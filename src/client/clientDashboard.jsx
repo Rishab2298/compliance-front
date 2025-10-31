@@ -146,26 +146,24 @@ const ClientDashboard = () => {
     }
   }
 
-  const loading = driversLoading || companyLoading || remindersLoading
+  // Get driver limit text based on plan
+  const getDriverLimitText = (planName) => {
+    const planLimits = {
+      'Free': 5,
+      'Starter': 25,
+      'Professional': 100,
+      'Enterprise': -1, // Unlimited
+    }
 
-  if (loading) {
-    return (
-      <div className="flex flex-col w-full min-h-screen bg-gray-50">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <Skeleton className="h-7 w-32 rounded-[10px]" />
-            <Skeleton className="h-10 w-32 rounded-[10px]" />
-          </div>
-        </header>
-        <div className="flex-1 py-8">
-          <div className="container w-full px-6 mx-auto space-y-6">
-            <Skeleton className="h-48 w-full rounded-[10px]" />
-            <Skeleton className="h-64 w-full rounded-[10px]" />
-            <Skeleton className="h-56 w-full rounded-[10px]" />
-          </div>
-        </div>
-      </div>
-    )
+    const limit = planLimits[planName]
+
+    if (limit === -1) {
+      return 'Unlimited on current plan'
+    } else if (limit) {
+      return `Up to ${limit} drivers on ${planName} plan`
+    } else {
+      return 'Based on current plan'
+    }
   }
 
   return (
@@ -233,29 +231,45 @@ const ClientDashboard = () => {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
                 <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Total Drivers</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalDrivers}</p>
+                {driversLoading ? (
+                  <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{totalDrivers}</p>
+                )}
                 <p className="mt-1 text-xs text-gray-500">Active in system</p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
                 <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Compliance Rate</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{complianceRate}%</p>
+                {driversLoading || companyLoading ? (
+                  <Skeleton className="h-9 w-20 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{complianceRate}%</p>
+                )}
                 <p className="mt-1 text-xs text-gray-500">
-                  {complianceRate >= 90 ? 'Excellent' : complianceRate >= 70 ? 'Good' : 'Needs attention'}
+                  {driversLoading || companyLoading ? ' ' : complianceRate >= 90 ? 'Excellent' : complianceRate >= 70 ? 'Good' : 'Needs attention'}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/reminders')}>
                 <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Expiring Soon</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{stats.total}</p>
+                {remindersLoading ? (
+                  <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{stats.total}</p>
+                )}
                 <p className="mt-1 text-xs text-gray-500">
-                  {stats.critical} critical • {stats.warning} warning
+                  {remindersLoading ? ' ' : `${stats.critical} critical • ${stats.warning} warning`}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/document-status')}>
                 <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Pending Review</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{docCounts.pending}</p>
+                {driversLoading ? (
+                  <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{docCounts.pending}</p>
+                )}
                 <p className="mt-1 text-xs text-gray-500">Awaiting verification</p>
               </div>
             </div>
@@ -289,7 +303,7 @@ const ClientDashboard = () => {
               <div>
                 <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Active Drivers</Label>
                 <p className="mt-2 text-3xl font-bold text-gray-900">{totalDrivers}</p>
-                <p className="mt-1 text-xs text-gray-500">Unlimited on current plan</p>
+                <p className="mt-1 text-xs text-gray-500">{getDriverLimitText(company?.plan || 'Professional')}</p>
               </div>
             </div>
 
