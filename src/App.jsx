@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 import { SidebarProvider } from "./components/ui/sidebar";
 import LoadingScreen from "./components/LoadingScreen";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 import { router } from "./routes/routes";
 
@@ -88,9 +89,11 @@ import { router } from "./routes/routes";
 function App() {
   return (
     <>
-      <SidebarProvider>
-        <RouterProvider router={router} />
-      </SidebarProvider>
+      <ThemeProvider>
+        <SidebarProvider>
+          <RouterProvider router={router} />
+        </SidebarProvider>
+      </ThemeProvider>
     </>
   );
 }

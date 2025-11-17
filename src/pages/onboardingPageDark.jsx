@@ -5,42 +5,35 @@ import { useAuth, useUser } from "@clerk/clerk-react";
 import {
   Shield,
   Building2,
-  FileText,
-  Bell,
-  Rocket,
   ArrowRight,
   ArrowLeft,
   Check,
-  Upload,
   Mail,
   Phone,
-  MapPin,
+  CreditCard,
+  DollarSign,
+  FileCheck,
+  ExternalLink,
 } from "lucide-react";
 import { onboardingSchema } from "../schemas/onboardingSchema";
 import { useNavigate } from "react-router-dom";
+import CSVUploadDialog from "@/components/CSVUploadDialog";
+import { bulkCreateDrivers } from "@/api/drivers";
+import { upgradePlan } from "@/api/billing";
+import { toast } from "sonner";
 
 export default function OnboardingDark() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [csvDialogOpen, setCsvDialogOpen] = useState(false);
+  const [bulkUploadedDrivers, setBulkUploadedDrivers] = useState([]);
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const { user, isLoaded } = useUser();
 
-  useEffect(() => {
-    if (!isLoaded) return; // wait for user to load
-
-    if (user) {
-      const companyId = user.publicMetadata?.companyId;
-      if (companyId) {
-        navigate("/client/dashboard");
-      }
-    }
-  }, [user, isLoaded, navigate]);
-
   const {
-    register,
     handleSubmit,
     watch,
     setValue,
@@ -49,166 +42,171 @@ export default function OnboardingDark() {
   } = useForm({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
-      companyName: "",
+      // Step 1 - Company Information
+      legalCompanyName: "",
+      operatingName: "",
+      country: "",
+      entityType: "",
+      businessRegistrationNumber: "",
+      registeredAddress: {
+        street: "",
+        city: "",
+        stateProvince: "",
+        zipPostalCode: "",
+      },
+      operatingAddresses: [],
+      sameAsRegistered: true,
+      companyWebsite: "",
       companySize: "",
-      operatingRegion: "",
       statesProvinces: [],
       industryType: "",
+      // Step 2 - DSP Verification
+      isAmazonDSP: false,
+      dspCompanyName: "",
+      stationCodes: [],
+      dspOwnerName: "",
+      opsManagerName: "",
+      dspId: "",
       documents: ["Driver's License"],
       reminderDays: ["90d", "30d", "7d"],
-      notificationMethod: "both",
-      notificationRecipients: ["admin"],
+      // Step 3 - Primary Admin Account
+      adminFullName: "",
       adminEmail: "",
       adminPhone: "",
-      firstDriverName: "",
-      firstDriverContact: "",
-      firstDriverDocuments: [],
+      // Step 4 - Billing Setup
+      plan: "Free",
+      billingFrequency: "monthly",
+      paymentMethod: "card",
+      billingContactName: "",
+      billingContactEmail: "",
+      billingAddress: {
+        street: "",
+        city: "",
+        stateProvince: "",
+        zipPostalCode: "",
+      },
+      // Step 5 - Legal Consents
+      agreeToTerms: false,
+      agreeToPrivacy: false,
+      agreeToDataProcessing: false,
+      agreeToSmsConsent: false,
+      agreeToSupportAccess: false,
+      consentTimestamp: "",
+      consentIpAddress: "",
+      consentVersion: "1.0",
     },
     mode: "onChange",
   });
 
   const formData = watch();
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
-  const companySizes = [
-    "1-10 drivers",
-    "11-50 drivers",
-    "51-200 drivers",
-    "200+ drivers",
-  ];
+  // Pre-populate admin data from Clerk user
+  useEffect(() => {
+    if (!isLoaded) return; // wait for user to load
 
-  const regions = ["United States", "Canada", "Both US & Canada"];
+    if (user) {
+      const role = user.publicMetadata?.role;
+      const companyId = user.publicMetadata?.companyId;
 
-  const usStates = [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-  ];
+      // Redirect SUPER_ADMIN to super admin dashboard
+      if (role === 'SUPER_ADMIN') {
+        navigate("/super-admin/dashboard");
+        return;
+      }
 
-  const canadianProvinces = [
-    "Alberta",
-    "British Columbia",
-    "Manitoba",
-    "New Brunswick",
-    "Newfoundland and Labrador",
-    "Nova Scotia",
-    "Ontario",
-    "Prince Edward Island",
-    "Quebec",
-    "Saskatchewan",
-  ];
+      // Redirect regular users with company to dashboard
+      if (companyId) {
+        navigate("/client/dashboard");
+        return;
+      }
 
-  const industries = [
-    "Amazon DSP",
-    "FedEx Ground Contractor",
-    "UPS Contractor",
-    "Independent Delivery Service",
-    "Food Delivery",
-    "Other",
-  ];
+      // Pre-populate admin email from Clerk user
+      if (user.primaryEmailAddress?.emailAddress) {
+        setValue("adminEmail", user.primaryEmailAddress.emailAddress);
+      }
 
-  const documentTypes = [
-    { id: "drivers_license", label: "Driver's License", mandatory: true },
-    { id: "vehicle_insurance", label: "Vehicle Insurance", mandatory: false },
-    { id: "cdl", label: "Commercial Driver's License (CDL)", mandatory: false },
-    { id: "dot_medical", label: "DOT Medical Certificate", mandatory: false },
-    { id: "background_check", label: "Background Check", mandatory: false },
-    { id: "drug_test", label: "Drug Test Results", mandatory: false },
-    {
-      id: "vehicle_registration",
-      label: "Vehicle Registration",
-      mandatory: false,
-    },
-    { id: "proof_of_address", label: "Proof of Address", mandatory: false },
-  ];
+      // Pre-populate admin full name if available
+      if (user.fullName) {
+        setValue("adminFullName", user.fullName);
+      } else if (user.firstName && user.lastName) {
+        setValue("adminFullName", `${user.firstName} ${user.lastName}`);
+      } else if (user.firstName) {
+        setValue("adminFullName", user.firstName);
+      }
+    }
+  }, [user, isLoaded, navigate, setValue]);
+
+  const countries = ["United States", "Canada"];
+
+  const entityTypes = ["Corp", "Inc", "LLC", "Ltd", "Partnership"];
 
   const updateFormData = (field, value) => {
     setValue(field, value, { shouldValidate: true });
   };
 
-  const toggleDocument = (docLabel) => {
-    if (docLabel === "Driver's License") return; // Can't uncheck mandatory
+  // Format phone number to ensure it starts with country code
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digit characters except +
+    let cleaned = value.replace(/[^\d+]/g, '');
 
-    const currentDocs = formData.documents || [];
-
-    // Free plan restriction: Only 1 document type allowed (Driver's License is mandatory)
-    // Since users are on Free plan during onboarding, restrict to 1 doc type
-    const isAdding = !currentDocs.includes(docLabel);
-
-    if (isAdding && currentDocs.length >= 1) {
-      // Free plan limit reached
-      alert("Free plan allows tracking only 1 document type per driver (Driver's License). Upgrade to a paid plan to track more document types.");
-      return;
+    // If doesn't start with +, add +1 for US/Canada by default
+    if (!cleaned.startsWith('+')) {
+      if (cleaned.length > 0) {
+        cleaned = '+1' + cleaned;
+      }
     }
 
-    const newDocs = currentDocs.includes(docLabel)
-      ? currentDocs.filter((d) => d !== docLabel)
-      : [...currentDocs, docLabel];
-    setValue("documents", newDocs, { shouldValidate: true });
+    return cleaned;
   };
 
-  const toggleStateProvince = (location) => {
-    const currentLocations = formData.statesProvinces || [];
-    const newLocations = currentLocations.includes(location)
-      ? currentLocations.filter((l) => l !== location)
-      : [...currentLocations, location];
-    setValue("statesProvinces", newLocations, { shouldValidate: true });
+  const addStationCode = (code) => {
+    if (code && !formData.stationCodes.includes(code)) {
+      setValue("stationCodes", [...formData.stationCodes, code], { shouldValidate: true });
+    }
   };
 
-  const toggleRecipient = (recipient) => {
-    const currentRecipients = formData.notificationRecipients || [];
-    const newRecipients = currentRecipients.includes(recipient)
-      ? currentRecipients.filter((r) => r !== recipient)
-      : [...currentRecipients, recipient];
-    setValue("notificationRecipients", newRecipients, { shouldValidate: true });
+  const removeStationCode = (code) => {
+    setValue("stationCodes", formData.stationCodes.filter(c => c !== code), { shouldValidate: true });
+  };
+
+  const handleCSVUpload = async (driversData) => {
+    try {
+      const token = await getToken();
+      const results = await bulkCreateDrivers(driversData, token);
+
+      // Update state with successful uploads
+      if (results.successful.length > 0) {
+        setBulkUploadedDrivers(results.successful);
+        toast.success(`Successfully imported ${results.successful.length} driver(s)`);
+      }
+
+      // Show limit warning if limit was reached
+      if (results.limitReached) {
+        toast.warning(`Driver limit reached!`, {
+          description: `Successfully added ${results.successful.length} driver(s). ${results.failed.length} driver(s) could not be added. Free plan allows up to 5 drivers. Please upgrade to add more.`,
+          duration: 8000,
+        });
+      } else if (results.failed.length > 0) {
+        // Show regular errors
+        const failedDrivers = results.failed.slice(0, 3).map(f => `${f.firstName} ${f.lastName}: ${f.error}`).join('\n');
+        const moreText = results.failed.length > 3 ? `\n...and ${results.failed.length - 3} more` : '';
+
+        toast.error(`Failed to import ${results.failed.length} driver(s)`, {
+          description: failedDrivers + moreText,
+          duration: 6000,
+        });
+      }
+
+      // If nothing succeeded and nothing failed, something is wrong
+      if (results.successful.length === 0 && results.failed.length === 0) {
+        toast.error('No drivers were imported. Please check your CSV file.');
+      }
+    } catch (error) {
+      console.error('Error bulk uploading drivers:', error);
+      throw error;
+    }
   };
 
   const handleNext = async () => {
@@ -219,27 +217,62 @@ export default function OnboardingDark() {
     switch (currentStep) {
       case 1:
         fieldsToValidate = [
-          "companyName",
-          "companySize",
-          "operatingRegion",
-          "statesProvinces",
+          "legalCompanyName",
+          "operatingName",
+          "country",
+          "entityType",
+          "businessRegistrationNumber",
+          "registeredAddress",
         ];
         break;
       case 2:
-        fieldsToValidate = ["documents", "reminderDays"];
+        // Conditionally validate DSP fields if user selected "Yes"
+        if (formData.isAmazonDSP) {
+          fieldsToValidate = [
+            "dspCompanyName",
+            "stationCodes",
+            "dspOwnerName",
+            "opsManagerName",
+          ];
+        }
+        // No validation needed if not Amazon DSP
         break;
       case 3:
         fieldsToValidate = [
-          "notificationMethod",
-          "notificationRecipients",
+          "adminFullName",
           "adminEmail",
           "adminPhone",
         ];
         break;
       case 4:
-        // Step 5 (Quick Start) is optional - no required fields
-        isOptionalStep = true;
-        fieldsToValidate = ["firstDriverName", "firstDriverContact"];
+        // Step 4 (Billing Setup) - Conditional validation based on plan
+        if (formData.plan !== 'Free') {
+          fieldsToValidate = [
+            "plan",
+            "billingFrequency",
+            "billingContactName",
+            "billingContactEmail",
+          ];
+          // Add payment method for non-Enterprise plans
+          if (formData.plan !== 'Enterprise') {
+            fieldsToValidate.push("paymentMethod");
+          }
+        } else {
+          // Free plan only needs plan selection
+          fieldsToValidate = ["plan"];
+        }
+        break;
+      case 5:
+        // Step 5 (Legal Consents) - Conditional validation
+        fieldsToValidate = ["agreeToTerms", "agreeToPrivacy"];
+        // Add Data Processing Addendum if Amazon DSP
+        if (formData.isAmazonDSP) {
+          fieldsToValidate.push("agreeToDataProcessing");
+        }
+        // Add SMS Consent if paid plan
+        if (formData.plan !== 'Free') {
+          fieldsToValidate.push("agreeToSmsConsent");
+        }
         break;
     }
 
@@ -270,9 +303,19 @@ export default function OnboardingDark() {
       const token = await getToken();
 
       if (!token) {
-        alert("Please sign in to complete onboarding.");
+        toast.error("Please sign in to complete onboarding.");
         return;
       }
+
+      // Capture consent metadata
+      const consentData = {
+        ...data,
+        consentTimestamp: new Date().toISOString(),
+        consentIpAddress: await fetch('https://api.ipify.org?format=json')
+          .then(res => res.json())
+          .then(ipData => ipData.ip)
+          .catch(() => 'unknown'),
+      };
 
       // First, sync the user to ensure they exist in the database
       console.log("Syncing user with database...");
@@ -293,14 +336,14 @@ export default function OnboardingDark() {
       const syncResult = await syncResponse.json();
       console.log("User synced:", syncResult);
 
-      // Now submit the onboarding data
+      // Now submit the onboarding data with consent metadata
       const response = await fetch(`${API_URL}/api/onboarding`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(consentData),
       });
 
       if (!response.ok) {
@@ -309,23 +352,64 @@ export default function OnboardingDark() {
         throw new Error(errorData.error || "Failed to save onboarding data");
       }
 
-      const result = await response.json();
+      const onboardingResult = await response.json();
+      console.log("Onboarding result:", onboardingResult);
 
-      alert("Onboarding completed successfully! Redirecting to dashboard...");
-      // Redirect to dashboard or next page
-      navigate("/client/dashboard");
+      // If paid plan, redirect to Stripe checkout
+      if (data.plan !== 'Free') {
+        toast.success("Onboarding completed! Setting up payment...");
+
+        // Wait for database transaction to commit and Clerk session to sync
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        try {
+          console.log("Calling upgradePlan with:", { plan: data.plan, billingFrequency: data.billingFrequency });
+
+          // Get fresh token to ensure Clerk session is updated
+          const freshToken = await getToken();
+          const result = await upgradePlan(data.plan, data.billingFrequency, freshToken);
+
+          console.log("Upgrade plan result:", result);
+
+          if (result.checkoutUrl) {
+            toast.success("Redirecting to payment gateway...");
+            // Redirect to Stripe checkout
+            window.location.href = result.checkoutUrl;
+          } else {
+            console.error("No checkout URL in result:", result);
+            throw new Error("No checkout URL received");
+          }
+        } catch (billingError) {
+          console.error("=== Billing Setup Error ===");
+          console.error("Error object:", billingError);
+          console.error("Error message:", billingError.message);
+          console.error("Error stack:", billingError.stack);
+
+          // Show detailed error to user for debugging
+          const errorMessage = billingError.message || 'Unknown error occurred';
+
+          toast.error(`Payment setup failed: ${errorMessage}`, {
+            description: "You can set up billing from the dashboard.",
+            duration: 5000,
+          });
+
+          console.log("Navigating to dashboard after error...");
+
+          // Wait a moment before navigating
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          navigate("/client/dashboard");
+        }
+      } else {
+        // Free plan - go straight to dashboard
+        toast.success("Onboarding completed successfully!");
+        navigate("/client/dashboard");
+      }
     } catch (error) {
       console.error("Error saving onboarding data:", error);
-      alert(`Failed to save onboarding data: ${error.message}`);
+      toast.error(`Failed to save onboarding data: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const getLocationOptions = () => {
-    if (formData.operatingRegion === "United States") return usStates;
-    if (formData.operatingRegion === "Canada") return canadianProvinces;
-    return [...usStates, ...canadianProvinces];
   };
 
   const renderStep = () => {
@@ -334,173 +418,332 @@ export default function OnboardingDark() {
         return (
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
-              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                <Building2 className="w-8 h-8 text-blue-400" />
+              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+                <Building2 className="w-8 h-8 text-violet-400" />
               </div>
               <h2 className="text-3xl font-bold text-white">
                 Company Information
               </h2>
               <p className="text-slate-400">
-                Let's start with the basics about your DSP
+                Let's start with the legal details about your company
               </p>
             </div>
 
             <div className="space-y-4">
+              {/* Legal Company Name */}
               <div>
                 <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Company Name *
+                  Legal Company Name *
                 </label>
                 <input
                   type="text"
                   required
-                  value={formData.companyName}
+                  value={formData.legalCompanyName}
                   onChange={(e) =>
-                    updateFormData("companyName", e.target.value)
+                    updateFormData("legalCompanyName", e.target.value)
                   }
-                  placeholder="Enter your company name"
+                  placeholder="e.g., ABC Logistics Inc."
                   className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-transparent rounded-[10px] ${
-                    errors.companyName
+                    errors.legalCompanyName
                       ? "border border-red-500 focus:ring-red-500"
-                      : "border border-slate-700 focus:ring-blue-500"
+                      : "border border-slate-700 focus:ring-violet-500"
                   }`}
                 />
-                {errors.companyName && (
+                {errors.legalCompanyName && (
                   <p className="mt-1 text-sm text-red-400">
-                    {errors.companyName.message}
+                    {errors.legalCompanyName.message}
                   </p>
                 )}
               </div>
 
+              {/* Operating Name (DBA) */}
               <div>
                 <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Company Size *
+                  Operating Name (DBA) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.operatingName}
+                  onChange={(e) =>
+                    updateFormData("operatingName", e.target.value)
+                  }
+                  placeholder="e.g., ABC Delivery Services"
+                  className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-transparent rounded-[10px] ${
+                    errors.operatingName
+                      ? "border border-red-500 focus:ring-red-500"
+                      : "border border-slate-700 focus:ring-violet-500"
+                  }`}
+                />
+                {errors.operatingName && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.operatingName.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Country Selection */}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Country *
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {companySizes.map((size) => (
+                  {countries.map((country) => (
                     <button
-                      key={size}
+                      key={country}
                       type="button"
-                      onClick={() => updateFormData("companySize", size)}
-                      className={`px-4 py-3 rounded-[10px] transition-all ${
-                        formData.companySize === size
-                          ? "bg-blue-500/20 border border-blue-500 text-blue-400"
+                      onClick={() => updateFormData("country", country)}
+                      className={`px-4 py-3 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
+                        formData.country === country
+                          ? "bg-violet-500/20 border border-violet-500 text-violet-400"
                           : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
-                      } ${errors.companySize ? "border border-red-500" : ""}`}>
-                      {size}
+                      } ${errors.country ? "border border-red-500" : ""}`}>
+                      {formData.country === country && <Check className="w-4 h-4" />}
+                      {country}
                     </button>
                   ))}
                 </div>
-                {errors.companySize && (
+                {errors.country && (
                   <p className="mt-1 text-sm text-red-400">
-                    {errors.companySize.message}
+                    {errors.country.message}
                   </p>
                 )}
               </div>
 
+              {/* Entity Type */}
               <div>
                 <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Primary Operating Region *
-                </label>
-                <div className="space-y-2">
-                  {regions.map((region) => (
-                    <button
-                      key={region}
-                      type="button"
-                      onClick={() => updateFormData("operatingRegion", region)}
-                      className={`w-full px-4 py-3 rounded-[10px] transition-all flex items-center justify-between ${
-                        formData.operatingRegion === region
-                          ? "bg-blue-500/20 border border-blue-500 text-blue-400"
-                          : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
-                      } ${errors.operatingRegion ? "border border-red-500" : ""}`}>
-                      <span className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        {region}
-                      </span>
-                      {formData.operatingRegion === region && (
-                        <Check className="w-5 h-5" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {errors.operatingRegion && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.operatingRegion.message}
-                  </p>
-                )}
-              </div>
-
-              {formData.operatingRegion && (
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    State(s)/Province(s) of Operation *
-                  </label>
-                  <div
-                    className={`p-4 overflow-y-auto bg-slate-800 max-h-48 rounded-[10px] ${
-                      errors.statesProvinces
-                        ? "border border-red-500"
-                        : "border border-slate-700"
-                    }`}>
-                    <div className="grid grid-cols-2 gap-2">
-                      {getLocationOptions().map((location) => (
-                        <label
-                          key={location}
-                          className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-slate-700/50">
-                          <input
-                            type="checkbox"
-                            checked={formData.statesProvinces.includes(
-                              location
-                            )}
-                            onChange={() => toggleStateProvince(location)}
-                            className="w-4 h-4 text-blue-500 rounded bg-slate-700 border-slate-600 focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-slate-300">
-                            {location}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  {formData.statesProvinces.length > 0 &&
-                    !errors.statesProvinces && (
-                      <p className="mt-2 text-sm text-slate-400">
-                        {formData.statesProvinces.length} selected
-                      </p>
-                    )}
-                  {errors.statesProvinces && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.statesProvinces.message}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Industry/Service Type
+                  Entity Type *
                 </label>
                 <select
-                  value={formData.industryType}
+                  value={formData.entityType}
                   onChange={(e) =>
-                    updateFormData("industryType", e.target.value)
+                    updateFormData("entityType", e.target.value)
                   }
                   className={`w-full px-4 py-3 text-white bg-slate-800 focus:outline-none focus:ring-2 rounded-[10px] ${
-                    errors.industryType
+                    errors.entityType
                       ? "border border-red-500 focus:ring-red-500"
-                      : "border border-slate-700 focus:ring-blue-500"
+                      : "border border-slate-700 focus:ring-violet-500"
                   }`}>
-                  <option value="">Select industry type</option>
-                  {industries.map((industry) => (
-                    <option key={industry} value={industry}>
-                      {industry}
+                  <option value="">Select entity type</option>
+                  {entityTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
                     </option>
                   ))}
                 </select>
-                {errors.industryType && (
+                {errors.entityType && (
                   <p className="mt-1 text-sm text-red-400">
-                    {errors.industryType.message}
+                    {errors.entityType.message}
                   </p>
                 )}
               </div>
+
+              {/* Business Registration Number */}
+              {formData.country && (
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-slate-300">
+                    {formData.country === "United States"
+                      ? "EIN (Employer Identification Number) *"
+                      : "Business Number / Corporation Number *"}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.businessRegistrationNumber}
+                    onChange={(e) =>
+                      updateFormData("businessRegistrationNumber", e.target.value)
+                    }
+                    placeholder={
+                      formData.country === "United States"
+                        ? "XX-XXXXXXX (e.g., 12-3456789)"
+                        : "123456789 (9 digits)"
+                    }
+                    className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                      errors.businessRegistrationNumber
+                        ? "border border-red-500 focus:ring-red-500"
+                        : "border border-slate-700 focus:ring-violet-500"
+                    }`}
+                  />
+                  {errors.businessRegistrationNumber && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.businessRegistrationNumber.message}
+                    </p>
+                  )}
+                  <p className="mt-1 text-xs text-slate-500">
+                    {formData.country === "United States"
+                      ? "Format: XX-XXXXXXX (two digits, hyphen, seven digits)"
+                      : "Format: 9 digits (no spaces or hyphens)"}
+                  </p>
+                </div>
+              )}
+
+              {/* Registered Address */}
+              <div className="p-4 border border-slate-700 bg-slate-800/50 rounded-[10px]">
+                <h3 className="mb-3 text-sm font-semibold text-white">
+                  Registered Address *
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block mb-1 text-xs font-medium text-slate-400">
+                      Street Address *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.registeredAddress?.street || ""}
+                      onChange={(e) =>
+                        setValue("registeredAddress", {
+                          ...formData.registeredAddress,
+                          street: e.target.value,
+                        }, { shouldValidate: true })
+                      }
+                      placeholder="123 Main Street"
+                      className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                        errors.registeredAddress?.street
+                          ? "border border-red-500 focus:ring-red-500"
+                          : "border border-slate-700 focus:ring-violet-500"
+                      }`}
+                    />
+                    {errors.registeredAddress?.street && (
+                      <p className="mt-1 text-xs text-red-400">
+                        {errors.registeredAddress.street.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block mb-1 text-xs font-medium text-slate-400">
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.registeredAddress?.city || ""}
+                        onChange={(e) =>
+                          setValue("registeredAddress", {
+                            ...formData.registeredAddress,
+                            city: e.target.value,
+                          }, { shouldValidate: true })
+                        }
+                        placeholder="City"
+                        className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                          errors.registeredAddress?.city
+                            ? "border border-red-500 focus:ring-red-500"
+                            : "border border-slate-700 focus:ring-violet-500"
+                        }`}
+                      />
+                      {errors.registeredAddress?.city && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {errors.registeredAddress.city.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-xs font-medium text-slate-400">
+                        {formData.country === "Canada" ? "Province *" : "State *"}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.registeredAddress?.stateProvince || ""}
+                        onChange={(e) =>
+                          setValue("registeredAddress", {
+                            ...formData.registeredAddress,
+                            stateProvince: e.target.value,
+                          }, { shouldValidate: true })
+                        }
+                        placeholder={formData.country === "Canada" ? "e.g., Ontario" : "e.g., California"}
+                        className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                          errors.registeredAddress?.stateProvince
+                            ? "border border-red-500 focus:ring-red-500"
+                            : "border border-slate-700 focus:ring-violet-500"
+                        }`}
+                      />
+                      {errors.registeredAddress?.stateProvince && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {errors.registeredAddress.stateProvince.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-xs font-medium text-slate-400">
+                      {formData.country === "Canada" ? "Postal Code *" : "ZIP Code *"}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.registeredAddress?.zipPostalCode || ""}
+                      onChange={(e) =>
+                        setValue("registeredAddress", {
+                          ...formData.registeredAddress,
+                          zipPostalCode: e.target.value,
+                        }, { shouldValidate: true })
+                      }
+                      placeholder={
+                        formData.country === "Canada" ? "A1A 1A1" : "12345"
+                      }
+                      className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                        errors.registeredAddress?.zipPostalCode
+                          ? "border border-red-500 focus:ring-red-500"
+                          : "border border-slate-700 focus:ring-violet-500"
+                      }`}
+                    />
+                    {errors.registeredAddress?.zipPostalCode && (
+                      <p className="mt-1 text-xs text-red-400">
+                        {errors.registeredAddress.zipPostalCode.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Operating/Warehouse Address */}
+              <div>
+                <label className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={formData.sameAsRegistered}
+                    onChange={(e) => updateFormData("sameAsRegistered", e.target.checked)}
+                    className="w-4 h-4 rounded text-violet-500 bg-slate-700 border-slate-600 focus:ring-violet-500"
+                  />
+                  Operating address is same as registered address
+                </label>
+                {!formData.sameAsRegistered && (
+                  <div className="p-4 border border-slate-700 bg-slate-800/50 rounded-[10px]">
+                    <p className="mb-3 text-xs text-slate-400">
+                      Add your operating/warehouse addresses
+                    </p>
+                    <button
+                      type="button"
+                      className="text-sm text-violet-400 hover:text-violet-300">
+                      + Add Operating Address
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Company Website */}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Company Website <span className="text-slate-500">(Optional)</span>
+                </label>
+                <input
+                  type="url"
+                  value={formData.companyWebsite}
+                  onChange={(e) =>
+                    updateFormData("companyWebsite", e.target.value)
+                  }
+                  placeholder="https://www.yourcompany.com"
+                  className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                    errors.companyWebsite
+                      ? "border border-red-500 focus:ring-red-500"
+                      : "border border-slate-700 focus:ring-violet-500"
+                  }`}
+                />
+                {errors.companyWebsite && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.companyWebsite.message}
+                  </p>
+                )}
+              </div>
+
             </div>
           </div>
         );
@@ -509,142 +752,212 @@ export default function OnboardingDark() {
         return (
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
-              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                <FileText className="w-8 h-8 text-blue-400" />
+              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+                <Building2 className="w-8 h-8 text-violet-400" />
               </div>
               <h2 className="text-3xl font-bold text-white">
-                Document Requirements
+                DSP Verification
               </h2>
               <p className="text-slate-400">
-                Select which documents you need to track for compliance
+                Tell us if you're an Amazon Delivery Service Partner
               </p>
-              <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-[10px]">
-                <p className="text-sm text-yellow-300">
-                  <strong>Free Plan:</strong> You can track only 1 document type per driver (Driver's License is included). Upgrade to Starter, Professional, or Enterprise plans to track multiple document types per driver.
-                </p>
-              </div>
             </div>
 
-            <div className="space-y-3">
-              {documentTypes.map((doc) => (
-                <div
-                  key={doc.id}
-                  className={`bg-slate-800 p-4 transition-all rounded-[10px] ${
-                    formData.documents.includes(doc.label)
-                      ? "border border-blue-500"
-                      : "border border-slate-700"
-                  }`}>
-                  <label className="flex items-start gap-3 cursor-pointer">
+            <div className="space-y-6">
+              {/* Amazon DSP Yes/No Toggle */}
+              <div>
+                <label className="block mb-3 text-sm font-medium text-slate-300">
+                  Are you an Amazon DSP? *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => updateFormData("isAmazonDSP", true)}
+                    className={`px-6 py-4 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
+                      formData.isAmazonDSP === true
+                        ? "bg-violet-500/20 border border-violet-500 text-violet-400"
+                        : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
+                    }`}>
+                    {formData.isAmazonDSP === true && <Check className="w-5 h-5" />}
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateFormData("isAmazonDSP", false)}
+                    className={`px-6 py-4 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
+                      formData.isAmazonDSP === false
+                        ? "bg-violet-500/20 border border-violet-500 text-violet-400"
+                        : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
+                    }`}>
+                    {formData.isAmazonDSP === false && <Check className="w-5 h-5" />}
+                    No
+                  </button>
+                </div>
+              </div>
+
+              {/* DSP Fields - Show only if Amazon DSP */}
+              {formData.isAmazonDSP && (
+                <div className="p-6 space-y-4 border border-violet-500/30 bg-violet-500/5 rounded-[10px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building2 className="w-5 h-5 text-violet-400" />
+                    <h3 className="text-lg font-semibold text-white">
+                      Amazon DSP Information
+                    </h3>
+                  </div>
+
+                  {/* DSP Company Name */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-300">
+                      DSP Company Name (as per Amazon Portal) *
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={formData.documents.includes(doc.label)}
-                      onChange={() => toggleDocument(doc.label)}
-                      disabled={doc.mandatory}
-                      className="w-5 h-5 mt-0.5 text-blue-500 bg-slate-700 border-slate-600 rounded focus:ring-blue-500"
+                      type="text"
+                      value={formData.dspCompanyName}
+                      onChange={(e) =>
+                        updateFormData("dspCompanyName", e.target.value)
+                      }
+                      placeholder="Enter DSP company name"
+                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                        errors.dspCompanyName
+                          ? "border border-red-500 focus:ring-red-500"
+                          : "border border-slate-700 focus:ring-violet-500"
+                      }`}
                     />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">
-                          {doc.label}
-                        </span>
-                        {doc.mandatory && (
-                          <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
-                            Mandatory
-                          </span>
-                        )}
+                    {errors.dspCompanyName && (
+                      <p className="mt-1 text-sm text-red-400">
+                        {errors.dspCompanyName.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Station Codes */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-300">
+                      Station Code(s) *
+                    </label>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          id="stationCodeInput"
+                          placeholder="e.g., DLA9, DCA2"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const input = e.target;
+                              addStationCode(input.value.trim().toUpperCase());
+                              input.value = '';
+                            }
+                          }}
+                          className={`flex-1 px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                            errors.stationCodes
+                              ? "border border-red-500 focus:ring-red-500"
+                              : "border border-slate-700 focus:ring-violet-500"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const input = document.getElementById('stationCodeInput');
+                            addStationCode(input.value.trim().toUpperCase());
+                            input.value = '';
+                          }}
+                          className="px-6 py-3 bg-violet-500 hover:bg-violet-600 text-white rounded-[10px] transition-colors">
+                          Add
+                        </button>
                       </div>
+                      {formData.stationCodes && formData.stationCodes.length > 0 && (
+                        <div className="flex flex-wrap gap-2 p-3 bg-slate-800/50 rounded-[10px]">
+                          {formData.stationCodes.map((code, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 px-3 py-1 bg-violet-500/20 border border-violet-500/50 text-violet-300 rounded-[6px]">
+                              <span className="font-mono text-sm">{code}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeStationCode(code)}
+                                className="text-violet-400 hover:text-violet-200">
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {errors.stationCodes && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {errors.stationCodes.message}
+                        </p>
+                      )}
                     </div>
-                  </label>
-                </div>
-              ))}
-            </div>
+                  </div>
 
-            {/* Global Reminder Days Section */}
-            <div className="mt-6 p-6 bg-slate-800 border border-slate-700 rounded-[10px]">
-              <h3 className="mb-3 text-lg font-semibold text-white">
-                Global Reminder Settings
-              </h3>
-              <p className="mb-4 text-sm text-slate-400">
-                Choose up to 3 reminder intervals before document expiry (applies to all document types)
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {["1d", "7d", "14d", "15d", "30d", "45d", "60d", "90d"].map((days) => {
-                  const current = formData.reminderDays || [];
-                  const isSelected = current.includes(days);
-                  const isMaxSelected = current.length >= 3 && !isSelected;
+                  {/* DSP Owner Name */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-300">
+                      DSP Owner Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.dspOwnerName}
+                      onChange={(e) =>
+                        updateFormData("dspOwnerName", e.target.value)
+                      }
+                      placeholder="Enter owner name"
+                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                        errors.dspOwnerName
+                          ? "border border-red-500 focus:ring-red-500"
+                          : "border border-slate-700 focus:ring-violet-500"
+                      }`}
+                    />
+                    {errors.dspOwnerName && (
+                      <p className="mt-1 text-sm text-red-400">
+                        {errors.dspOwnerName.message}
+                      </p>
+                    )}
+                  </div>
 
-                  return (
-                    <button
-                      key={days}
-                      type="button"
-                      onClick={() => {
-                        if (isMaxSelected) {
-                          // Show toast or alert that max is reached
-                          return;
-                        }
-                        const updated = isSelected
-                          ? current.filter((d) => d !== days)
-                          : [...current, days];
-                        updateFormData("reminderDays", updated);
-                      }}
-                      disabled={isMaxSelected}
-                      className={`px-4 py-2 rounded-[10px] text-sm font-medium transition-all ${
-                        isSelected
-                          ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
-                          : isMaxSelected
-                          ? "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50"
-                          : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                      }`}>
-                      {days}
-                    </button>
-                  );
-                })}
-              </div>
-              {formData.reminderDays && formData.reminderDays.length >= 3 && (
-                <p className="mt-2 text-sm text-yellow-400">
-                  Maximum of 3 reminder intervals selected
-                </p>
-              )}
-              {errors.reminderDays && (
-                <p className="mt-2 text-sm text-red-400">
-                  {errors.reminderDays.message}
-                </p>
-              )}
-              {formData.reminderDays && formData.reminderDays.length > 0 && (
-                <div className="p-3 mt-4 rounded-md bg-slate-700/50">
-                  <p className="text-sm text-slate-300">
-                    Selected ({formData.reminderDays.length}/3): <span className="font-semibold text-blue-400">
-                      {formData.reminderDays.join(", ")}
-                    </span>
-                  </p>
-                </div>
-              )}
-            </div>
+                  {/* Ops Manager / Fleet Manager */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-300">
+                      Ops Manager / Fleet Manager Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.opsManagerName}
+                      onChange={(e) =>
+                        updateFormData("opsManagerName", e.target.value)
+                      }
+                      placeholder="Enter manager name"
+                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                        errors.opsManagerName
+                          ? "border border-red-500 focus:ring-red-500"
+                          : "border border-slate-700 focus:ring-violet-500"
+                      }`}
+                    />
+                    {errors.opsManagerName && (
+                      <p className="mt-1 text-sm text-red-400">
+                        {errors.opsManagerName.message}
+                      </p>
+                    )}
+                  </div>
 
-            <div className="space-y-3">
-              <div className="flex gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-[10px]">
-                <div className="text-blue-400 mt-0.5">
-                  <Bell className="w-5 h-5" />
+                  {/* DSP ID (Optional) */}
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-slate-300">
+                      DSP ID <span className="text-slate-500">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.dspId}
+                      onChange={(e) =>
+                        updateFormData("dspId", e.target.value)
+                      }
+                      placeholder="Enter DSP ID"
+                      className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-300">⏰ Automatic Reminders</p>
-                  <p className="mt-1 text-sm text-slate-300">
-                    Your reminder notifications are sent automatically every day at <span className="font-semibold text-blue-400">8:00 AM Eastern Time</span> (New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-3 p-4 bg-slate-700/50 border border-slate-600/50 rounded-[10px]">
-                <div className="text-slate-400 mt-0.5">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-300">💡 Pro Tip</p>
-                  <p className="mt-1 text-sm text-slate-400">
-                    We recommend selecting 90d, 30d, and 7d reminders to ensure
-                    documents never miss renewals.
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         );
@@ -653,153 +966,122 @@ export default function OnboardingDark() {
         return (
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
-              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                <Bell className="w-8 h-8 text-blue-400" />
+              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+                <Shield className="w-8 h-8 text-violet-400" />
               </div>
               <h2 className="text-3xl font-bold text-white">
-                Notification Preferences
+                Primary Admin Account
               </h2>
               <p className="text-slate-400">
-                Configure how you want to receive compliance alerts
+                Set up the main administrator for your company
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Full Name */}
               <div>
-                <label className="block mb-3 text-sm font-medium text-slate-300">
-                  Primary Notification Method *
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Full Name *
                 </label>
-                <div className="space-y-2">
-                  {[
-                    {
-                      value: "email",
-                      label: "Email only",
-                      icon: <Mail className="w-5 h-5" />,
-                    },
-                    {
-                      value: "sms",
-                      label: "SMS only",
-                      icon: <Phone className="w-5 h-5" />,
-                    },
-                    {
-                      value: "both",
-                      label: "Both Email & SMS",
-                      icon: <Bell className="w-5 h-5" />,
-                      recommended: true,
-                    },
-                  ].map((method) => (
-                    <button
-                      key={method.value}
-                      onClick={() =>
-                        updateFormData("notificationMethod", method.value)
-                      }
-                      className={`w-full px-4 py-3 rounded-[10px] transition-all flex items-center justify-between ${
-                        formData.notificationMethod === method.value
-                          ? "bg-blue-500/20 border border-blue-500 text-blue-400"
-                          : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
-                      }`}>
-                      <span className="flex items-center gap-3">
-                        {method.icon}
-                        {method.label}
-                        {method.recommended && (
-                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">
-                            Recommended
-                          </span>
-                        )}
-                      </span>
-                      {formData.notificationMethod === method.value && (
-                        <Check className="w-5 h-5" />
-                      )}
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  value={formData.adminFullName}
+                  onChange={(e) =>
+                    updateFormData("adminFullName", e.target.value)
+                  }
+                  placeholder="e.g., John Smith"
+                  className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                    errors.adminFullName
+                      ? "border border-red-500 focus:ring-red-500"
+                      : "border border-slate-700 focus:ring-violet-500"
+                  }`}
+                />
+                {errors.adminFullName && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.adminFullName.message}
+                  </p>
+                )}
               </div>
 
+              {/* Work Email */}
               <div>
-                <label className="block mb-3 text-sm font-medium text-slate-300">
-                  Who should receive compliance alerts? *
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Work Email *
                 </label>
-                <div className="space-y-2">
-                  {[
-                    { value: "admin", label: "Admin/Owner" },
-                    { value: "drivers", label: "Drivers directly" },
-                  ].map((recipient) => (
-                    <label
-                      key={recipient.value}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-[10px] cursor-pointer transition-all ${
-                        formData.notificationRecipients.includes(
-                          recipient.value
-                        )
-                          ? "bg-blue-500/10 border border-blue-500/50"
-                          : "bg-slate-800 border border-slate-700 hover:border-slate-600"
-                      }`}>
-                      <input
-                        type="checkbox"
-                        checked={formData.notificationRecipients.includes(
-                          recipient.value
-                        )}
-                        onChange={() => toggleRecipient(recipient.value)}
-                        className="w-4 h-4 text-blue-500 rounded bg-slate-700 border-slate-600 focus:ring-blue-500"
-                      />
-                      <span className="text-slate-300">{recipient.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {(formData.notificationMethod === "email" ||
-                formData.notificationMethod === "both") && (
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    Admin Email *
-                  </label>
+                <div className="relative">
                   <input
                     type="email"
                     value={formData.adminEmail}
                     onChange={(e) =>
                       updateFormData("adminEmail", e.target.value)
                     }
-                    placeholder="admin@yourcompany.com"
+                    placeholder="admin@company.com"
                     className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
                       errors.adminEmail
                         ? "border border-red-500 focus:ring-red-500"
-                        : "border border-slate-700 focus:ring-blue-500"
+                        : "border border-slate-700 focus:ring-violet-500"
                     }`}
                   />
-                  {errors.adminEmail && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.adminEmail.message}
-                    </p>
-                  )}
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <Mail className="w-5 h-5 text-slate-500" />
+                  </div>
                 </div>
-              )}
+                {errors.adminEmail && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.adminEmail.message}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-slate-500">
+                  This email is automatically fetched from your account
+                </p>
+              </div>
 
-              {(formData.notificationMethod === "sms" ||
-                formData.notificationMethod === "both") && (
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    Admin Phone Number *
-                  </label>
+              {/* Mobile Number */}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Mobile Number *
+                </label>
+                <div className="relative">
                   <input
                     type="tel"
                     value={formData.adminPhone}
-                    onChange={(e) =>
-                      updateFormData("adminPhone", e.target.value)
-                    }
-                    placeholder="+1 (555) 123-4567"
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      updateFormData("adminPhone", formatted);
+                    }}
+                    placeholder="+1 234 567 8900"
                     className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
                       errors.adminPhone
                         ? "border border-red-500 focus:ring-red-500"
-                        : "border border-slate-700 focus:ring-blue-500"
+                        : "border border-slate-700 focus:ring-violet-500"
                     }`}
                   />
-                  {errors.adminPhone && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.adminPhone.message}
-                    </p>
-                  )}
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <Phone className="w-5 h-5 text-slate-500" />
+                  </div>
                 </div>
-              )}
+                {errors.adminPhone && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.adminPhone.message}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-slate-500">
+                  Include country code (e.g., +1 for US/Canada)
+                </p>
+              </div>
+
+              {/* Info Box */}
+              <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded-[10px]">
+                <div className="flex gap-3">
+                  <Shield className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-violet-300">Primary Administrator</p>
+                    <p className="mt-1 text-sm text-slate-300">
+                      This account will have full access to all company settings, driver management, and compliance tracking.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -808,97 +1090,461 @@ export default function OnboardingDark() {
         return (
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
-              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                <Rocket className="w-8 h-8 text-blue-400" />
+              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+                <CreditCard className="w-8 h-8 text-violet-400" />
               </div>
-              <h2 className="text-3xl font-bold text-white">Quick Start</h2>
+              <h2 className="text-3xl font-bold text-white">Billing Setup</h2>
               <p className="text-slate-400">
-                Let's add your first driver to get started!
+                Choose your plan and set up billing information
+              </p>
+            </div>
+
+            {/* Plan Selection */}
+            <div>
+              <label className="block mb-3 text-sm font-medium text-slate-300">
+                Select Your Plan *
+              </label>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {[
+                  { name: 'Free', price: '$0', features: ['Basic features', 'Email support'] },
+                  { name: 'Starter', price: '$49', features: ['All Free features', 'SMS notifications', 'Priority support'] },
+                  { name: 'Professional', price: '$149', features: ['All Starter features', 'Advanced analytics', 'API access'] },
+                  { name: 'Enterprise', price: 'Custom', features: ['All Professional features', 'Dedicated support', 'Custom integrations'] }
+                ].map((plan) => (
+                  <button
+                    key={plan.name}
+                    type="button"
+                    onClick={() => updateFormData("plan", plan.name)}
+                    className={`p-4 text-left border rounded-[10px] transition-all ${
+                      formData.plan === plan.name
+                        ? 'border-violet-500 bg-violet-500/10'
+                        : 'border-slate-700 bg-slate-800 hover:border-slate-600'
+                    }`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
+                        <p className="text-sm text-slate-400">{plan.price}/month</p>
+                      </div>
+                      {formData.plan === plan.name && (
+                        <Check className="w-5 h-5 text-violet-400" />
+                      )}
+                    </div>
+                    <ul className="space-y-1">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-center gap-2 text-xs text-slate-400">
+                          <span className="w-1 h-1 rounded-full bg-violet-400"></span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+                ))}
+              </div>
+              {errors.plan && (
+                <p className="mt-1 text-sm text-red-400">{errors.plan.message}</p>
+              )}
+            </div>
+
+            {/* Conditional Fields for Paid Plans */}
+            {formData.plan !== 'Free' && (
+              <>
+                {/* Billing Frequency */}
+                <div>
+                  <label className="block mb-3 text-sm font-medium text-slate-300">
+                    Billing Frequency *
+                  </label>
+                  <div className="flex gap-3">
+                    {['monthly', 'yearly'].map((freq) => (
+                      <button
+                        key={freq}
+                        type="button"
+                        onClick={() => updateFormData("billingFrequency", freq)}
+                        className={`flex-1 px-4 py-3 border rounded-[10px] transition-all ${
+                          formData.billingFrequency === freq
+                            ? 'border-violet-500 bg-violet-500/10 text-white'
+                            : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600'
+                        }`}>
+                        <div className="flex items-center justify-center gap-2">
+                          <DollarSign className="w-4 h-4" />
+                          <span className="font-medium capitalize">{freq}</span>
+                        </div>
+                        {freq === 'yearly' && (
+                          <span className="block mt-1 text-xs text-green-400">Save 20%</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  {errors.billingFrequency && (
+                    <p className="mt-1 text-sm text-red-400">{errors.billingFrequency.message}</p>
+                  )}
+                </div>
+
+                {/* Payment Method - Not for Enterprise */}
+                {formData.plan !== 'Enterprise' && (
+                  <div>
+                    <label className="block mb-3 text-sm font-medium text-slate-300">
+                      Payment Method *
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { value: 'card', label: 'Credit/Debit Card' },
+                        { value: 'ach', label: 'ACH Transfer' },
+                        { value: 'pad', label: 'PAD (Canada)' }
+                      ].map((method) => (
+                        <button
+                          key={method.value}
+                          type="button"
+                          onClick={() => updateFormData("paymentMethod", method.value)}
+                          className={`px-4 py-3 border rounded-[10px] transition-all ${
+                            formData.paymentMethod === method.value
+                              ? 'border-violet-500 bg-violet-500/10 text-white'
+                              : 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600'
+                          }`}>
+                          {method.label}
+                        </button>
+                      ))}
+                    </div>
+                    {errors.paymentMethod && (
+                      <p className="mt-1 text-sm text-red-400">{errors.paymentMethod.message}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Invoice notice for Enterprise */}
+                {formData.plan === 'Enterprise' && (
+                  <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded-[10px]">
+                    <p className="text-sm text-violet-300">
+                      Enterprise plan uses invoice billing. Our team will contact you to set up your account.
+                    </p>
+                  </div>
+                )}
+
+                {/* Billing Contact Name */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-slate-300">
+                    Billing Contact Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.billingContactName}
+                    onChange={(e) => updateFormData("billingContactName", e.target.value)}
+                    placeholder="John Doe"
+                    className={`w-full px-4 py-3 text-white bg-slate-800 border placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px] ${
+                      errors.billingContactName ? 'border-red-500' : 'border-slate-700'
+                    }`}
+                  />
+                  {errors.billingContactName && (
+                    <p className="mt-1 text-sm text-red-400">{errors.billingContactName.message}</p>
+                  )}
+                </div>
+
+                {/* Billing Contact Email */}
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-slate-300">
+                    Billing Contact Email *
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute w-5 h-5 text-slate-400 left-3 top-3.5" />
+                    <input
+                      type="email"
+                      value={formData.billingContactEmail}
+                      onChange={(e) => updateFormData("billingContactEmail", e.target.value)}
+                      placeholder="billing@company.com"
+                      className={`w-full pl-10 pr-4 py-3 text-white bg-slate-800 border placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px] ${
+                        errors.billingContactEmail ? 'border-red-500' : 'border-slate-700'
+                      }`}
+                    />
+                  </div>
+                  {errors.billingContactEmail && (
+                    <p className="mt-1 text-sm text-red-400">{errors.billingContactEmail.message}</p>
+                  )}
+                </div>
+
+                {/* Billing Address */}
+                <div>
+                  <label className="block mb-3 text-sm font-medium text-slate-300">
+                    Billing Address
+                  </label>
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={formData.billingAddress?.street || ''}
+                      onChange={(e) => updateFormData("billingAddress", {
+                        ...formData.billingAddress,
+                        street: e.target.value
+                      })}
+                      placeholder="Street Address"
+                      className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        value={formData.billingAddress?.city || ''}
+                        onChange={(e) => updateFormData("billingAddress", {
+                          ...formData.billingAddress,
+                          city: e.target.value
+                        })}
+                        placeholder="City"
+                        className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
+                      />
+                      <input
+                        type="text"
+                        value={formData.billingAddress?.stateProvince || ''}
+                        onChange={(e) => updateFormData("billingAddress", {
+                          ...formData.billingAddress,
+                          stateProvince: e.target.value
+                        })}
+                        placeholder="State/Province"
+                        className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={formData.billingAddress?.zipPostalCode || ''}
+                      onChange={(e) => updateFormData("billingAddress", {
+                        ...formData.billingAddress,
+                        zipPostalCode: e.target.value
+                      })}
+                      placeholder="ZIP/Postal Code"
+                      className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Free Plan Notice */}
+            {formData.plan === 'Free' && (
+              <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-[10px]">
+                <p className="text-sm text-green-300">
+                  You've selected the Free plan. No payment information required!
+                </p>
+              </div>
+            )}
+          </div>
+        );
+
+      case 5:
+        const isUS = formData.country === 'United States';
+        const isCanada = formData.country === 'Canada';
+        const termsLink = '/policies/terms-of-service';
+        const privacyLink = '/policies/privacy-policy';
+        const dpaLink = '/policies/data-processing-agreement';
+        const smsConsentLink = '/policies/sms-consent';
+        const cookieLink = '/policies/cookie-preferences';
+        const supportAccessLink = '/policies/support-access';
+
+        return (
+          <div className="space-y-6">
+            <div className="mb-8 space-y-2 text-center">
+              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+                <FileCheck className="w-8 h-8 text-violet-400" />
+              </div>
+              <h2 className="text-3xl font-bold text-white">Legal Consents</h2>
+              <p className="text-slate-400">
+                Please review and accept our terms and policies
               </p>
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Driver Name *
+              {/* Terms of Service (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToTerms ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToTerms}
+                    onChange={(e) => updateFormData("agreeToTerms", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I agree to the{' '}
+                      <a
+                        href={termsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        Complyo Terms of Service
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      . <span className="text-red-400">*</span>
+                    </p>
+                  </div>
                 </label>
-                <input
-                  type="text"
-                  value={formData.firstDriverName}
-                  onChange={(e) =>
-                    updateFormData("firstDriverName", e.target.value)
-                  }
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[10px]"
-                />
+                {errors.agreeToTerms && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToTerms.message}</p>
+                )}
               </div>
 
-              <div>
-                <label className="block mb-2 text-sm font-medium text-slate-300">
-                  Driver Email or Phone *
+              {/* Privacy Policy (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToPrivacy ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToPrivacy}
+                    onChange={(e) => updateFormData("agreeToPrivacy", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I have read and agree to the{' '}
+                      <a
+                        href={privacyLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        Privacy Policy
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      . <span className="text-red-400">*</span>
+                    </p>
+                  </div>
                 </label>
-                <input
-                  type="text"
-                  value={formData.firstDriverContact}
-                  onChange={(e) =>
-                    updateFormData("firstDriverContact", e.target.value)
-                  }
-                  placeholder="john.doe@email.com or +1 555-123-4567"
-                  className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[10px]"
-                />
+                {errors.agreeToPrivacy && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToPrivacy.message}</p>
+                )}
               </div>
 
-              <div>
-                <label className="block mb-3 text-sm font-medium text-slate-300">
-                  Required Documents
+              {/* Data Processing Addendum (Required for DSPs) */}
+              {formData.isAmazonDSP && (
+                <div className={`p-4 border rounded-[10px] ${
+                  errors.agreeToDataProcessing ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+                }`}>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.agreeToDataProcessing}
+                      onChange={(e) => updateFormData("agreeToDataProcessing", e.target.checked)}
+                      className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm text-slate-300">
+                        I agree that Complyo processes documents and personal information under the{' '}
+                        <a
+                          href={dpaLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                          Data Processing Addendum
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        . <span className="text-red-400">*</span>
+                      </p>
+                    </div>
+                  </label>
+                  {errors.agreeToDataProcessing && (
+                    <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToDataProcessing.message}</p>
+                  )}
+                </div>
+              )}
+
+              {/* SMS Consent (Required if SMS Enabled - paid plans) */}
+              {formData.plan !== 'Free' && (
+                <div className={`p-4 border rounded-[10px] ${
+                  errors.agreeToSmsConsent ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+                }`}>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.agreeToSmsConsent}
+                      onChange={(e) => updateFormData("agreeToSmsConsent", e.target.checked)}
+                      className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm text-slate-300">
+                        I agree to receive{' '}
+                        <a
+                          href={smsConsentLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                          SMS alerts
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        {' '}from Complyo. Message frequency varies. Reply STOP to opt out, HELP for help. Message & data rates may apply. Consent is not a condition of purchase. <span className="text-red-400">*</span>
+                      </p>
+                      <p className="mt-2 text-xs text-slate-500">
+                        By checking this box, you authorize Complyo to send automated text messages to the mobile number provided. Standard messaging rates apply.
+                      </p>
+                    </div>
+                  </label>
+                  {errors.agreeToSmsConsent && (
+                    <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToSmsConsent.message}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Cookie Preferences (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToCookies ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToCookies || true}
+                    onChange={(e) => updateFormData("agreeToCookies", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I agree to the use of{' '}
+                      <a
+                        href={cookieLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        cookies
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      {' '}as described in the Cookie Policy. <span className="text-red-400">*</span>
+                    </p>
+                  </div>
                 </label>
-                <div className="space-y-2">
-                  {formData.documents.map((docLabel) => {
-                    return (
-                      <div
-                        key={docLabel}
-                        className="flex items-center gap-3 px-4 py-3 bg-slate-800 border border-slate-700 rounded-[10px]">
-                        <Check className="w-5 h-5 text-green-400" />
-                        <span className="text-slate-300">{docLabel}</span>
-                      </div>
-                    );
-                  })}
-                </div>
               </div>
 
-              <div className="flex gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-[10px]">
-                <div className="text-blue-400 mt-0.5">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-300">
-                    What happens next?
-                  </p>
-                  <p className="mt-1 text-sm text-slate-300">
-                    We'll send an email to your driver with a secure upload
-                    link. No login required!
-                  </p>
-                </div>
+              {/* Support Access (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToSupportAccess ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToSupportAccess}
+                    onChange={(e) => updateFormData("agreeToSupportAccess", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I authorize Complyo{' '}
+                      <a
+                        href={supportAccessLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        support to access
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      {' '}my account solely to resolve an active support ticket. <span className="text-red-400">*</span>
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Access expires after 72 hours from when granted. You can revoke this permission at any time in your account settings.
+                    </p>
+                  </div>
+                </label>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-slate-800">
-              <button
-                onClick={() => {
-                  /* Handle bulk upload */
-                }}
-                className="flex items-center justify-center w-full gap-2 px-6 py-3 transition-all bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-[10px]">
-                <Upload className="w-5 h-5" />
-                Or upload multiple drivers via CSV
-              </button>
-            </div>
-
-            <div className="text-center">
-              <button
-                onClick={() => handleSubmit(onSubmit)()}
-                className="text-sm text-slate-400 hover:text-slate-300">
-                Skip for now, I'll add drivers later
-              </button>
+              {/* Region Notice */}
+              <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded-[10px]">
+                <p className="text-xs text-violet-300">
+                  {isUS && "🇺🇸 You're viewing US-specific terms and policies."}
+                  {isCanada && "🇨🇦 You're viewing Canada-specific terms and policies."}
+                  {!isUS && !isCanada && "🌍 General terms and policies apply."}
+                </p>
+              </div>
             </div>
           </div>
         );
@@ -911,17 +1557,17 @@ export default function OnboardingDark() {
   return (
     <div className="min-w-full min-h-screen text-white bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Decorative elements */}
-      <div className="absolute rounded-full top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 blur-3xl"></div>
-      <div className="absolute rounded-full bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 blur-3xl"></div>
+      <div className="absolute rounded-full top-1/4 left-1/4 w-96 h-96 bg-violet-500/10 blur-3xl"></div>
+      <div className="absolute rounded-full bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 blur-3xl"></div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Header */}
         <div className="p-6 md:p-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-[10px] bg-gradient-to-br from-blue-500 to-cyan-400">
+            <div className="p-2 rounded-[10px] bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text">
+            <span className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text">
               DSP ComplianceManager
             </span>
           </div>
@@ -940,31 +1586,32 @@ export default function OnboardingDark() {
             </div>
             <div className="w-full h-2 overflow-hidden rounded-full bg-slate-800">
               <div
-                className="h-2 transition-all duration-300 ease-out bg-gradient-to-r from-blue-500 to-cyan-400"
+                className="h-2 transition-all duration-300 ease-out bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600"
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}></div>
             </div>
             <div className="flex justify-between mt-4">
-              {[1, 2, 3, 4].map((step) => (
+              {[1, 2, 3, 4, 5].map((step) => (
                 <div
                   key={step}
                   className={`flex flex-col items-center ${
-                    step <= currentStep ? "text-blue-400" : "text-slate-600"
+                    step <= currentStep ? "text-violet-400" : "text-slate-600"
                   }`}>
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                       step < currentStep
-                        ? "bg-blue-500 text-white"
+                        ? "bg-violet-500 text-white"
                         : step === currentStep
-                        ? "bg-gradient-to-br from-blue-500 to-cyan-400 text-white"
+                        ? "bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600 text-white"
                         : "bg-slate-800 text-slate-600"
                     }`}>
                     {step < currentStep ? <Check className="w-4 h-4" /> : step}
                   </div>
                   <span className="hidden mt-2 text-xs md:block">
                     {step === 1 && "Company"}
-                    {step === 2 && "Documents"}
-                    {step === 3 && "Notifications"}
-                    {step === 4 && "Start"}
+                    {step === 2 && "DSP Info"}
+                    {step === 3 && "Admin"}
+                    {step === 4 && "Billing"}
+                    {step === 5 && "Legal"}
                   </span>
                 </div>
               ))}
@@ -997,7 +1644,7 @@ export default function OnboardingDark() {
             </button>
 
             <div className="flex items-center gap-3">
-              {currentStep < totalSteps && (
+              {currentStep < totalSteps && currentStep <= 3 && (
                 <button
                   onClick={() => setCurrentStep(totalSteps)}
                   className="px-6 py-3 font-medium transition-colors rounded-[10px] text-slate-400 hover:text-slate-300">
@@ -1007,7 +1654,7 @@ export default function OnboardingDark() {
               <button
                 onClick={handleNext}
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-8 py-3 font-semibold transition-all rounded-[10px] bg-gradient-to-r from-blue-600 to-cyan-500 hover:shadow-lg hover:shadow-blue-500/50 group disabled:opacity-50 disabled:cursor-not-allowed">
+                className="flex items-center gap-2 px-8 py-3 font-semibold transition-all rounded-[10px] bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 group disabled:opacity-50 disabled:cursor-not-allowed">
                 {isSubmitting
                   ? "Saving..."
                   : currentStep === totalSteps
@@ -1025,12 +1672,18 @@ export default function OnboardingDark() {
         <div className="px-6 pb-6 text-center">
           <p className="text-sm text-slate-500">
             Need help?{" "}
-            <a href="/support" className="text-blue-400 hover:text-blue-300">
+            <a href="/support" className="text-violet-400 hover:text-violet-300">
               Contact support
             </a>
           </p>
         </div>
       </div>
+
+      <CSVUploadDialog
+        isOpen={csvDialogOpen}
+        onClose={() => setCsvDialogOpen(false)}
+        onUpload={handleCSVUpload}
+      />
     </div>
   );
 }

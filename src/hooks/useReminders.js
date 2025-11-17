@@ -1,6 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-react';
-import { getReminders, sendManualReminder, getReminderHistory } from '@/api/reminders';
+import {
+  getReminders,
+  sendManualReminder,
+  getReminderHistory,
+  createCustomReminder,
+  getCustomReminders,
+  deleteCustomReminder,
+  updateCustomReminder
+} from '@/api/reminders';
 
 /**
  * Hook to fetch all reminders for the company
@@ -54,5 +62,80 @@ export const useReminderHistory = (documentId) => {
     },
     enabled: !!documentId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+/**
+ * Hook to fetch all custom reminders for the company
+ */
+export const useCustomReminders = () => {
+  const { getToken } = useAuth();
+
+  return useQuery({
+    queryKey: ['customReminders'],
+    queryFn: async () => {
+      const token = await getToken();
+      const response = await getCustomReminders(token);
+      return response.data;
+    },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    cacheTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+/**
+ * Hook to create a custom reminder
+ */
+export const useCreateCustomReminder = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reminderData) => {
+      const token = await getToken();
+      return createCustomReminder(reminderData, token);
+    },
+    onSuccess: () => {
+      // Invalidate custom reminders query to refetch
+      queryClient.invalidateQueries({ queryKey: ['customReminders'] });
+    },
+  });
+};
+
+/**
+ * Hook to delete a custom reminder
+ */
+export const useDeleteCustomReminder = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reminderId) => {
+      const token = await getToken();
+      return deleteCustomReminder(reminderId, token);
+    },
+    onSuccess: () => {
+      // Invalidate custom reminders query to refetch
+      queryClient.invalidateQueries({ queryKey: ['customReminders'] });
+    },
+  });
+};
+
+/**
+ * Hook to update a custom reminder
+ */
+export const useUpdateCustomReminder = () => {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ reminderId, reminderData }) => {
+      const token = await getToken();
+      return updateCustomReminder(reminderId, reminderData, token);
+    },
+    onSuccess: () => {
+      // Invalidate custom reminders query to refetch
+      queryClient.invalidateQueries({ queryKey: ['customReminders'] });
+    },
   });
 };

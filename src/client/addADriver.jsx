@@ -13,11 +13,14 @@ import Step4 from "@/components/add-a-driver/step4";
 import Step5 from "@/components/add-a-driver/step5";
 import Step6 from "@/components/add-a-driver/step6";
 import Step7 from "@/components/add-a-driver/step7";
+import { useTheme } from "@/contexts/ThemeContext";
+import { getThemeClasses } from "@/utils/themeClasses";
 
 export default function AddADriver() {
   const navigate = useNavigate();
   const { getToken } = useAuth();
   const { user } = useUser();
+  const { isDarkMode } = useTheme();
   const { data: currentPlanData, isLoading: planLoading } = useCurrentPlan();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
@@ -346,12 +349,12 @@ export default function AddADriver() {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full overflow-y-auto bg-gray-50">
+    <div className={`fixed inset-0 w-full h-full overflow-y-auto ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-gray-50'}`}>
       <div className="container max-w-4xl min-h-full px-6 py-8 mx-auto">
         {/* Header */}
         <div className="justify-center w-full mb-8 text-center">
-          <h1 className="text-2xl font-bold text-center text-gray-900">Add a Driver</h1>
-          <p className="mt-1 text-sm text-center text-gray-500">
+          <h1 className={`text-2xl font-bold text-center ${getThemeClasses.text.primary(isDarkMode)}`}>Add a Driver</h1>
+          <p className={`mt-1 text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
             Complete the steps below to add a new driver to your roster
           </p>
         </div>
@@ -365,9 +368,15 @@ export default function AddADriver() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                       step.number === currentStep
-                        ? "bg-gray-800 text-white"
+                        ? isDarkMode
+                          ? "bg-violet-500 text-white"
+                          : "bg-gray-800 text-white"
                         : step.number < currentStep
-                        ? "bg-gray-600 text-white"
+                        ? isDarkMode
+                          ? "bg-violet-600 text-white"
+                          : "bg-gray-600 text-white"
+                        : isDarkMode
+                        ? "bg-slate-800 text-slate-500 border border-slate-700"
                         : "bg-gray-200 text-gray-500"
                     }`}>
                     {step.number < currentStep ? (
@@ -379,10 +388,12 @@ export default function AddADriver() {
                   <span
                     className={`mt-2 text-xs font-medium ${
                       step.number === currentStep
-                        ? "text-gray-900"
+                        ? getThemeClasses.text.primary(isDarkMode)
                         : step.number < currentStep
-                        ? "text-gray-600"
-                        : "text-gray-500"
+                        ? isDarkMode
+                          ? "text-slate-400"
+                          : "text-gray-600"
+                        : getThemeClasses.text.secondary(isDarkMode)
                     }`}>
                     {step.title}
                   </span>
@@ -390,7 +401,13 @@ export default function AddADriver() {
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-0.5 mx-2 transition-all ${
-                      step.number < currentStep ? "bg-gray-600" : "bg-gray-200"
+                      step.number < currentStep
+                        ? isDarkMode
+                          ? "bg-violet-600"
+                          : "bg-gray-600"
+                        : isDarkMode
+                        ? "bg-slate-800"
+                        : "bg-gray-200"
                     }`}></div>
                 )}
               </React.Fragment>
@@ -399,14 +416,14 @@ export default function AddADriver() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-[10px] p-6 md:p-8 border border-gray-200">
+        <div className={`rounded-[10px] p-6 md:p-8 border ${getThemeClasses.bg.card(isDarkMode)}`}>
           {currentStep === 1 && (
             <>
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Personal Information
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   Please fill in your basic details to get started
                 </p>
               </div>
@@ -417,7 +434,7 @@ export default function AddADriver() {
                   <div>
                     <label
                       htmlFor="firstName"
-                      className="block mb-2 text-sm font-medium text-gray-900">
+                      className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                       First Name
                     </label>
                     <input
@@ -426,8 +443,10 @@ export default function AddADriver() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                        errors.firstName ? "border-red-500" : "border-gray-300"
+                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                        errors.firstName
+                          ? "border-red-500"
+                          : getThemeClasses.input.default(isDarkMode)
                       }`}
                       placeholder="John"
                     />
@@ -438,7 +457,7 @@ export default function AddADriver() {
                   <div>
                     <label
                       htmlFor="lastName"
-                      className="block mb-2 text-sm font-medium text-gray-900">
+                      className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                       Last Name
                     </label>
                     <input
@@ -447,8 +466,10 @@ export default function AddADriver() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                        errors.lastName ? "border-red-500" : "border-gray-300"
+                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                        errors.lastName
+                          ? "border-red-500"
+                          : getThemeClasses.input.default(isDarkMode)
                       }`}
                       placeholder="Doe"
                     />
@@ -462,7 +483,7 @@ export default function AddADriver() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                    className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                     Email Address
                   </label>
                   <input
@@ -471,8 +492,10 @@ export default function AddADriver() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                      errors.email ? "border-red-500" : "border-gray-300"
+                    className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                      errors.email
+                        ? "border-red-500"
+                        : getThemeClasses.input.default(isDarkMode)
                     }`}
                     placeholder="john.doe@example.com"
                   />
@@ -486,7 +509,7 @@ export default function AddADriver() {
                   <div>
                     <label
                       htmlFor="phone"
-                      className="block mb-2 text-sm font-medium text-gray-900">
+                      className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                       Phone Number
                     </label>
                     <input
@@ -495,8 +518,10 @@ export default function AddADriver() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                        errors.phone ? "border-red-500" : "border-gray-300"
+                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                        errors.phone
+                          ? "border-red-500"
+                          : getThemeClasses.input.default(isDarkMode)
                       }`}
                       placeholder="+15550000000"
                     />
@@ -507,7 +532,7 @@ export default function AddADriver() {
                   <div>
                     <label
                       htmlFor="location"
-                      className="block mb-2 text-sm font-medium text-gray-900">
+                      className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                       Location
                     </label>
                     <input
@@ -516,8 +541,10 @@ export default function AddADriver() {
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                        errors.location ? "border-red-500" : "border-gray-300"
+                      className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                        errors.location
+                          ? "border-red-500"
+                          : getThemeClasses.input.default(isDarkMode)
                       }`}
                       placeholder="New York, NY"
                     />
@@ -531,7 +558,7 @@ export default function AddADriver() {
                 <div>
                   <label
                     htmlFor="employeeId"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                    className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                     Employee ID
                   </label>
                   <input
@@ -540,8 +567,10 @@ export default function AddADriver() {
                     name="employeeId"
                     value={formData.employeeId}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
-                      errors.employeeId ? "border-red-500" : "border-gray-300"
+                    className={`w-full px-4 py-2.5 transition-all border rounded-[10px] outline-none ${
+                      errors.employeeId
+                        ? "border-red-500"
+                        : getThemeClasses.input.default(isDarkMode)
                     }`}
                     placeholder="EMP-12345"
                   />
@@ -551,8 +580,8 @@ export default function AddADriver() {
                 </div>
 
                 {/* Tip */}
-                <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-[10px]">
-                  <p className="text-sm leading-relaxed text-gray-400">
+                <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <p className={`text-sm leading-relaxed ${getThemeClasses.text.secondary(isDarkMode)}`}>
                     <span className="font-light">💡<strong>Tip:</strong>  Make sure to include the country code in the phone number without any spaces or hyphens. For example: <span className="font-mono font-medium">+15551234567</span> for United States or <span className="font-mono font-medium">+16131234567</span> for Canada. This ensures SMS notifications are delivered successfully to the driver.
                  </span> </p>
                 </div>
@@ -563,10 +592,10 @@ export default function AddADriver() {
           {currentStep === 2 && (
             <>
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Document Upload
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   How would you like to add the documents?
                 </p>
               </div>
@@ -578,25 +607,33 @@ export default function AddADriver() {
                   onClick={() => selectDocumentOption("upload")}
                   className={`w-full p-5 border rounded-[10px] transition-all text-left ${
                     formData.documentOption === "upload"
-                      ? "border-gray-800 bg-gray-50"
+                      ? isDarkMode
+                        ? "border-violet-500 bg-slate-800/50"
+                        : "border-gray-800 bg-gray-50"
+                      : isDarkMode
+                      ? "border-slate-700 hover:border-slate-600 hover:bg-slate-800/30"
                       : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }`}>
                   <div className="flex items-start">
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 mr-3 shrink-0 ${
                         formData.documentOption === "upload"
-                          ? "border-gray-800"
+                          ? isDarkMode
+                            ? "border-violet-500"
+                            : "border-gray-800"
+                          : isDarkMode
+                          ? "border-slate-600"
                           : "border-gray-300"
                       }`}>
                       {formData.documentOption === "upload" && (
-                        <div className="w-2.5 h-2.5 bg-gray-800 rounded-full"></div>
+                        <div className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-violet-500' : 'bg-gray-800'}`}></div>
                       )}
                     </div>
                     <div>
-                      <h3 className="mb-1 text-sm font-semibold text-gray-900">
+                      <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         Upload Now
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         Upload your documents immediately and complete the
                         process right away
                       </p>
@@ -610,25 +647,33 @@ export default function AddADriver() {
                   onClick={() => selectDocumentOption("link")}
                   className={`w-full p-5 border rounded-[10px] transition-all text-left ${
                     formData.documentOption === "link"
-                      ? "border-gray-800 bg-gray-50"
+                      ? isDarkMode
+                        ? "border-violet-500 bg-slate-800/50"
+                        : "border-gray-800 bg-gray-50"
+                      : isDarkMode
+                      ? "border-slate-700 hover:border-slate-600 hover:bg-slate-800/30"
                       : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }`}>
                   <div className="flex items-start">
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 mr-3 shrink-0 ${
                         formData.documentOption === "link"
-                          ? "border-gray-800"
+                          ? isDarkMode
+                            ? "border-violet-500"
+                            : "border-gray-800"
+                          : isDarkMode
+                          ? "border-slate-600"
                           : "border-gray-300"
                       }`}>
                       {formData.documentOption === "link" && (
-                        <div className="w-2.5 h-2.5 bg-gray-800 rounded-full"></div>
+                        <div className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-violet-500' : 'bg-gray-800'}`}></div>
                       )}
                     </div>
                     <div>
-                      <h3 className="mb-1 text-sm font-semibold text-gray-900">
+                      <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         Send Link to Driver
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         We'll send a secure link to the driver to upload
                         documents at their convenience
                       </p>
@@ -642,25 +687,33 @@ export default function AddADriver() {
                   onClick={() => selectDocumentOption("skip")}
                   className={`w-full p-5 border rounded-[10px] transition-all text-left ${
                     formData.documentOption === "skip"
-                      ? "border-gray-800 bg-gray-50"
+                      ? isDarkMode
+                        ? "border-violet-500 bg-slate-800/50"
+                        : "border-gray-800 bg-gray-50"
+                      : isDarkMode
+                      ? "border-slate-700 hover:border-slate-600 hover:bg-slate-800/30"
                       : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }`}>
                   <div className="flex items-start">
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 mr-3 shrink-0 ${
                         formData.documentOption === "skip"
-                          ? "border-gray-800"
+                          ? isDarkMode
+                            ? "border-violet-500"
+                            : "border-gray-800"
+                          : isDarkMode
+                          ? "border-slate-600"
                           : "border-gray-300"
                       }`}>
                       {formData.documentOption === "skip" && (
-                        <div className="w-2.5 h-2.5 bg-gray-800 rounded-full"></div>
+                        <div className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-violet-500' : 'bg-gray-800'}`}></div>
                       )}
                     </div>
                     <div>
-                      <h3 className="mb-1 text-sm font-semibold text-gray-900">
+                      <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         Skip for Now
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         Continue with the registration and add documents later
                         from your dashboard
                       </p>
@@ -682,11 +735,13 @@ export default function AddADriver() {
                   documentTypes={companyDocumentTypes}
                   driverId={createdDriverId}
                   planData={currentPlanData}
+                  isDarkMode={isDarkMode}
                 />
               ) : (
                 <DocumentPreviewStep
                   formData={formData}
                   documentTypes={companyDocumentTypes}
+                  isDarkMode={isDarkMode}
                 />
               )}
             </>
@@ -698,6 +753,7 @@ export default function AddADriver() {
               setCurrentStep={setCurrentStep}
               setIsProcessing={setIsProcessing}
               setExtractedData={setExtractedData}
+              isDarkMode={isDarkMode}
             />
           )}
           {currentStep === 5 && (
@@ -710,6 +766,7 @@ export default function AddADriver() {
               extractedData={extractedData}
               setExtractedData={setExtractedData}
               documentTypes={companyDocumentTypes}
+              isDarkMode={isDarkMode}
             />
           )}
           {currentStep === 6 && (
@@ -720,10 +777,11 @@ export default function AddADriver() {
                 extractedData={extractedData}
                 documentTypes={companyDocumentTypes}
                 setCurrentStep={setCurrentStep}
+                isDarkMode={isDarkMode}
               />
               {errors.verification && (
-                <div className="mt-4 p-4 border-l-4 border-red-500 rounded-r-[10px] bg-red-50">
-                  <p className="text-sm font-medium text-red-800">{errors.verification}</p>
+                <div className={`mt-4 p-4 border-l-4 border-red-500 rounded-r-[10px] ${isDarkMode ? 'bg-red-900/20' : 'bg-red-50'}`}>
+                  <p className={`text-sm font-medium ${isDarkMode ? 'text-red-400' : 'text-red-800'}`}>{errors.verification}</p>
                 </div>
               )}
             </>
@@ -732,6 +790,7 @@ export default function AddADriver() {
             <Step7
               formData={formData}
               updateFormData={updateFormData}
+              isDarkMode={isDarkMode}
             />
           )}
 
@@ -741,21 +800,21 @@ export default function AddADriver() {
               {formData.documentOption === "skip" ? (
                 // Documents Skipped UI
                 <div className="max-w-md mx-auto text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-[10px]">
-                    <CheckCircle className="w-8 h-8 text-gray-600" />
+                  <div className={`inline-flex items-center justify-center w-16 h-16 mb-4 rounded-[10px] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+                    <CheckCircle className={`w-8 h-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`} />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  <h3 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                     Documents Skipped
                   </h3>
-                  <p className="mb-4 text-sm text-gray-600">
+                  <p className={`mb-4 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                     You've chosen to skip document uploads for now. You can add documents later from the driver's profile page.
                   </p>
-                  <div className="p-4 border border-gray-200 rounded-[10px] bg-gray-50">
+                  <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50'}`}>
                     <div className="flex items-start gap-3 text-left">
-                      <Check className="flex-shrink-0 w-5 h-5 mt-0.5 text-gray-600" />
+                      <Check className={`flex-shrink-0 w-5 h-5 mt-0.5 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">What happens next?</p>
-                        <p className="mt-1 text-xs text-gray-600">
+                        <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>What happens next?</p>
+                        <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                           After creating the driver, you can upload documents or send them an invitation link to upload documents themselves.
                         </p>
                       </div>
@@ -767,11 +826,11 @@ export default function AddADriver() {
                 <div className="text-center">
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-800 animate-spin" />
-                      <h2 className="mb-2 text-lg font-semibold text-gray-900">
+                      <Loader2 className={`w-12 h-12 mx-auto mb-4 animate-spin ${isDarkMode ? 'text-violet-500' : 'text-gray-800'}`} />
+                      <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         Creating Driver Profile...
                       </h2>
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         Please wait while we save your driver information.
                       </p>
                     </>
@@ -794,25 +853,25 @@ export default function AddADriver() {
                       <h2 className="mb-2 text-lg font-semibold text-red-600">
                         Failed to Create Driver
                       </h2>
-                      <p className="mb-6 text-sm text-gray-500">{submitError}</p>
+                      <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{submitError}</p>
                       <button
                         onClick={() => {
                           setCurrentStep(1);
                           setSubmitError(null);
                         }}
-                        className="px-6 py-2.5 text-white transition-all bg-gray-800 rounded-[10px] hover:bg-gray-900">
+                        className={`px-6 py-2.5 text-white transition-all rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
                         Try Again
                       </button>
                     </>
                   ) : (
                     <>
                       <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-600" />
-                      <h2 className="mb-2 text-lg font-semibold text-gray-900">
+                      <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         {formData.documentOption === "link"
                           ? "Invitation Sent Successfully!"
                           : "Driver Added Successfully!"}
                       </h2>
-                      <p className="mb-6 text-sm text-gray-500">
+                      <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         {formData.documentOption === "link" ? (
                           <>
                             An email{formData.phone && " and SMS"} with a secure upload link has been sent to{" "}
@@ -827,12 +886,12 @@ export default function AddADriver() {
                       <div className="flex justify-center gap-3">
                         <button
                           onClick={handleNavigateToDrivers}
-                          className="px-6 py-2.5 text-white transition-all bg-gray-800 rounded-[10px] hover:bg-gray-900">
+                          className={`px-6 py-2.5 text-white transition-all rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
                           View All Drivers
                         </button>
                         <button
                           onClick={() => window.location.reload()}
-                          className="px-6 py-2.5 text-gray-700 transition-all border border-gray-200 rounded-[10px] hover:bg-gray-50">
+                          className={`px-6 py-2.5 transition-all border rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}>
                           Add Another Driver
                         </button>
                       </div>
@@ -845,15 +904,17 @@ export default function AddADriver() {
 
           {/* Action Buttons */}
           {currentStep <= 8 && (
-            <div className="flex justify-between pt-6 mt-6 border-t border-gray-200">
+            <div className={`flex justify-between pt-6 mt-6 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
               <button
                 type="button"
                 onClick={handleBack}
                 disabled={isSubmitting || (currentStep === 8 && formData.documentOption === "skip")}
                 className={`px-6 py-2.5 border rounded-[10px] font-medium transition-all ${
                   isSubmitting || (currentStep === 8 && formData.documentOption === "skip")
-                    ? "text-gray-400 border-gray-200 cursor-not-allowed"
-                    : "text-gray-700 border-gray-200 hover:bg-gray-50"
+                    ? isDarkMode
+                      ? "text-slate-600 border-slate-700 cursor-not-allowed"
+                      : "text-gray-400 border-gray-200 cursor-not-allowed"
+                    : getThemeClasses.button.secondary(isDarkMode)
                 }`}>
                 {currentStep === 1 ? "Cancel" : "Back"}
               </button>
@@ -872,8 +933,10 @@ export default function AddADriver() {
                 disabled={isSubmitting || creatingDriver}
                 className={`px-8 py-2.5 font-medium text-white transition-all rounded-[10px] ${
                   isSubmitting || creatingDriver
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gray-800 hover:bg-gray-900"
+                    ? isDarkMode
+                      ? "bg-slate-700 cursor-not-allowed"
+                      : "bg-gray-400 cursor-not-allowed"
+                    : getThemeClasses.button.primary(isDarkMode)
                 }`}>
                 {isSubmitting ? (
                   <span className="flex items-center">

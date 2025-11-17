@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   FileText,
   Search,
@@ -14,23 +15,74 @@ import {
   Eye,
   Send,
   Loader2,
+  Plus,
+  List,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
-import { useReminders, useSendManualReminder } from '@/hooks/useReminders';
+import {
+  useReminders,
+  useSendManualReminder,
+  useCustomReminders,
+  useCreateCustomReminder,
+  useDeleteCustomReminder
+} from '@/hooks/useReminders';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useTheme } from '@/contexts/ThemeContext';
+import { getThemeClasses } from '@/utils/themeClasses';
+import { useCompany } from '@/hooks/useCompany';
+import { useUser } from '@clerk/clerk-react';
+import CreateReminderDialog from '@/components/CreateReminderDialog';
+import CalendarView from '@/components/CalendarView';
 
 const Reminders = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
+  const { user } = useUser();
+  const companyId = user?.publicMetadata?.companyId;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all'); // all, critical, warning, info
+  const [viewMode, setViewMode] = useState('list'); // list or calendar
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  // Fetch reminders
+  // Fetch data
   const { data, isLoading, error } = useReminders();
+  const { data: customRemindersData, isLoading: customRemindersLoading } = useCustomReminders();
+  const { data: companyData } = useCompany(companyId);
+
+  // Mutations
   const sendReminderMutation = useSendManualReminder();
+  const createReminderMutation = useCreateCustomReminder();
+  const deleteReminderMutation = useDeleteCustomReminder();
 
   const reminders = data?.reminders || [];
   const stats = data?.stats || { total: 0, critical: 0, warning: 0, info: 0 };
   const reminderSettings = data?.reminderSettings || [];
+  const customReminders = customRemindersData?.reminders || [];
+
+  // Handler functions
+  const handleCreateReminder = async (reminderData) => {
+    try {
+      await createReminderMutation.mutateAsync(reminderData);
+      toast.success('Custom reminder created successfully');
+      setIsCreateDialogOpen(false);
+    } catch (error) {
+      console.error('Error creating reminder:', error);
+      toast.error(error.message || 'Failed to create reminder');
+      throw error;
+    }
+  };
+
+  const handleDeleteReminder = async (reminderId) => {
+    try {
+      await deleteReminderMutation.mutateAsync(reminderId);
+      toast.success('Reminder deleted successfully');
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      toast.error(error.message || 'Failed to delete reminder');
+    }
+  };
 
   // Filter reminders based on selected filter and search query
   const filteredReminders = reminders.filter((reminder) => {
@@ -75,7 +127,7 @@ const Reminders = () => {
   };
 
   const getUrgencyBadge = (urgency) => {
-    const configs = {
+    const lightConfigs = {
       critical: {
         className: 'bg-red-100 text-red-800 border-red-200',
         icon: AlertCircle,
@@ -93,6 +145,25 @@ const Reminders = () => {
       },
     };
 
+    const darkConfigs = {
+      critical: {
+        className: 'bg-red-500/20 text-red-400 border-red-500/30',
+        icon: AlertCircle,
+        label: 'Critical',
+      },
+      warning: {
+        className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+        icon: Clock,
+        label: 'Warning',
+      },
+      info: {
+        className: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        icon: CheckCircle,
+        label: 'Info',
+      },
+    };
+
+    const configs = isDarkMode ? darkConfigs : lightConfigs;
     const config = configs[urgency] || configs.info;
     const Icon = config.icon;
 
@@ -128,104 +199,80 @@ const Reminders = () => {
     { value: 'info', label: 'Info', icon: CheckCircle, count: stats.info },
   ];
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="flex flex-col w-full bg-gray-50 min-h-screen">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <h1 className="text-xl font-semibold text-gray-900">Reminders</h1>
-          </div>
-        </header>
-
-        <div className="flex-1 py-8">
-          <div className="container w-full px-6 mx-auto space-y-6">
-            {/* Loading skeletons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-[10px] p-4 border border-gray-200"
-                >
-                  <div className="space-y-2">
-                    <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
-                    <div className="h-8 w-16 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="h-10 bg-gray-200 rounded-[10px] animate-pulse max-w-md" />
-
-            <div className="space-y-3">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-[10px] p-4 border border-gray-200"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gray-200 rounded-[10px] animate-pulse" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
-                      <div className="h-3 w-64 bg-gray-200 rounded animate-pulse" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="flex flex-col w-full bg-gray-50 min-h-screen">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <h1 className="text-xl font-semibold text-gray-900">Reminders</h1>
-          </div>
-        </header>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <AlertCircle className="w-8 h-8 text-red-500" />
-            <p className="text-sm text-red-600">
-              Failed to load reminders: {error.message}
-            </p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="rounded-[10px]"
-            >
-              Retry
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col w-full bg-gray-50 min-h-screen">
+    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
+      {/* Decorative elements for dark mode */}
+      {isDarkMode && (
+        <>
+          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        </>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
         <div className="container flex items-center justify-between w-full px-6 mx-auto">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Reminders</h1>
-            <p className="text-sm text-gray-500">
-              {stats.total} document{stats.total !== 1 ? 's' : ''} requiring
-              attention
-            </p>
+            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Reminders</h1>
+            {isLoading ? (
+              <Skeleton className="h-4 w-48 mt-1 rounded-[10px]" />
+            ) : (
+              <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                {stats.total} document{stats.total !== 1 ? 's' : ''} requiring attention
+                {customReminders.length > 0 && ` • ${customReminders.length} custom reminder${customReminders.length !== 1 ? 's' : ''}`}
+              </p>
+            )}
           </div>
-          <Button
-            onClick={() => navigate('/client/settings')}
-            variant="outline"
-            className="rounded-[10px]"
-          >
-            <Bell className="w-4 h-4 mr-2" />
-            Reminder Settings
-          </Button>
+          <div className="flex items-center gap-3">
+            {/* View Mode Toggle */}
+            <div className={`flex items-center gap-1 p-1 rounded-[10px] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+                className={`rounded-[8px] ${
+                  viewMode === 'list'
+                    ? getThemeClasses.button.primary(isDarkMode)
+                    : isDarkMode
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'calendar' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('calendar')}
+                className={`rounded-[8px] ${
+                  viewMode === 'calendar'
+                    ? getThemeClasses.button.primary(isDarkMode)
+                    : isDarkMode
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <CalendarIcon className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Reminder
+            </Button>
+
+            <Button
+              onClick={() => navigate('/client/settings')}
+              variant="outline"
+              className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -234,14 +281,14 @@ const Reminders = () => {
         <div className="container w-full px-6 mx-auto space-y-6">
           {/* Reminder Settings Info */}
           {reminderSettings.length > 0 && (
-            <section className="bg-blue-50 rounded-[10px] border border-blue-200 p-4">
+            <section className={`rounded-[10px] border p-4 ${getThemeClasses.alert.info(isDarkMode)}`}>
               <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-blue-600" />
+                <Bell className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                 <div>
-                  <p className="text-sm font-semibold text-blue-900">
+                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-900'}`}>
                     Active Reminder Intervals
                   </p>
-                  <p className="text-sm text-blue-700">
+                  <p className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
                     You'll receive reminders {reminderSettings.join(', ')} before
                     document expiry
                   </p>
@@ -255,43 +302,51 @@ const Reminders = () => {
             {filterOptions.map((filter) => (
               <Card
                 key={filter.value}
-                className={`cursor-pointer transition-all duration-200 rounded-[10px] ${
+                className={`cursor-pointer transition-all duration-200 rounded-[10px] border ${
                   selectedFilter === filter.value
-                    ? 'border-gray-900 shadow-md'
-                    : 'border-gray-200 hover:border-gray-400'
+                    ? isDarkMode
+                      ? 'border-violet-500 shadow-lg shadow-violet-500/20 bg-slate-800/50'
+                      : 'border-gray-900 shadow-md bg-white'
+                    : isDarkMode
+                      ? 'border-slate-700 hover:border-slate-600 bg-slate-900/50'
+                      : 'border-gray-200 hover:border-gray-400 bg-white'
                 }`}
                 onClick={() => setSelectedFilter(filter.value)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">
+                      <p className={`text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
                         {filter.label}
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {filter.count}
-                      </p>
+                      {isLoading ? (
+                        <Skeleton className="h-8 w-12 rounded-[10px]" />
+                      ) : (
+                        <p className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>
+                          {filter.count}
+                        </p>
+                      )}
                     </div>
                     <div
                       className={`p-3 rounded-[10px] ${
                         filter.value === 'critical'
-                          ? 'bg-red-100'
+                          ? isDarkMode ? 'bg-red-500/20' : 'bg-red-100'
                           : filter.value === 'warning'
-                          ? 'bg-yellow-100'
+                          ? isDarkMode ? 'bg-yellow-500/20' : 'bg-yellow-100'
                           : filter.value === 'info'
-                          ? 'bg-blue-100'
-                          : 'bg-gray-100'
+                          ? isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'
+                          : isDarkMode ? 'bg-slate-700' : 'bg-gray-100'
                       }`}
                     >
                       <filter.icon
                         className={`w-6 h-6 ${
                           filter.value === 'critical'
-                            ? 'text-red-600'
+                            ? isDarkMode ? 'text-red-400' : 'text-red-600'
                             : filter.value === 'warning'
-                            ? 'text-yellow-600'
+                            ? isDarkMode ? 'text-yellow-400' : 'text-yellow-600'
                             : filter.value === 'info'
-                            ? 'text-blue-600'
-                            : 'text-gray-600'
+                            ? isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                            : isDarkMode ? 'text-slate-400' : 'text-gray-600'
                         }`}
                       />
                     </div>
@@ -302,28 +357,81 @@ const Reminders = () => {
           </section>
 
           {/* Search Section */}
-          <section className="bg-white rounded-[10px] p-4 border border-gray-200">
+          <section className={`rounded-[10px] p-4 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
               <Input
                 type="text"
                 placeholder="Search by driver name, document type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-[10px]"
+                className={`pl-10 rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
               />
             </div>
           </section>
 
-          {/* Reminders List */}
-          <section className="space-y-3">
-            {filteredReminders.length === 0 ? (
-              <div className="bg-white rounded-[10px] p-12 border border-gray-200 text-center">
-                <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-gray-900 mb-1">
+          {/* View Content - Toggle between List and Calendar */}
+          {viewMode === 'calendar' ? (
+            /* Calendar View */
+            <CalendarView
+              reminders={reminders}
+              customReminders={customReminders}
+              isDarkMode={isDarkMode}
+              onDeleteReminder={handleDeleteReminder}
+            />
+          ) : (
+            /* List View */
+            <section className="space-y-3">
+            {isLoading ? (
+              // Loading skeletons for reminder cards
+              [...Array(5)].map((_, i) => (
+                <Card
+                  key={i}
+                  className={`rounded-[10px] border ${
+                    isDarkMode
+                      ? 'bg-slate-900/50 border-slate-700'
+                      : 'bg-white border-gray-200'
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="w-11 h-11 rounded-[10px]" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-5 w-48 rounded-[10px]" />
+                        <Skeleton className="h-4 w-64 rounded-[10px]" />
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Skeleton className="h-8 w-8 rounded-[10px]" />
+                        <Skeleton className="h-8 w-8 rounded-[10px]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : error ? (
+              // Error state
+              <div className={`rounded-[10px] p-12 border text-center ${isDarkMode ? 'bg-red-500/10 border-red-500/30' : 'bg-red-50 border-red-200'}`}>
+                <AlertCircle className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-red-400' : 'text-red-500'}`} />
+                <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-red-300' : 'text-red-900'}`}>
+                  Failed to load reminders
+                </h3>
+                <p className={`text-sm mb-4 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                  {error.message}
+                </p>
+                <Button
+                  onClick={() => window.location.reload()}
+                  className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : filteredReminders.length === 0 ? (
+              <div className={`rounded-[10px] p-12 border text-center ${getThemeClasses.bg.card(isDarkMode)}`}>
+                <FileText className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-slate-600' : 'text-gray-300'}`} />
+                <h3 className={`text-sm font-semibold mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>
                   No reminders found
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {searchQuery
                     ? 'Try adjusting your search query'
                     : selectedFilter !== 'all'
@@ -335,29 +443,45 @@ const Reminders = () => {
               filteredReminders.map((reminder) => (
                 <Card
                   key={reminder.id}
-                  className="hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-gray-900 rounded-[10px] bg-white"
+                  className={`transition-all duration-200 border rounded-[10px] ${
+                    isDarkMode
+                      ? 'bg-slate-900/50 border-slate-700 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/10'
+                      : 'bg-white border-gray-200 hover:border-gray-900 hover:shadow-md'
+                  }`}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       {/* Document Icon */}
-                      <div className="bg-gray-100 rounded-[10px] p-2.5 shrink-0">
-                        <FileText className="w-6 h-6 text-gray-700" />
+                      <div className={`rounded-[10px] p-2.5 shrink-0 ${
+                        reminder.urgency === 'critical'
+                          ? isDarkMode ? 'bg-red-500/20' : 'bg-red-100'
+                          : reminder.urgency === 'warning'
+                          ? isDarkMode ? 'bg-yellow-500/20' : 'bg-yellow-100'
+                          : isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'
+                      }`}>
+                        <FileText className={`w-6 h-6 ${
+                          reminder.urgency === 'critical'
+                            ? isDarkMode ? 'text-red-400' : 'text-red-600'
+                            : reminder.urgency === 'warning'
+                            ? isDarkMode ? 'text-yellow-400' : 'text-yellow-600'
+                            : isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                        }`} />
                       </div>
 
                       {/* Document Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-1 flex-wrap">
-                          <h3 className="text-sm font-semibold text-gray-900">
+                          <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                             {reminder.documentType}
                           </h3>
                           {getUrgencyBadge(reminder.urgency)}
                           <span
                             className={`text-xs font-medium ${
                               reminder.daysUntilExpiry < 0
-                                ? 'text-red-600'
+                                ? isDarkMode ? 'text-red-400' : 'text-red-600'
                                 : reminder.daysUntilExpiry <= 7
-                                ? 'text-orange-600'
-                                : 'text-gray-600'
+                                ? isDarkMode ? 'text-orange-400' : 'text-orange-600'
+                                : isDarkMode ? 'text-slate-400' : 'text-gray-600'
                             }`}
                           >
                             {reminder.daysUntilExpiry < 0
@@ -365,7 +489,7 @@ const Reminders = () => {
                               : `${reminder.daysUntilExpiry} days remaining`}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+                        <div className={`flex items-center gap-4 text-xs flex-wrap ${getThemeClasses.text.secondary(isDarkMode)}`}>
                           <span className="flex items-center gap-1">
                             <User className="w-3 h-3" />
                             {reminder.driver?.name || 'Unknown Driver'}
@@ -389,7 +513,7 @@ const Reminders = () => {
                           onClick={() =>
                             navigate(`/client/driver/${reminder.driver?.id}`)
                           }
-                          className="rounded-[10px]"
+                          className={`rounded-[10px] ${isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
                           title="View Driver"
                         >
                           <Eye className="w-4 h-4" />
@@ -404,7 +528,7 @@ const Reminders = () => {
                             )
                           }
                           disabled={sendReminderMutation.isPending}
-                          className="rounded-[10px]"
+                          className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                           title="Send Reminder Now"
                         >
                           {sendReminderMutation.isPending ? (
@@ -420,6 +544,17 @@ const Reminders = () => {
               ))
             )}
           </section>
+          )}
+
+          {/* Create Reminder Dialog */}
+          <CreateReminderDialog
+            isOpen={isCreateDialogOpen}
+            onClose={() => setIsCreateDialogOpen(false)}
+            isDarkMode={isDarkMode}
+            settings={companyData}
+            onCreateReminder={handleCreateReminder}
+            isCreating={createReminderMutation.isPending}
+          />
         </div>
       </div>
     </div>

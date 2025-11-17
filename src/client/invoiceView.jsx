@@ -148,7 +148,7 @@ const InvoiceView = () => {
           </div>
         </header>
         <div className="flex-1 py-8">
-          <div className="container w-full px-6 mx-auto max-w-4xl">
+          <div className="container w-full max-w-4xl px-6 mx-auto">
             <section className="bg-white rounded-[10px] p-8 border border-gray-200">
               <Skeleton className="h-12 w-48 mb-8 rounded-[10px]" />
               <div className="space-y-4">
@@ -179,10 +179,10 @@ const InvoiceView = () => {
             </Button>
           </div>
         </header>
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center justify-center flex-1">
           <div className="text-center">
-            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-900 font-medium mb-2">Invoice not found</p>
+            <FileText className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+            <p className="mb-2 font-medium text-gray-900">Invoice not found</p>
             <p className="text-sm text-gray-500">The invoice you're looking for doesn't exist.</p>
           </div>
         </div>
@@ -225,13 +225,13 @@ const InvoiceView = () => {
 
       {/* Invoice Content */}
       <div className="flex-1 py-8 print:py-0">
-        <div className="container w-full px-6 mx-auto max-w-4xl print:max-w-none">
+        <div className="container w-full max-w-4xl px-6 mx-auto print:max-w-none">
           <section className="invoice-content bg-white rounded-[10px] p-8 border border-gray-200 print:border-0 print:rounded-none print:p-12">
             {/* Invoice Header */}
-            <div className="flex items-start justify-between mb-8 pb-8 border-b border-gray-200">
+            <div className="flex items-start justify-between pb-8 mb-8 border-b border-gray-200">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">INVOICE</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="mb-2 text-3xl font-bold text-gray-900">INVOICE</h2>
+                <p className="mt-1 text-sm text-gray-500">
                   {invoice.invoiceNumber || `INV-${invoice.id.slice(0, 8)}`}
                 </p>
               </div>
@@ -262,15 +262,15 @@ const InvoiceView = () => {
             {/* Billed From and Billed To */}
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">Billed From</h3>
+                <h3 className="mb-3 text-sm font-semibold tracking-wider text-gray-900 uppercase">Billed From</h3>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-900">Logilink Solutions</p>
-                  <p className="text-sm text-gray-600">support@logilink.com</p>
+                  <p className="text-sm font-medium text-gray-900">Complyo</p>
+                  <p className="text-sm text-gray-600">support@complyo.io</p>
                   <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">Billed To</h3>
+                <h3 className="mb-3 text-sm font-semibold tracking-wider text-gray-900 uppercase">Billed To</h3>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-900">{company?.name || 'N/A'}</p>
                   <p className="text-sm text-gray-600">{company?.email || 'N/A'}</p>
@@ -284,8 +284,8 @@ const InvoiceView = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b-2 border-gray-300">
-                    <th className="text-left py-3 text-sm font-semibold text-gray-900 uppercase tracking-wider">Description</th>
-                    <th className="text-right py-3 text-sm font-semibold text-gray-900 uppercase tracking-wider">Amount</th>
+                    <th className="py-3 text-sm font-semibold tracking-wider text-left text-gray-900 uppercase">Description</th>
+                    <th className="py-3 text-sm font-semibold tracking-wider text-right text-gray-900 uppercase">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -296,7 +296,7 @@ const InvoiceView = () => {
                       </p>
                       {invoice.plan ? (
                         // For plan subscriptions, show billing period with month/annual indicator
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="mt-1 text-xs text-gray-500">
                           {invoice.billingPeriodStart && invoice.billingPeriodEnd ? (
                             <>
                               Billing Period (
@@ -314,12 +314,12 @@ const InvoiceView = () => {
                         </p>
                       ) : (
                         // For credit purchases, show lifetime validity
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="mt-1 text-xs text-gray-500">
                           Valid for lifetime • Credits never expire
                         </p>
                       )}
                       {invoice.stripeInvoiceId && (
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="mt-1 text-xs text-gray-500">
                           Transaction ID: {invoice.stripeInvoiceId}
                         </p>
                       )}
@@ -356,13 +356,13 @@ const InvoiceView = () => {
             </div>
 
             {/* Footer */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                Thank you for your business with Logilink Solutions. If you have any questions about this invoice,
-                please contact us at support@logilink.com or call +1 (555) 123-4567
+            <div className="pt-8 mt-8 border-t border-gray-200">
+              <p className="text-xs text-center text-gray-500">
+                Thank you for your business with Complyo. If you have any questions about this invoice,
+                please contact us at support@complyo.io or call +1 (555) 123-4567
               </p>
-              <p className="text-xs text-gray-400 text-center mt-2">
-                Logilink Solutions - Simplifying Driver Document Management
+              <p className="mt-2 text-xs text-center text-gray-400">
+                Complyo - Simplifying Driver Document Management
               </p>
             </div>
           </section>

@@ -16,9 +16,12 @@ import { useUser } from '@clerk/clerk-react'
 import { useCompany, useUpdateCompany } from '@/hooks/useCompany'
 import { useCurrentPlan } from '@/hooks/useBilling'
 import { toast } from 'sonner'
+import { useTheme } from '@/contexts/ThemeContext'
+import { getThemeClasses } from '@/utils/themeClasses'
 
 const Settings = () => {
   const { user } = useUser()
+  const { isDarkMode } = useTheme()
   const companyId = user?.publicMetadata?.companyId
 
   // Use cached queries
@@ -131,37 +134,25 @@ const Settings = () => {
     }))
   }
 
-  if (loading) {
-    return (
-      <div className="flex flex-col w-full min-h-screen bg-gray-50">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <Skeleton className="h-7 w-32 rounded-[10px]" />
-            <Skeleton className="h-10 w-24 rounded-[10px]" />
-          </div>
-        </header>
-        <div className="flex-1 py-8">
-          <div className="container w-full px-6 mx-auto space-y-6">
-            <Skeleton className="h-48 w-full rounded-[10px]" />
-            <Skeleton className="h-64 w-full rounded-[10px]" />
-            <Skeleton className="h-56 w-full rounded-[10px]" />
-            <Skeleton className="h-72 w-full rounded-[10px]" />
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gray-50">
+    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
+      {/* Decorative elements for dark mode */}
+      {isDarkMode && (
+        <>
+          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        </>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
         <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className="text-xl font-semibold text-gray-900">Settings</h1>
+          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Settings</h1>
           <Button
             onClick={handleSaveSettings}
             disabled={saving}
-            className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+            className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
           >
             {saving ? (
               <>
@@ -183,49 +174,65 @@ const Settings = () => {
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Company Info */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Company Information</h2>
-              <p className="mt-1 text-sm text-gray-500">View your company details</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Company Information</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>View your company details</p>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Company Name</Label>
-                <p className="mt-2 text-sm font-medium text-gray-900">
-                  {companyData?.name || 'N/A'}
-                </p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Company Name</Label>
+                {loading ? (
+                  <Skeleton className="h-5 w-32 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                    {companyData?.name || 'N/A'}
+                  </p>
+                )}
               </div>
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Company Size</Label>
-                <p className="mt-2 text-sm font-medium text-gray-900">
-                  {companyData?.companySize || 'N/A'}
-                </p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Company Size</Label>
+                {loading ? (
+                  <Skeleton className="h-5 w-24 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                    {companyData?.companySize || 'N/A'}
+                  </p>
+                )}
               </div>
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Operating Region</Label>
-                <p className="mt-2 text-sm font-medium text-gray-900">
-                  {companyData?.operatingRegion || 'N/A'}
-                </p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Operating Region</Label>
+                {loading ? (
+                  <Skeleton className="h-5 w-28 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                    {companyData?.operatingRegion || 'N/A'}
+                  </p>
+                )}
               </div>
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Plan</Label>
-                <p className="mt-2 text-sm font-medium text-gray-900">{companyData?.plan || 'Free'}</p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Plan</Label>
+                {loading ? (
+                  <Skeleton className="h-5 w-20 mt-2 rounded-[10px]" />
+                ) : (
+                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{companyData?.plan || 'Free'}</p>
+                )}
               </div>
             </div>
 
             {/* Tip */}
-            <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-[10px]">
-              <p className="text-sm text-gray-900">
+            <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
+              <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
                 <span className="font-semibold">💡 Tip:</span> Need to update your company information? Contact support to make changes to these details.
               </p>
             </div>
           </section>
 
           {/* Document Types */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Document Types</h2>
-              <p className="mt-1 text-sm text-gray-500">Manage the types of documents you track for drivers</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Types</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Manage the types of documents you track for drivers</p>
             </div>
 
             <div className="flex gap-3 mb-4">
@@ -234,11 +241,11 @@ const Settings = () => {
                 value={newDocumentType}
                 onChange={(e) => setNewDocumentType(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addDocumentType()}
-                className="max-w-md rounded-[10px]"
+                className={`max-w-md rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
               />
               <Button
                 onClick={addDocumentType}
-                className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px] shrink-0"
+                className={`rounded-[10px] shrink-0 ${getThemeClasses.button.primary(isDarkMode)}`}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Type
@@ -246,20 +253,31 @@ const Settings = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {formData.documentTypes.length === 0 ? (
+              {loading ? (
+                // Show skeleton cards while loading
+                [...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
+                  >
+                    <Skeleton className="h-5 w-32 rounded-[10px]" />
+                    <Skeleton className="h-4 w-4 rounded" />
+                  </div>
+                ))
+              ) : formData.documentTypes.length === 0 ? (
                 <div className="py-8 text-center col-span-full">
-                  <p className="text-sm text-gray-500">No document types added yet</p>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>No document types added yet</p>
                 </div>
               ) : (
                 formData.documentTypes.map((docType, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-[10px] border border-gray-200"
+                    className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
                   >
-                    <span className="text-sm font-medium text-gray-900">{docType}</span>
+                    <span className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{docType}</span>
                     <button
                       onClick={() => removeDocumentType(docType)}
-                      className="text-gray-400 transition-colors hover:text-gray-600"
+                      className={`transition-colors ${isDarkMode ? 'text-slate-500 hover:text-red-400' : 'text-gray-400 hover:text-gray-600'}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -270,14 +288,14 @@ const Settings = () => {
 
             {/* Tip and Plan Info */}
             <div className="mt-6 space-y-3">
-              <div className="p-4 bg-gray-100 border border-gray-200 rounded-[10px]">
-                <p className="text-sm text-gray-900">
+              <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
+                <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
                   <span className="font-semibold">💡 Tip:</span> Common document types include Driver's License, CDL, Medical Certificate, Insurance Card, and Vehicle Registration.
                 </p>
               </div>
               {currentPlanData && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-[10px]">
-                  <p className="text-sm text-blue-900">
+                <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-200'}`}>
+                  <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
                     <span className="font-semibold">📋 Plan Limits:</span> Your{' '}
                     {currentPlanData.currentPlan?.name || 'Free'} plan allows tracking{' '}
                     {currentPlanData.currentPlan?.maxDocumentsPerDriver === -1
@@ -294,46 +312,59 @@ const Settings = () => {
           </section>
 
           {/* Reminder Settings */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Reminder Settings</h2>
-              <p className="mt-1 text-sm text-gray-500">Choose up to 3 reminder intervals before document expiration</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Reminder Settings</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Choose up to 3 reminder intervals before document expiration</p>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              {['1d', '7d', '14d', '15d', '30d', '45d', '60d', '90d'].map((days) => {
-                const isSelected = formData.reminderDays.includes(days)
-                const isMaxSelected = formData.reminderDays.length >= 3 && !isSelected
+              {loading ? (
+                // Show skeleton buttons while loading
+                [...Array(8)].map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-16 rounded-[10px]" />
+                ))
+              ) : (
+                ['1d', '7d', '14d', '15d', '30d', '45d', '60d', '90d'].map((days) => {
+                  const isSelected = formData.reminderDays.includes(days)
+                  const isMaxSelected = formData.reminderDays.length >= 3 && !isSelected
 
-                return (
-                  <button
-                    key={days}
-                    type="button"
-                    onClick={() => toggleReminderDay(days)}
-                    disabled={isMaxSelected}
-                    className={`px-5 py-2.5 rounded-[10px] text-sm font-medium transition-all ${
-                      isSelected
-                        ? 'bg-gray-800 text-white'
-                        : isMaxSelected
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {days}
-                  </button>
-                )
-              })}
+                  return (
+                    <button
+                      key={days}
+                      type="button"
+                      onClick={() => toggleReminderDay(days)}
+                      disabled={isMaxSelected}
+                      className={`px-5 py-2.5 rounded-[10px] text-sm font-medium transition-all ${
+                        isSelected
+                          ? isDarkMode
+                            ? 'bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/20'
+                            : 'bg-gray-800 text-white'
+                          : isMaxSelected
+                          ? isDarkMode
+                            ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed opacity-50'
+                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                          : isDarkMode
+                          ? 'bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {days}
+                    </button>
+                  )
+                })
+              )}
             </div>
 
             {formData.reminderDays.length >= 3 && (
-              <p className="mt-3 text-sm text-yellow-600">
+              <p className={`mt-3 text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
                 Maximum of 3 reminder intervals selected
               </p>
             )}
 
-            {formData.reminderDays.length > 0 && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-[10px]">
-                <p className="text-sm text-gray-700">
+{!loading && formData.reminderDays.length > 0 && (
+              <div className={`mt-4 p-4 rounded-[10px] ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-50'}`}>
+                <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   <span className="font-semibold">Selected ({formData.reminderDays.length}/3):</span> {formData.reminderDays.join(', ')}
                 </p>
               </div>
@@ -341,13 +372,13 @@ const Settings = () => {
 
             {/* Tips */}
             <div className="mt-6 space-y-3">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-[10px]">
-                <p className="text-sm text-blue-900">
+              <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-200'}`}>
+                <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
                   <span className="font-semibold">⏰ Automatic Reminders:</span> Your reminder notifications are sent automatically every day at <span className="font-semibold">8:00 AM Eastern Time</span> (New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!
                 </p>
               </div>
-              <div className="p-4 bg-gray-100 border border-gray-200 rounded-[10px]">
-                <p className="text-sm text-gray-900">
+              <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
+                <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
                   <span className="font-semibold">💡 Tip:</span> We recommend setting reminders at 30, 15, and 7 days to ensure you never miss a document expiration.
                 </p>
               </div>
@@ -355,92 +386,116 @@ const Settings = () => {
           </section>
 
           {/* Notification Preferences */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Notification Preferences</h2>
-              <p className="mt-1 text-sm text-gray-500">Configure how you receive compliance alerts</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Preferences</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Configure how you receive compliance alerts</p>
             </div>
 
             <div className="max-w-2xl space-y-6">
               {/* Admin Email */}
               <div className="space-y-2">
-                <Label htmlFor="adminEmail" className="text-sm font-medium text-gray-900">Admin Email</Label>
-                <Input
-                  id="adminEmail"
-                  type="email"
-                  value={formData.adminEmail}
-                  onChange={(e) =>
-                    setFormData(prev => ({ ...prev, adminEmail: e.target.value }))
-                  }
-                  placeholder="admin@company.com"
-                  className="rounded-[10px]"
-                />
+                <Label htmlFor="adminEmail" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Admin Email</Label>
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-[10px]" />
+                ) : (
+                  <Input
+                    id="adminEmail"
+                    type="email"
+                    value={formData.adminEmail}
+                    onChange={(e) =>
+                      setFormData(prev => ({ ...prev, adminEmail: e.target.value }))
+                    }
+                    placeholder="admin@company.com"
+                    className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
+                  />
+                )}
               </div>
 
               {/* Admin Phone */}
               <div className="space-y-2">
-                <Label htmlFor="adminPhone" className="text-sm font-medium text-gray-900">Admin Phone Number</Label>
-                <Input
-                  id="adminPhone"
-                  type="tel"
-                  value={formData.adminPhone}
-                  onChange={(e) =>
-                    setFormData(prev => ({ ...prev, adminPhone: e.target.value }))
-                  }
-                  placeholder="+1 (555) 000-0000"
-                  className="rounded-[10px]"
-                />
+                <Label htmlFor="adminPhone" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Admin Phone Number</Label>
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-[10px]" />
+                ) : (
+                  <Input
+                    id="adminPhone"
+                    type="tel"
+                    value={formData.adminPhone}
+                    onChange={(e) =>
+                      setFormData(prev => ({ ...prev, adminPhone: e.target.value }))
+                    }
+                    placeholder="+1 (555) 000-0000"
+                    className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
+                  />
+                )}
               </div>
 
               {/* Notification Method */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-900">Notification Method</Label>
-                <Select
-                  value={formData.notificationMethod}
-                  onValueChange={(value) =>
-                    setFormData(prev => ({ ...prev, notificationMethod: value }))
-                  }
-                >
-                  <SelectTrigger className="rounded-[10px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="email">Email Only</SelectItem>
-                    <SelectItem value="sms">SMS Only</SelectItem>
-                    <SelectItem value="both">Email & SMS</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Method</Label>
+                {loading ? (
+                  <Skeleton className="h-10 w-full rounded-[10px]" />
+                ) : (
+                  <Select
+                    value={formData.notificationMethod}
+                    onValueChange={(value) =>
+                      setFormData(prev => ({ ...prev, notificationMethod: value }))
+                    }
+                  >
+                    <SelectTrigger className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
+                      <SelectItem value="email">Email Only</SelectItem>
+                      <SelectItem value="sms">SMS Only</SelectItem>
+                      <SelectItem value="both">Email & SMS</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
 
               {/* Notification Recipients */}
               <div className="space-y-3">
-                <Label className="text-sm font-medium text-gray-900">Notification Recipients</Label>
+                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Recipients</Label>
                 <div className="space-y-2">
-                  {['admin', 'drivers'].map((recipient) => (
-                    <div
-                      key={recipient}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-[10px] border border-gray-200"
-                    >
-                      <Label
-                        className="text-sm font-medium text-gray-900 capitalize cursor-pointer"
-                        htmlFor={`recipient-${recipient}`}
+                  {loading ? (
+                    [...Array(2)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
                       >
-                        {recipient}
-                      </Label>
-                      <Switch
-                        id={`recipient-${recipient}`}
-                        checked={formData.notificationRecipients.includes(recipient)}
-                        onCheckedChange={() => toggleNotificationRecipient(recipient)}
-                      />
-                    </div>
-                  ))}
+                        <Skeleton className="h-5 w-20 rounded-[10px]" />
+                        <Skeleton className="h-6 w-11 rounded-full" />
+                      </div>
+                    ))
+                  ) : (
+                    ['admin', 'drivers'].map((recipient) => (
+                      <div
+                        key={recipient}
+                        className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
+                      >
+                        <Label
+                          className={`text-sm font-medium capitalize cursor-pointer ${getThemeClasses.text.primary(isDarkMode)}`}
+                          htmlFor={`recipient-${recipient}`}
+                        >
+                          {recipient}
+                        </Label>
+                        <Switch
+                          id={`recipient-${recipient}`}
+                          checked={formData.notificationRecipients.includes(recipient)}
+                          onCheckedChange={() => toggleNotificationRecipient(recipient)}
+                        />
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Tip */}
-            <div className="mt-6 p-4 bg-gray-100 border border-gray-200 rounded-[10px]">
-              <p className="text-sm text-gray-900">
+            <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
+              <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
                 <span className="font-semibold">💡 Tip:</span> Enable driver notifications to keep your team informed about their document expiration dates automatically.
               </p>
             </div>
@@ -451,7 +506,7 @@ const Settings = () => {
             <Button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px] px-8"
+              className={`rounded-[10px] px-8 ${getThemeClasses.button.primary(isDarkMode)}`}
             >
               {saving ? (
                 <>

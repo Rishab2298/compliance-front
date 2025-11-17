@@ -14,7 +14,8 @@ export const useDrivers = () => {
     queryKey: ['drivers'],
     queryFn: async () => {
       const token = await getToken()
-      const response = await fetch(`${API_URL}/api/drivers`, {
+      console.log('🔍 Fetching drivers from API...')
+      const response = await fetch(`${API_URL}/api/drivers?includeDocuments=true`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -22,10 +23,19 @@ export const useDrivers = () => {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to fetch drivers')
+        const errorData = await response.json()
+        console.error('❌ Failed to fetch drivers:', response.status, errorData)
+        throw new Error(errorData.error || 'Failed to fetch drivers')
       }
 
       const result = await response.json()
+      console.log('✅ Drivers fetched successfully:', result)
+      console.log(`📊 Total drivers: ${result.drivers?.length || 0}`)
+
+      if (result.drivers && result.drivers.length > 0) {
+        console.log('First driver:', result.drivers[0])
+      }
+
       return result.drivers || []
     },
   })

@@ -77,6 +77,11 @@ export const purchaseCredits = async (amount, token) => {
  * @returns {Promise<Object>} Checkout session data
  */
 export const upgradePlan = async (targetPlan, billingCycle, token) => {
+  console.log("=== Upgrade Plan API Call ===");
+  console.log("Target Plan:", targetPlan);
+  console.log("Billing Cycle:", billingCycle);
+  console.log("API URL:", `${API_URL}/api/billing/upgrade`);
+
   const response = await fetch(`${API_URL}/api/billing/upgrade`, {
     method: 'POST',
     headers: {
@@ -86,12 +91,17 @@ export const upgradePlan = async (targetPlan, billingCycle, token) => {
     body: JSON.stringify({ targetPlan, billingCycle }),
   });
 
+  console.log("Response status:", response.status);
+  console.log("Response ok:", response.ok);
+
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to create upgrade checkout');
+    console.error("API Error Response:", error);
+    throw new Error(error.error || error.message || 'Failed to create upgrade checkout');
   }
 
   const result = await response.json();
+  console.log("API Success Response:", result);
   return result.data;
 };
 

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 // import PublicRoute from "./publicRoute";
 import AppLayout from "@/layout/app-layout";
+import SuperAdminLayout from "@/layout/super-admin-layout";
 import ProtectedRoute from "./protectedRoute";
 import Dashboard from "@/pages/dashboard-sample";
 import OnboardingDark from "@/pages/onboardingPageDark";
@@ -25,6 +26,19 @@ import AddADriver from "@/client/addADriver";
 import Settings from "@/client/settings";
 import DriverUploadPortal from "@/pages/driverUploadPortal";
 import DriverDetail from "@/client/driverDetail";
+import SuperAdminDashboard from "@/super-admin/superAdminDashboard";
+import PoliciesPage from "@/super-admin/PoliciesPage";
+import PolicyEditPage from "@/super-admin/PolicyEditPage";
+import AIUsagePage from "@/super-admin/AIUsagePage";
+import SystemLogsPage from "@/super-admin/SystemLogsPage";
+import ConsentLogsPage from "@/super-admin/ConsentLogsPage";
+import BillingPage from "@/super-admin/BillingPage";
+import CompaniesPage from "@/super-admin/CompaniesPage";
+import CompanyDetailPage from "@/super-admin/CompanyDetailPage";
+import TeamManagement from "@/client/teamManagement";
+import AuditLogs from "@/client/auditLogs";
+import PolicyAcceptance from "@/pages/PolicyAcceptance";
+import PolicyViewer from "@/pages/PolicyViewer";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +53,15 @@ export const router = createBrowserRouter([
       { path: "/sign-in", element: <LoginPage /> },
       { path: "/onboarding-dark", element:<OnboardingDark /> },
       { path: "/driver/upload/:token", element: <DriverUploadPortal /> },
+      { path: "/policies/:type", element: <PolicyViewer /> },
+      {
+        path: "/policy-acceptance",
+        element: (
+          <ProtectedRoute>
+            <PolicyAcceptance />
+          </ProtectedRoute>
+        )
+      },
       {
         path: "/client/add-a-driver",
         element: (
@@ -70,7 +93,31 @@ export const router = createBrowserRouter([
       { path: "/client/document-types", element: <DocumentTypes /> },
       { path: "/client/smart-upload-driver-license", element: <DriverLicense /> },
       { path: "/client/smart-upload-passport", element: <Passport /> },
+      { path: "/client/team", element: <TeamManagement /> },
+      { path: "/client/audit-logs", element: <AuditLogs /> },
       { path: "/client/settings", element: <Settings /> }
+    ],
+  },
+  {
+    element: (
+      <ProtectedRoute>
+        <SuperAdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: "/super-admin/dashboard", element: <SuperAdminDashboard /> },
+      { path: "/super-admin/policies", element: <PoliciesPage /> },
+      { path: "/super-admin/policies/:type", element: <PolicyEditPage /> },
+      { path: "/super-admin/ai-usage", element: <AIUsagePage /> },
+      { path: "/super-admin/logs", element: <SystemLogsPage /> },
+      { path: "/super-admin/consent-logs", element: <ConsentLogsPage /> },
+      // Placeholder routes - you can create these pages later
+      { path: "/super-admin/companies", element: <CompaniesPage /> },
+      { path: "/super-admin/companies/:id", element: <CompanyDetailPage /> },
+      { path: "/super-admin/users", element: <div className="p-8 text-center">Users Page Coming Soon</div> },
+      { path: "/super-admin/analytics", element: <div className="p-8 text-center">Analytics Page Coming Soon</div> },
+      { path: "/super-admin/billing", element: <BillingPage /> },
+      { path: "/super-admin/settings", element: <div className="p-8 text-center">Settings Page Coming Soon</div> },
     ],
   },
 ]);

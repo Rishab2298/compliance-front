@@ -99,10 +99,10 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen max-w-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    <div className="w-full min-h-screen text-white max-w-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Decorative elements */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"></div>
+      <div className="fixed top-0 rounded-full left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
+      <div className="fixed bottom-0 rounded-full right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
 
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-slate-800 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -110,10 +110,10 @@ export default function Dashboard() {
           {/* Logo */}
           <div className="p-6 border-b border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-500 to-cyan-400 p-2 rounded-lg">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600">
                 <Shield className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+              <span className="font-bold text-transparent bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text">
                 DSP Compliance
               </span>
             </div>
@@ -127,7 +127,7 @@ export default function Dashboard() {
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   activeTab === item.id
-                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                    ? 'bg-gradient-to-r from-blue-500/20 via-violet-500/20 to-purple-500/20 text-violet-400 border border-violet-500/30'
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -140,12 +140,12 @@ export default function Dashboard() {
           {/* User Profile */}
           <div className="p-4 border-t border-slate-800">
             <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-800/50">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center font-bold">
+              <div className="flex items-center justify-center w-10 h-10 font-bold rounded-full bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600">
                 AD
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">Admin User</p>
-                <p className="text-xs text-slate-400 truncate">admin@dsp.com</p>
+                <p className="text-xs truncate text-slate-400">admin@dsp.com</p>
               </div>
               <button className="text-slate-400 hover:text-white">
                 <LogOut className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function Dashboard() {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}
@@ -166,7 +166,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800">
+        <header className="sticky top-0 z-30 border-b bg-slate-900/95 backdrop-blur-xl border-slate-800">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
               <button
@@ -182,19 +182,19 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-2 bg-slate-800 rounded-lg px-4 py-2 border border-slate-700">
+              <div className="items-center hidden gap-2 px-4 py-2 border rounded-lg md:flex bg-slate-800 border-slate-700">
                 <Search className="w-4 h-4 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search drivers, documents..."
-                  className="bg-transparent border-none outline-none text-sm text-white placeholder-slate-500 w-64"
+                  className="w-64 text-sm text-white bg-transparent border-none outline-none placeholder-slate-500"
                 />
               </div>
-              <button className="relative p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all">
+              <button className="relative p-2 transition-all border rounded-lg bg-slate-800 border-slate-700 hover:bg-slate-700">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                <span className="absolute w-2 h-2 bg-red-500 rounded-full top-1 right-1"></span>
               </button>
-              <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all">
+              <button className="flex items-center gap-2 px-4 py-2 transition-all rounded-lg bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50">
                 <Plus className="w-4 h-4" />
                 <span className="hidden md:inline">Add Driver</span>
               </button>
@@ -205,14 +205,14 @@ export default function Dashboard() {
         {/* Main Dashboard Content */}
         <main className="p-6 space-y-6 "  >
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, i) => (
-              <Card key={i} className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-all">
+              <Card key={i} className="transition-all bg-slate-900/50 border-slate-800 hover:border-slate-700">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <p className="text-sm text-slate-400 mb-1">{stat.title}</p>
-                      <p className="text-3xl font-bold text-white mb-2">{stat.value}</p>
+                      <p className="mb-1 text-sm text-slate-400">{stat.title}</p>
+                      <p className="mb-2 text-3xl font-bold text-white">{stat.value}</p>
                       <div className="flex items-center gap-1 text-sm">
                         {stat.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-400" />}
                         {stat.trend === 'warning' && <Clock className="w-4 h-4 text-yellow-400" />}
@@ -236,29 +236,29 @@ export default function Dashboard() {
           </div>
 
           {/* Critical Alerts */}
-          <Alert className="bg-red-500/10 border-red-500/30 text-red-400">
+          <Alert className="text-red-400 bg-red-500/10 border-red-500/30">
             <AlertTriangle className="w-4 h-4" />
             <AlertDescription className="flex items-center justify-between">
               <span>3 documents require immediate attention - expiring within 7 days</span>
-              <button className="text-sm font-medium hover:underline flex items-center gap-1">
+              <button className="flex items-center gap-1 text-sm font-medium hover:underline">
                 View All <ChevronRight className="w-4 h-4" />
               </button>
             </AlertDescription>
           </Alert>
 
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid gap-6 lg:grid-cols-3">
             {/* Expiring Documents */}
-            <Card className="lg:col-span-2 bg-slate-900/50 border-slate-800">
+            <Card className="lg:col-span-2 bg-slate-900 border-slate-800">
               <CardHeader className="flex flex-row items-center justify-between pb-4">
                 <div>
                   <CardTitle className="text-white">Expiring Documents</CardTitle>
                   <CardDescription className="text-slate-400">Documents expiring in the next 30 days</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all">
+                  <button className="p-2 transition-all border rounded-lg bg-slate-800 border-slate-700 hover:bg-slate-700">
                     <Filter className="w-4 h-4" />
                   </button>
-                  <button className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all">
+                  <button className="p-2 transition-all border rounded-lg bg-slate-800 border-slate-700 hover:bg-slate-700">
                     <Download className="w-4 h-4" />
                   </button>
                 </div>
@@ -266,8 +266,8 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {expiringDocuments.map((doc, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700 hover:border-slate-600 transition-all">
-                      <div className="flex items-center gap-4 flex-1">
+                    <div key={i} className="flex items-center justify-between p-4 transition-all border rounded-lg bg-slate-800/50 border-slate-700 hover:border-slate-600">
+                      <div className="flex items-center flex-1 gap-4">
                         <div className={`w-2 h-2 rounded-full ${doc.status === 'critical' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
                         <div className="flex-1">
                           <p className="font-medium text-white">{doc.driver}</p>
@@ -280,13 +280,13 @@ export default function Dashboard() {
                           </p>
                         </div>
                       </div>
-                      <button className="ml-4 p-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all">
+                      <button className="p-2 ml-4 transition-all rounded-lg bg-slate-700 hover:bg-slate-600">
                         <Eye className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                 </div>
-                <button className="w-full mt-4 py-2 text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center justify-center gap-1">
+                <button className="flex items-center justify-center w-full gap-1 py-2 mt-4 text-sm font-medium text-blue-400 hover:text-blue-300">
                   View All Expiring Documents <ChevronRight className="w-4 h-4" />
                 </button>
               </CardContent>
@@ -315,8 +315,8 @@ export default function Dashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-white">{activity.action}</p>
-                        <p className="text-xs text-slate-400 truncate">{activity.detail}</p>
-                        <p className="text-xs text-slate-500 mt-1">{activity.time}</p>
+                        <p className="text-xs truncate text-slate-400">{activity.detail}</p>
+                        <p className="mt-1 text-xs text-slate-500">{activity.time}</p>
                       </div>
                     </div>
                   ))}
@@ -332,7 +332,7 @@ export default function Dashboard() {
                 <CardTitle className="text-white">Recent Drivers</CardTitle>
                 <CardDescription className="text-slate-400">Latest driver registrations and updates</CardDescription>
               </div>
-              <button className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1">
+              <button className="flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300">
                 View All <ChevronRight className="w-4 h-4" />
               </button>
             </CardHeader>
@@ -341,19 +341,19 @@ export default function Dashboard() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-slate-800">
-                      <th className="text-left text-sm font-medium text-slate-400 pb-3">Driver</th>
-                      <th className="text-left text-sm font-medium text-slate-400 pb-3">Status</th>
-                      <th className="text-left text-sm font-medium text-slate-400 pb-3">Documents</th>
-                      <th className="text-left text-sm font-medium text-slate-400 pb-3">Expiring</th>
-                      <th className="text-right text-sm font-medium text-slate-400 pb-3">Actions</th>
+                      <th className="pb-3 text-sm font-medium text-left text-slate-400">Driver</th>
+                      <th className="pb-3 text-sm font-medium text-left text-slate-400">Status</th>
+                      <th className="pb-3 text-sm font-medium text-left text-slate-400">Documents</th>
+                      <th className="pb-3 text-sm font-medium text-left text-slate-400">Expiring</th>
+                      <th className="pb-3 text-sm font-medium text-right text-slate-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {recentDrivers.map((driver) => (
-                      <tr key={driver.id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                      <tr key={driver.id} className="transition-colors border-b border-slate-800/50 hover:bg-slate-800/30">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center font-bold text-sm">
+                            <div className="flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600">
                               {driver.avatar}
                             </div>
                             <span className="font-medium text-white">{driver.name}</span>
@@ -373,7 +373,7 @@ export default function Dashboard() {
                           </span>
                         </td>
                         <td className="py-4 text-right">
-                          <button className="px-3 py-1 text-sm text-blue-400 hover:text-blue-300 font-medium">
+                          <button className="px-3 py-1 text-sm font-medium text-blue-400 hover:text-blue-300">
                             View Details
                           </button>
                         </td>

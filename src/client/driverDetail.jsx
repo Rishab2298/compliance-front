@@ -16,6 +16,8 @@ import DocumentDetailsModal from '@/components/DocumentDetailsModal'
 import DocumentEditModal from '@/components/DocumentEditModal'
 import { useQueryClient } from '@tanstack/react-query'
 import { getDocumentDownloadUrl, deleteDocument } from '@/api/documents'
+import { useTheme } from '@/contexts/ThemeContext'
+import { getThemeClasses } from '@/utils/themeClasses'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 // Reminder History Section Component
-const ReminderHistorySection = ({ documentId }) => {
+const ReminderHistorySection = ({ documentId, isDarkMode }) => {
   const { data: reminderHistory, isLoading, error } = useReminderHistory(documentId)
 
   const formatDateTime = (dateString) => {
@@ -96,10 +98,10 @@ const ReminderHistorySection = ({ documentId }) => {
 
   if (isLoading) {
     return (
-      <div className="px-6 pb-6 border-t border-gray-200 bg-gray-50">
+      <div className={`px-6 pb-6 border-t ${getThemeClasses.border.primary(isDarkMode)} ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="flex items-center gap-2 py-4">
-          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-          <p className="text-sm text-gray-500">Loading reminder history...</p>
+          <Loader2 className={`w-4 h-4 animate-spin ${getThemeClasses.text.muted(isDarkMode)}`} />
+          <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Loading reminder history...</p>
         </div>
       </div>
     )
@@ -119,7 +121,7 @@ const ReminderHistorySection = ({ documentId }) => {
   const history = reminderHistory || []
 
   return (
-    <div className="px-6 pb-6 border-t border-gray-200 bg-blue-50">
+    <div className={`px-6 pb-6 border-t ${getThemeClasses.border.primary(isDarkMode)} bg-blue-50`}>
       <div className="py-4">
         <div className="flex items-center gap-2 mb-4">
           <Bell className="w-4 h-4 text-blue-600" />
@@ -130,10 +132,10 @@ const ReminderHistorySection = ({ documentId }) => {
         </div>
 
         {history.length === 0 ? (
-          <div className="bg-white rounded-[10px] p-6 text-center border border-blue-200">
-            <Bell className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-            <p className="text-sm text-gray-500">No reminders sent yet</p>
-            <p className="text-xs text-gray-400 mt-1">
+          <div className={`${getThemeClasses.bg.card(isDarkMode)} rounded-[10px] p-6 text-center border border-blue-200`}>
+            <Bell className={`w-8 h-8 mx-auto mb-2 ${getThemeClasses.text.muted(isDarkMode)}`} />
+            <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>No reminders sent yet</p>
+            <p className={`text-xs ${getThemeClasses.text.muted(isDarkMode)} mt-1`}>
               Reminders will appear here when sent
             </p>
           </div>
@@ -142,21 +144,21 @@ const ReminderHistorySection = ({ documentId }) => {
             {history.map((reminder) => (
               <div
                 key={reminder.id}
-                className="bg-white rounded-[10px] p-4 border border-blue-200"
+                className={`${getThemeClasses.bg.card(isDarkMode)} rounded-[10px] p-4 border border-blue-200`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       {getStatusBadge(reminder.status)}
                       {getChannelBadge(reminder.channel)}
-                      <span className="text-xs text-gray-500">
+                      <span className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         {reminder.daysBeforeExpiry} day{reminder.daysBeforeExpiry !== 1 ? 's' : ''} before expiry
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                    <p className={`text-xs ${getThemeClasses.text.primary(isDarkMode)} mb-2 line-clamp-2`}>
                       {reminder.message || 'Reminder sent to driver'}
                     </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className={`flex items-center gap-4 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         Sent: {formatDateTime(reminder.sentAt)}
@@ -180,6 +182,7 @@ const DriverDetail = () => {
   const { getToken } = useAuth()
   const companyId = user?.publicMetadata?.companyId
   const queryClient = useQueryClient()
+  const { isDarkMode } = useTheme()
 
   // Use cached query
   const { data: driver, isLoading: loading, error } = useDriver(driverId)
@@ -579,7 +582,7 @@ const DriverDetail = () => {
         <Badge className={`${bgColor} ${textColor} ${borderColor} border rounded-[10px] px-3 py-1`}>
           <span className="text-base font-semibold">{score}%</span>
         </Badge>
-        <span className="text-xs text-gray-500">Compliant</span>
+        <span className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Compliant</span>
       </div>
     )
   }
@@ -595,8 +598,8 @@ const DriverDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col w-full min-h-screen bg-gray-50">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
+        <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
           <div className="container flex items-center w-full gap-4 px-6 mx-auto">
             <Skeleton className="h-10 w-20 rounded-[10px]" />
             <Skeleton className="h-6 w-48 rounded-[10px]" />
@@ -614,8 +617,8 @@ const DriverDetail = () => {
 
   if ((error || !driver) && !loading) {
     return (
-      <div className="flex flex-col w-full min-h-screen bg-gray-50">
-        <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
+        <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
           <div className="container flex items-center w-full gap-4 px-6 mx-auto">
             <Button
               variant="ghost"
@@ -642,9 +645,17 @@ const DriverDetail = () => {
   const initials = driver.name.split(' ').map(n => n[0]).join('').substring(0, 2)
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gray-50">
+    <div className={`relative flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
+      {/* Decorative elements for dark mode */}
+      {isDarkMode && (
+        <>
+          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        </>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
         <div className="container flex items-center justify-between w-full px-6 mx-auto">
           <div className="flex items-center gap-4">
             <Button
@@ -655,7 +666,7 @@ const DriverDetail = () => {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <h1 className="text-xl font-semibold text-gray-900">Driver Details</h1>
+            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Driver Details</h1>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -724,7 +735,7 @@ const DriverDetail = () => {
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Driver Profile Section */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-6 border`}>
             <div className="flex items-start gap-6">
               {/* Avatar */}
               <div className="flex items-center justify-center w-20 h-20 text-2xl font-semibold text-white bg-gray-700 rounded-full shrink-0">
@@ -737,7 +748,7 @@ const DriverDetail = () => {
                   <div className="flex-1">
                     {isEditing ? (
                       <div className="max-w-md">
-                        <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Driver Name</Label>
+                        <Label className={`text-xs font-medium tracking-wider ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Driver Name</Label>
                         <Input
                           value={formData.name}
                           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -747,8 +758,8 @@ const DriverDetail = () => {
                       </div>
                     ) : (
                       <div>
-                        <h2 className="text-2xl font-semibold text-gray-900">{formData.name}</h2>
-                        <p className="mt-1 text-sm text-gray-500">{driver.contact || 'No employee ID'}</p>
+                        <h2 className={`text-2xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{formData.name}</h2>
+                        <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{driver.contact || 'No employee ID'}</p>
                       </div>
                     )}
                   </div>
@@ -760,7 +771,7 @@ const DriverDetail = () => {
                   <div>
                     {isEditing ? (
                       <>
-                        <Label htmlFor="email" className="flex items-center gap-2 text-xs font-medium tracking-wider text-gray-500 uppercase">
+                        <Label htmlFor="email" className={`flex items-center gap-2 text-xs font-medium tracking-wider ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>
                           <Mail className="w-4 h-4" />
                           Email
                         </Label>
@@ -775,12 +786,12 @@ const DriverDetail = () => {
                       </>
                     ) : (
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[10px] bg-gray-100 flex items-center justify-center shrink-0">
+                        <div className={`w-10 h-10 rounded-[10px] ${getThemeClasses.iconBg.primary(isDarkMode)} flex items-center justify-center shrink-0`}>
                           <Mail className="w-5 h-5 text-gray-700" />
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">Email</p>
-                          <p className="text-sm font-medium text-gray-900">{formData.email || 'N/A'}</p>
+                          <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Email</p>
+                          <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{formData.email || 'N/A'}</p>
                         </div>
                       </div>
                     )}
@@ -790,7 +801,7 @@ const DriverDetail = () => {
                   <div>
                     {isEditing ? (
                       <>
-                        <Label htmlFor="phone" className="flex items-center gap-2 text-xs font-medium tracking-wider text-gray-500 uppercase">
+                        <Label htmlFor="phone" className={`flex items-center gap-2 text-xs font-medium tracking-wider ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>
                           <Phone className="w-4 h-4" />
                           Phone
                         </Label>
@@ -805,12 +816,12 @@ const DriverDetail = () => {
                       </>
                     ) : (
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[10px] bg-gray-100 flex items-center justify-center shrink-0">
+                        <div className={`w-10 h-10 rounded-[10px] ${getThemeClasses.iconBg.primary(isDarkMode)} flex items-center justify-center shrink-0`}>
                           <Phone className="w-5 h-5 text-gray-700" />
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">Phone</p>
-                          <p className="text-sm font-medium text-gray-900">{formData.phone || 'N/A'}</p>
+                          <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Phone</p>
+                          <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{formData.phone || 'N/A'}</p>
                         </div>
                       </div>
                     )}
@@ -818,12 +829,12 @@ const DriverDetail = () => {
 
                   {/* Added On - Always read-only */}
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[10px] bg-gray-100 flex items-center justify-center shrink-0">
+                    <div className={`w-10 h-10 rounded-[10px] ${getThemeClasses.iconBg.primary(isDarkMode)} flex items-center justify-center shrink-0`}>
                       <Calendar className="w-5 h-5 text-gray-700" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-gray-500 uppercase">Added On</p>
-                      <p className="text-sm font-medium text-gray-900">{formatDate(driver.createdAt)}</p>
+                      <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Added On</p>
+                      <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{formatDate(driver.createdAt)}</p>
                     </div>
                   </div>
                 </div>
@@ -862,26 +873,26 @@ const DriverDetail = () => {
           )}
 
           {/* Upload Documents Section */}
-          <section className="bg-white rounded-[10px] border border-gray-200">
+          <section className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] border`}>
             <div
-              className="flex items-center justify-between p-6 transition-colors cursor-pointer hover:bg-gray-50"
+              className={`flex items-center justify-between p-6 transition-colors cursor-pointer ${getThemeClasses.bg.hover(isDarkMode)}`}
               onClick={() => setShowUpload(!showUpload)}
             >
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Upload Documents</h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Upload Documents</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   Add new documents for this driver
                 </p>
               </div>
               {showUpload ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
+                <ChevronUp className={`w-5 h-5 ${getThemeClasses.text.muted(isDarkMode)}`} />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
+                <ChevronDown className={`w-5 h-5 ${getThemeClasses.text.muted(isDarkMode)}`} />
               )}
             </div>
 
             {showUpload && (
-              <div className="p-6 border-t border-gray-200">
+              <div className={`p-6 border-t ${getThemeClasses.border.primary(isDarkMode)}`}>
                 <DocumentUpload
                   driverId={driverId}
                   onUploadComplete={handleUploadComplete}
@@ -894,31 +905,31 @@ const DriverDetail = () => {
           </section>
 
           {/* Documents Overview */}
-          <section className="bg-white rounded-[10px] border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Documents Overview</h2>
-              <p className="mt-1 text-sm text-gray-500">
+          <section className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] border`}>
+            <div className={`p-6 border-b ${getThemeClasses.border.primary(isDarkMode)}`}>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Documents Overview</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                 {driver.documents?.length || 0} document(s) on file
               </p>
             </div>
 
             {driver.documents && driver.documents.length > 0 ? (
-              <div className="divide-y divide-gray-200">
+              <div className={`divide-y ${getThemeClasses.border.secondary(isDarkMode)}`}>
                 {driver.documents.map((doc) => (
-                  <div key={doc.id} className="transition-colors hover:bg-gray-50">
+                  <div key={doc.id} className={`transition-colors ${getThemeClasses.bg.hover(isDarkMode)}`}>
                     <div className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center flex-1 gap-4">
-                          <div className="bg-gray-100 rounded-[10px] p-2.5">
+                          <div className={`${getThemeClasses.iconBg.primary(isDarkMode)} rounded-[10px] p-2.5`}>
                             <FileText className="w-5 h-5 text-gray-700" />
                           </div>
 
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-sm font-semibold text-gray-900">{doc.type}</h3>
+                              <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{doc.type}</h3>
                               {getStatusBadge(doc.status)}
                             </div>
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <div className={`flex items-center gap-4 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                               <span>Expires: {formatDate(doc.expiryDate)}</span>
                               <span>•</span>
                               <span>Uploaded: {formatDate(doc.uploadedAt)}</span>
@@ -1028,24 +1039,24 @@ const DriverDetail = () => {
 
                     {/* Reminder History Section */}
                     {expandedReminderDocId === doc.id && (
-                      <ReminderHistorySection documentId={doc.id} />
+                      <ReminderHistorySection documentId={doc.id} isDarkMode={isDarkMode} />
                     )}
                   </div>
                 ))}
               </div>
             ) : (
               <div className="p-12 text-center">
-                <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <h3 className="mb-1 text-sm font-semibold text-gray-900">No documents yet</h3>
-                <p className="text-sm text-gray-500">Upload documents using the section above to get started</p>
+                <FileText className={`w-12 h-12 mx-auto mb-3 ${getThemeClasses.text.muted(isDarkMode)}`} />
+                <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>No documents yet</h3>
+                <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Upload documents using the section above to get started</p>
               </div>
             )}
           </section>
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-            <div className="bg-white rounded-[10px] p-4 border border-gray-200">
-              <p className="text-xs font-medium text-gray-500 uppercase">Compliance Score</p>
+            <div className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-4 border`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Compliance Score</p>
               <div className="flex items-baseline gap-2 mt-2">
                 <p className={`text-2xl font-semibold ${
                   complianceScore >= 81 ? 'text-green-700' :
@@ -1054,29 +1065,29 @@ const DriverDetail = () => {
                 }`}>
                   {complianceScore}%
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   ({driver.documents?.filter(d => d.status === 'ACTIVE').length || 0}/{documentTypes.length})
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-[10px] p-4 border border-gray-200">
-              <p className="text-xs font-medium text-gray-500 uppercase">Total Documents</p>
-              <p className="mt-2 text-2xl font-semibold text-gray-900">{driver.documents?.length || 0}</p>
+            <div className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-4 border`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Total Documents</p>
+              <p className={`mt-2 text-2xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{driver.documents?.length || 0}</p>
             </div>
-            <div className="bg-white rounded-[10px] p-4 border border-gray-200">
-              <p className="text-xs font-medium text-gray-500 uppercase">Verified</p>
+            <div className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-4 border`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Verified</p>
               <p className="mt-2 text-2xl font-semibold text-green-700">
                 {driver.documents?.filter(d => d.status === 'ACTIVE').length || 0}
               </p>
             </div>
-            <div className="bg-white rounded-[10px] p-4 border border-gray-200">
-              <p className="text-xs font-medium text-gray-500 uppercase">Expiring Soon</p>
+            <div className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-4 border`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Expiring Soon</p>
               <p className="mt-2 text-2xl font-semibold text-yellow-700">
                 {driver.documents?.filter(d => d.status === 'EXPIRING_SOON').length || 0}
               </p>
             </div>
-            <div className="bg-white rounded-[10px] p-4 border border-gray-200">
-              <p className="text-xs font-medium text-gray-500 uppercase">Expired</p>
+            <div className={`${getThemeClasses.bg.card(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} rounded-[10px] p-4 border`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Expired</p>
               <p className="mt-2 text-2xl font-semibold text-red-700">
                 {driver.documents?.filter(d => d.status === 'EXPIRED').length || 0}
               </p>
@@ -1114,9 +1125,9 @@ const DriverDetail = () => {
             <AlertDialogDescription>
               Are you sure you want to delete this document? This action cannot be undone.
               {documentToDelete && (
-                <div className="mt-3 p-3 bg-gray-50 rounded-[10px]">
-                  <p className="text-sm font-medium text-gray-900">{documentToDelete.type}</p>
-                  <p className="text-sm text-gray-500">{documentToDelete.fileName}</p>
+                <div className={`mt-3 p-3 ${getThemeClasses.bg.primary(isDarkMode)} rounded-[10px]`}>
+                  <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{documentToDelete.type}</p>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{documentToDelete.fileName}</p>
                 </div>
               )}
             </AlertDialogDescription>

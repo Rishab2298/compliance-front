@@ -12,6 +12,8 @@ import { Search, MoreVertical, Trash2, Eye } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useTheme } from "@/contexts/ThemeContext"
+import { getThemeClasses } from "@/utils/themeClasses"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -107,56 +109,68 @@ const transformDriverData = (drivers = [], documentTypes = []) => {
   })
 }
 
-// Simplified status badge
-const getStatusBadge = (status) => {
-  const variants = {
-    'Verified': 'bg-green-100 text-green-800',
-    'Expiring Soon': 'bg-yellow-100 text-yellow-800',
-    'Expired': 'bg-red-100 text-red-800',
-    'Processing': 'bg-blue-100 text-blue-800',
-    'Pending': 'bg-gray-100 text-gray-800',
-    'Compliant': 'bg-green-100 text-green-800',
-    'Warning': 'bg-yellow-100 text-yellow-800',
-    'Critical': 'bg-red-100 text-red-800',
+// Simplified status badge with dark mode support
+const getStatusBadge = (status, isDarkMode = false) => {
+  const lightVariants = {
+    'Verified': 'bg-green-100 text-green-800 border-green-200',
+    'Expiring Soon': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'Expired': 'bg-red-100 text-red-800 border-red-200',
+    'Processing': 'bg-blue-100 text-blue-800 border-blue-200',
+    'Pending': 'bg-gray-100 text-gray-800 border-gray-200',
+    'Compliant': 'bg-green-100 text-green-800 border-green-200',
+    'Warning': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'Critical': 'bg-red-100 text-red-800 border-red-200',
   }
 
+  const darkVariants = {
+    'Verified': 'bg-green-500/20 text-green-400 border-green-500/30',
+    'Expiring Soon': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    'Expired': 'bg-red-500/20 text-red-400 border-red-500/30',
+    'Processing': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    'Pending': 'bg-slate-700 text-slate-300 border-slate-600',
+    'Compliant': 'bg-green-500/20 text-green-400 border-green-500/30',
+    'Warning': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
+  }
+
+  const variants = isDarkMode ? darkVariants : lightVariants
+
   return (
-    <Badge className={`${variants[status] || variants.Pending} rounded-[10px] border-0`}>
+    <Badge className={`${variants[status] || variants.Pending} rounded-[10px] border`}>
       {status}
     </Badge>
   )
 }
 
-// Compliance score badge
-const getComplianceScoreBadge = (score) => {
-  let bgColor, textColor, borderColor
+// Compliance score badge with dark mode support
+const getComplianceScoreBadge = (score, isDarkMode = false) => {
+  let lightClasses, darkClasses
 
   if (score >= 81) {
     // Green for 81-100%
-    bgColor = 'bg-green-100'
-    textColor = 'text-green-800'
-    borderColor = 'border-green-200'
+    lightClasses = 'bg-green-100 text-green-800 border-green-200'
+    darkClasses = 'bg-green-500/20 text-green-400 border-green-500/30'
   } else if (score >= 51) {
     // Yellow for 51-80%
-    bgColor = 'bg-yellow-100'
-    textColor = 'text-yellow-800'
-    borderColor = 'border-yellow-200'
+    lightClasses = 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    darkClasses = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
   } else {
     // Red for 0-50%
-    bgColor = 'bg-red-100'
-    textColor = 'text-red-800'
-    borderColor = 'border-red-200'
+    lightClasses = 'bg-red-100 text-red-800 border-red-200'
+    darkClasses = 'bg-red-500/20 text-red-400 border-red-500/30'
   }
 
+  const classes = isDarkMode ? darkClasses : lightClasses
+
   return (
-    <Badge className={`${bgColor} ${textColor} ${borderColor} border rounded-[10px]`}>
+    <Badge className={`${classes} border rounded-[10px]`}>
       <span className="font-semibold">{score}%</span>
     </Badge>
   )
 }
 
-// Generate simplified columns
-const generateColumns = (documentTypes = [], onDeleteClick, onViewClick) => {
+// Generate simplified columns with dark mode support
+const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkMode = false) => {
   const baseColumns = [
     {
       accessorKey: "name",
@@ -165,12 +179,12 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick) => {
         const initials = row.original.name.split(' ').map(n => n[0]).join('').substring(0, 2)
         return (
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center text-xs font-semibold text-white bg-gray-700 rounded-full w-9 h-9">
+            <div className={`flex items-center justify-center text-xs font-semibold rounded-full w-9 h-9 ${isDarkMode ? 'bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600 text-white' : 'bg-gray-700 text-white'}`}>
               {initials}
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-900">{row.original.name}</div>
-              <div className="text-xs text-gray-500">{row.original.employeeId}</div>
+              <div className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{row.original.name}</div>
+              <div className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>{row.original.employeeId}</div>
             </div>
           </div>
         )
@@ -180,27 +194,27 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick) => {
       accessorKey: "email",
       header: "Email",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-700">{row.original.email}</div>
+        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{row.original.email}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Phone",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-700">{row.original.phone}</div>
+        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{row.original.phone}</div>
       ),
     },
     {
       accessorKey: "documentsCount",
       header: "Documents",
       cell: ({ row }) => (
-        <div className="text-sm text-gray-900">{row.original.documentsCount}</div>
+        <div className={`text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{row.original.documentsCount}</div>
       ),
     },
     {
       accessorKey: "complianceScore",
       header: "Compliance",
-      cell: ({ row }) => getComplianceScoreBadge(row.original.complianceScore),
+      cell: ({ row }) => getComplianceScoreBadge(row.original.complianceScore, isDarkMode),
     },
     {
       id: "actions",
@@ -211,20 +225,23 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick) => {
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0 rounded-[10px]"
+              className={`h-8 w-8 p-0 rounded-[10px] ${isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
             >
               <MoreVertical className="w-4 h-4" />
               <span className="sr-only">Open menu</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 rounded-[10px]">
-            <DropdownMenuItem onClick={() => onViewClick && onViewClick(row.original)}>
+          <DropdownMenuContent align="end" className={`w-40 rounded-[10px] ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+            <DropdownMenuItem
+              onClick={() => onViewClick && onViewClick(row.original)}
+              className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-900 hover:bg-gray-100'}
+            >
               <Eye className="w-4 h-4 mr-2" />
               View Details
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className={isDarkMode ? 'bg-slate-700' : 'bg-gray-200'} />
             <DropdownMenuItem
-              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              className={isDarkMode ? 'text-red-400 focus:text-red-400 focus:bg-red-500/10' : 'text-red-600 focus:text-red-600 focus:bg-red-50'}
               onClick={() => onDeleteClick && onDeleteClick(row.original)}
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -241,6 +258,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick) => {
 
 export function DataTable({ data: initialData, documentTypes = [], onDeleteDriver }) {
   const navigate = useNavigate()
+  const { isDarkMode } = useTheme()
 
   // Transform database data for table
   const transformedData = React.useMemo(() => {
@@ -296,8 +314,8 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
 
   // Generate columns
   const columns = React.useMemo(() =>
-    generateColumns(documentTypes, handleDeleteClick, handleViewClick),
-    [documentTypes]
+    generateColumns(documentTypes, handleDeleteClick, handleViewClick, isDarkMode),
+    [documentTypes, isDarkMode]
   )
 
   const table = useReactTable({
@@ -320,24 +338,24 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
   return (
     <div className="container w-full px-6 mx-auto space-y-6">
       {/* Toolbar */}
-      <div className="bg-white rounded-[10px] p-4 border border-gray-200">
+      <div className={`rounded-[10px] p-4 border ${getThemeClasses.bg.card(isDarkMode)}`}>
         <div className="flex items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+            <Search className={`absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
             <Input
               placeholder="Search drivers..."
               value={(table.getColumn("name")?.getFilterValue()) ?? ""}
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 rounded-[10px]"
+              className={`pl-10 rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
             />
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               onClick={() => navigate("/client/add-a-driver")}
-              className="rounded-[10px]"
+              className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
             >
               Add Driver
             </Button>
@@ -346,14 +364,14 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-[10px] border border-gray-200 overflow-hidden py-4 pl-8">
+      <div className={`rounded-[10px] border overflow-hidden py-4 pl-8 ${getThemeClasses.bg.card(isDarkMode)}`}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="px-4 border-b border-gray-200 hover:bg-transparent">
+              <TableRow key={headerGroup.id} className={`px-4 border-b hover:bg-transparent ${getThemeClasses.border.primary(isDarkMode)}`}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-xs font-medium text-gray-500 uppercase">
+                    <TableHead key={header.id} className={`text-xs font-medium uppercase ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -371,7 +389,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="px-4 border-b border-gray-200 hover:bg-gray-50"
+                  className={`px-4 border-b ${isDarkMode ? 'border-slate-800 hover:bg-slate-800/30' : 'border-gray-200 hover:bg-gray-50'}`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-4">
@@ -387,7 +405,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-sm text-center text-gray-500"
+                  className={`h-24 text-sm text-center ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}
                 >
                   No drivers found.
                 </TableCell>
@@ -399,7 +417,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-700">
+        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
           Showing {table.getRowModel().rows.length} of {data.length} driver(s)
         </div>
         <div className="flex items-center gap-2">
@@ -408,11 +426,11 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="rounded-[10px]"
+            className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
           >
             Previous
           </Button>
-          <div className="px-2 text-sm text-gray-900">
+          <div className={`px-2 text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </div>
@@ -421,7 +439,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="rounded-[10px]"
+            className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
           >
             Next
           </Button>
@@ -430,21 +448,24 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="rounded-[10px]">
+        <AlertDialogContent className={`rounded-[10px] ${isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Driver</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete <strong>{driverToDelete?.name}</strong>?
+            <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>Delete Driver</AlertDialogTitle>
+            <AlertDialogDescription className={isDarkMode ? 'text-slate-400' : 'text-gray-600'}>
+              Are you sure you want to delete <strong className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{driverToDelete?.name}</strong>?
               This action cannot be undone. All documents and records associated with this driver will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDriverToDelete(null)} className="rounded-[10px]">
+            <AlertDialogCancel
+              onClick={() => setDriverToDelete(null)}
+              className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600 rounded-[10px]"
+              className={`rounded-[10px] ${isDarkMode ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-red-600 hover:bg-red-700 text-white'} focus:ring-red-600`}
             >
               Delete
             </AlertDialogAction>

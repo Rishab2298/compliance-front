@@ -20,9 +20,12 @@ import {
 import { ChevronLeft, ChevronRight, Save, Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { updateDocumentDetails, getDocumentDownloadUrl } from '@/api/documents';
+import { useTheme } from '@/contexts/ThemeContext';
+import { getThemeClasses } from '@/utils/themeClasses';
 
 const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, initialDocumentId }) => {
   const { getToken } = useAuth();
+  const { isDarkMode } = useTheme();
 
   // Find initial index based on initialDocumentId
   const initialIndex = initialDocumentId
@@ -151,14 +154,14 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-2/3 w-full h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-4 border-b border-gray-200">
+      <DialogContent className={`!max-w-2/3 w-full h-[90vh] p-0 ${isDarkMode ? 'bg-slate-900 border-slate-700' : ''}`}>
+        <DialogHeader className={`p-6 pb-4 border-b ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
           <div className="flex items-start justify-between">
             <div>
-              <DialogTitle className="text-xl font-semibold text-gray-900">
+              <DialogTitle className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                 Edit Document Details ({currentIndex + 1} of {documents.length})
               </DialogTitle>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                 Update details for {currentDocument.fileName}
               </p>
             </div>
@@ -167,35 +170,35 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
 
         <div className="flex flex-1 overflow-hidden">
           {/* Left Side - Image Viewer */}
-          <div className="flex flex-col flex-1 p-6 border-r border-gray-200 bg-gray-50">
+          <div className={`flex flex-col flex-1 p-6 border-r ${isDarkMode ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50'}`}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Document Preview</h3>
+              <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Preview</h3>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setZoom(Math.max(50, zoom - 10))}
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   <ZoomOut className="w-4 h-4" />
                 </Button>
-                <span className="w-12 text-sm text-center text-gray-600">{zoom}%</span>
+                <span className={`w-12 text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>{zoom}%</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setZoom(Math.min(200, zoom + 10))}
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   <ZoomIn className="w-4 h-4" />
                 </Button>
               </div>
             </div>
 
-            <div className="flex-1 flex items-center justify-center overflow-auto bg-white rounded-[10px] border border-gray-200">
+            <div className={`flex-1 flex items-center justify-center overflow-auto rounded-[10px] border ${isDarkMode ? 'bg-slate-900/50 border-slate-700' : 'bg-white border-gray-200'}`}>
               {loadingImage ? (
                 <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
-                  <p className="text-sm text-gray-500">Loading document...</p>
+                  <Loader2 className={`w-8 h-8 animate-spin ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`} />
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Loading document...</p>
                 </div>
               ) : imageUrl ? (
                 <img
@@ -205,7 +208,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                   className="object-contain"
                 />
               ) : (
-                <p className="text-sm text-gray-500">No preview available</p>
+                <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>No preview available</p>
               )}
             </div>
           </div>
@@ -215,7 +218,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
             <div className="flex-1 space-y-6 overflow-auto">
               {/* Document Type */}
               <div className="space-y-2">
-                <Label htmlFor="type" className="text-sm font-medium text-gray-900">
+                <Label htmlFor="type" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Document Type <span className="text-red-500">*</span>
                 </Label>
                 <Select
@@ -224,10 +227,10 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                     setFormData((prev) => ({ ...prev, type: value }))
                   }
                 >
-                  <SelectTrigger className="rounded-[10px]">
+                  <SelectTrigger className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}>
                     <SelectValue placeholder="Select document type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
                     {documentTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
@@ -239,7 +242,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
 
               {/* Document Number */}
               <div className="space-y-2">
-                <Label htmlFor="documentNumber" className="text-sm font-medium text-gray-900">
+                <Label htmlFor="documentNumber" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Document Number / ID
                 </Label>
                 <Input
@@ -249,13 +252,13 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                     setFormData((prev) => ({ ...prev, documentNumber: e.target.value }))
                   }
                   placeholder="e.g., DL123456789"
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
                 />
               </div>
 
               {/* Issued Date */}
               <div className="space-y-2">
-                <Label htmlFor="issuedDate" className="text-sm font-medium text-gray-900">
+                <Label htmlFor="issuedDate" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Issue Date
                 </Label>
                 <Input
@@ -265,13 +268,13 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, issuedDate: e.target.value }))
                   }
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
                 />
               </div>
 
               {/* Expiry Date */}
               <div className="space-y-2">
-                <Label htmlFor="expiryDate" className="text-sm font-medium text-gray-900">
+                <Label htmlFor="expiryDate" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Expiry Date <span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -281,13 +284,13 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, expiryDate: e.target.value }))
                   }
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
                 />
               </div>
 
               {/* Notes */}
               <div className="space-y-2">
-                <Label htmlFor="notes" className="text-sm font-medium text-gray-900">
+                <Label htmlFor="notes" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Notes
                 </Label>
                 <Textarea
@@ -297,25 +300,25 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                     setFormData((prev) => ({ ...prev, notes: e.target.value }))
                   }
                   placeholder="Additional notes about this document..."
-                  className="rounded-[10px] min-h-[100px]"
+                  className={`rounded-[10px] min-h-[100px] ${getThemeClasses.input.default(isDarkMode)}`}
                 />
               </div>
             </div>
 
             {/* Footer Buttons */}
-            <div className="pt-6 mt-6 space-y-3 border-t border-gray-200">
+            <div className={`pt-6 mt-6 space-y-3 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between gap-3">
                 <Button
                   variant="outline"
                   onClick={handlePrevious}
                   disabled={currentIndex === 0}
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Previous
                 </Button>
 
-                <span className="text-sm text-gray-600">
+                <span className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {currentIndex + 1} / {documents.length}
                 </span>
 
@@ -323,7 +326,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                   variant="outline"
                   onClick={handleNext}
                   disabled={currentIndex === documents.length - 1}
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   Next
                   <ChevronRight className="w-4 h-4 ml-2" />
@@ -335,14 +338,14 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                   variant="outline"
                   onClick={handleCancel}
                   disabled={saving}
-                  className="flex-1 rounded-[10px]"
+                  className={`flex-1 rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+                  className={`flex-1 rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
                 >
                   {saving ? (
                     <>

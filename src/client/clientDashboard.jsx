@@ -24,11 +24,14 @@ import {
 import { useDrivers } from '@/hooks/useDrivers'
 import { useCompany } from '@/hooks/useCompany'
 import { useReminders } from '@/hooks/useReminders'
+import { useTheme } from '@/contexts/ThemeContext'
+import { getThemeClasses } from '@/utils/themeClasses'
 
 const ClientDashboard = () => {
   const navigate = useNavigate()
   const { getToken } = useAuth()
   const { user } = useUser()
+  const { isDarkMode } = useTheme()
   const companyId = user?.publicMetadata?.companyId
 
   // Fetch data using existing hooks
@@ -167,14 +170,22 @@ const ClientDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-gray-50">
+    <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)} relative`}>
+      {/* Decorative elements for dark mode */}
+      {isDarkMode && (
+        <>
+          <div className="fixed top-0 rounded-full pointer-events-none left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
+          <div className="fixed bottom-0 rounded-full pointer-events-none right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
+        </>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center h-16 bg-white border-b shrink-0">
+      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
         <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Dashboard</h1>
           <Button
             onClick={() => navigate('/client/add-a-driver')}
-            className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+            className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px]`}
           >
             <UserPlus className="w-4 h-4 mr-2" />
             Add Driver
@@ -188,14 +199,14 @@ const ClientDashboard = () => {
 
           {/* Critical Alerts */}
           {(docCounts.expired > 0 || stats.critical > 0) && (
-            <section className="bg-red-50 rounded-[10px] border border-red-200 p-4">
+            <section className={`rounded-[10px] border p-4 ${getThemeClasses.alert.critical(isDarkMode)}`}>
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
+                <AlertTriangle className={`w-5 h-5 mt-0.5 shrink-0 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-red-900 mb-1">
+                  <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-red-300' : 'text-red-900'}`}>
                     Critical Compliance Issues
                   </h3>
-                  <div className="flex flex-wrap gap-4 text-sm text-red-700">
+                  <div className={`flex flex-wrap gap-4 text-sm ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>
                     {docCounts.expired > 0 && (
                       <span>
                         {docCounts.expired} expired document{docCounts.expired !== 1 ? 's' : ''}
@@ -211,8 +222,8 @@ const ClientDashboard = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-[10px] border-red-300 text-red-700 hover:bg-red-100"
-                  onClick={() => navigate('/client/reminders')}
+                  className={`rounded-[10px] ${isDarkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-700 hover:bg-red-100'}`}
+                  onClick={() => navigate('/client/document-status')}
                 >
                   View Details
                   <ChevronRight className="w-4 h-4 ml-1" />
@@ -222,70 +233,70 @@ const ClientDashboard = () => {
           )}
 
           {/* Overview Stats */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Overview</h2>
-              <p className="mt-1 text-sm text-gray-500">Key metrics for your fleet compliance</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Overview</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Key metrics for your fleet compliance</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Total Drivers</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Total Drivers</Label>
                 {driversLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{totalDrivers}</p>
+                  <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{totalDrivers}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">Active in system</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Active in system</p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Compliance Rate</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Compliance Rate</Label>
                 {driversLoading || companyLoading ? (
                   <Skeleton className="h-9 w-20 mt-2 rounded-[10px]" />
                 ) : (
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{complianceRate}%</p>
+                  <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{complianceRate}%</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {driversLoading || companyLoading ? ' ' : complianceRate >= 90 ? 'Excellent' : complianceRate >= 70 ? 'Good' : 'Needs attention'}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/reminders')}>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Expiring Soon</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Expiring Soon</Label>
                 {remindersLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{stats.total}</p>
+                  <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{stats.total}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {remindersLoading ? ' ' : `${stats.critical} critical • ${stats.warning} warning`}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/document-status')}>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Pending Review</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Pending Review</Label>
                 {driversLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{docCounts.pending}</p>
+                  <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.pending}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">Awaiting verification</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Awaiting verification</p>
               </div>
             </div>
           </section>
 
           {/* Credits Usage */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Credits & Usage</h2>
-                <p className="mt-1 text-sm text-gray-500">Current plan: {company?.plan || 'Professional'}</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Credits & Usage</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Current plan: {company?.plan || 'Professional'}</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-[10px]"
+                className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/billing')}
               >
                 Manage Plan
@@ -295,21 +306,21 @@ const ClientDashboard = () => {
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">AI Credits Remaining</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{company?.aiCredits || 0}</p>
-                <p className="mt-1 text-xs text-gray-500">Used for document scanning and processing</p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>AI Credits Remaining</Label>
+                <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{company?.aiCredits || 0}</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Used for document scanning and processing</p>
               </div>
 
               <div>
-                <Label className="text-xs font-medium tracking-wider text-gray-500 uppercase">Active Drivers</Label>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalDrivers}</p>
-                <p className="mt-1 text-xs text-gray-500">{getDriverLimitText(company?.plan || 'Professional')}</p>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Active Drivers</Label>
+                <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{totalDrivers}</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{getDriverLimitText(company?.plan || 'Professional')}</p>
               </div>
             </div>
 
             {company?.aiCredits < 5 && (
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-[10px]">
-                <p className="text-sm text-yellow-900">
+              <div className={`mt-6 p-4 rounded-[10px] ${isDarkMode ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-yellow-50 border border-yellow-200'}`}>
+                <p className={`text-sm ${isDarkMode ? 'text-yellow-300' : 'text-yellow-900'}`}>
                   <span className="font-semibold">⚠️ Low Credits:</span> You have less than 5 AI credits remaining. Consider upgrading your plan or purchasing additional credits.
                 </p>
               </div>
@@ -317,16 +328,16 @@ const ClientDashboard = () => {
           </section>
 
           {/* Document Status */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Document Status</h2>
-                <p className="mt-1 text-sm text-gray-500">Overview of all documents by status</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Status</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Overview of all documents by status</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-[10px]"
+                className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/document-status')}
               >
                 View All
@@ -335,57 +346,65 @@ const ClientDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <div className="p-4 bg-gray-50 rounded-[10px] border border-gray-200">
+              <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-green-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <CheckCircle className="w-5 h-5 text-gray-600" />
-                  <span className="text-2xl font-bold text-gray-900">{docCounts.active}</span>
+                  <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-green-500/20' : 'bg-green-100'}`}>
+                    <CheckCircle className={`w-5 h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} />
+                  </div>
+                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.active}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-900">Active</p>
-                <p className="text-xs text-gray-500">Up to date</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Active</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Up to date</p>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-[10px] border border-gray-200">
+              <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-yellow-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <Clock className="w-5 h-5 text-gray-600" />
-                  <span className="text-2xl font-bold text-gray-900">{docCounts.expiringSoon}</span>
+                  <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-yellow-500/20' : 'bg-yellow-100'}`}>
+                    <Clock className={`w-5 h-5 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
+                  </div>
+                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.expiringSoon}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-900">Expiring Soon</p>
-                <p className="text-xs text-gray-500">Action needed</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Expiring Soon</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Action needed</p>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-[10px] border border-gray-200">
+              <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-red-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <XCircle className="w-5 h-5 text-gray-600" />
-                  <span className="text-2xl font-bold text-gray-900">{docCounts.expired}</span>
+                  <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-red-500/20' : 'bg-red-100'}`}>
+                    <XCircle className={`w-5 h-5 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
+                  </div>
+                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.expired}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-900">Expired</p>
-                <p className="text-xs text-gray-500">Urgent</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Expired</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Urgent</p>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-[10px] border border-gray-200">
+              <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-blue-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <AlertCircle className="w-5 h-5 text-gray-600" />
-                  <span className="text-2xl font-bold text-gray-900">{docCounts.pending}</span>
+                  <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
+                    <AlertCircle className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                  </div>
+                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.pending}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-900">Pending</p>
-                <p className="text-xs text-gray-500">Under review</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Pending</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Under review</p>
               </div>
             </div>
           </section>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Drivers with Issues */}
-            <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+            <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Drivers Requiring Attention</h2>
-                <p className="mt-1 text-sm text-gray-500">Non-compliant drivers with missing, expired, expiring, or pending documents</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Drivers Requiring Attention</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Non-compliant drivers with missing, expired, expiring, or pending documents</p>
               </div>
 
               {driversWithIssues.length === 0 ? (
                 <div className="py-8 text-center">
-                  <CheckCircle className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                  <p className="text-sm font-medium text-gray-900 mb-1">All Clear!</p>
-                  <p className="text-sm text-gray-500">All drivers are fully compliant</p>
+                  <CheckCircle className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>All Clear!</p>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>All drivers are fully compliant</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -407,23 +426,23 @@ const ClientDashboard = () => {
                     return (
                       <div
                         key={driver.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-[10px] border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                        className={`flex items-center justify-between p-3 rounded-[10px] border transition-colors cursor-pointer ${getThemeClasses.bg.hover(isDarkMode)} ${isDarkMode ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'}`}
                         onClick={() => navigate(`/client/driver/${driver.id}`)}
                       >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium text-sm shrink-0">
+                        <div className="flex items-center flex-1 min-w-0 gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm shrink-0 ${isDarkMode ? 'bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600 text-white' : 'bg-gray-200 text-gray-700'}`}>
                             {driver.name?.charAt(0) || 'D'}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{driver.name}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className={`font-medium truncate ${getThemeClasses.text.primary(isDarkMode)}`}>{driver.name}</p>
+                            <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                               {issues.join(' • ')}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           {getComplianceBadge(compliance)}
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                          <ChevronRight className={`w-4 h-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
                         </div>
                       </div>
                     )
@@ -433,16 +452,16 @@ const ClientDashboard = () => {
             </section>
 
             {/* Recent Drivers */}
-            <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+            <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Recently Added</h2>
-                  <p className="mt-1 text-sm text-gray-500">Latest drivers in the system</p>
+                  <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Recently Added</h2>
+                  <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Latest drivers in the system</p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-[10px]"
+                  className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                   onClick={() => navigate('/client/drivers')}
                 >
                   View All
@@ -451,12 +470,12 @@ const ClientDashboard = () => {
 
               {recentDrivers.length === 0 ? (
                 <div className="py-8 text-center">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="text-sm font-medium text-gray-900 mb-1">No Drivers Yet</p>
-                  <p className="text-sm text-gray-500 mb-3">Add your first driver to get started</p>
+                  <Users className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-700' : 'text-gray-300'}`} />
+                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>No Drivers Yet</p>
+                  <p className={`text-sm mb-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>Add your first driver to get started</p>
                   <Button
                     size="sm"
-                    className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+                    className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
                     onClick={() => navigate('/client/add-a-driver')}
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
@@ -471,23 +490,23 @@ const ClientDashboard = () => {
                     return (
                       <div
                         key={driver.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-[10px] border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                        className={`flex items-center justify-between p-3 rounded-[10px] border transition-colors cursor-pointer ${getThemeClasses.bg.hover(isDarkMode)} ${isDarkMode ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'}`}
                         onClick={() => navigate(`/client/driver/${driver.id}`)}
                       >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium text-sm shrink-0">
+                        <div className="flex items-center flex-1 min-w-0 gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm shrink-0 ${isDarkMode ? 'bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600 text-white' : 'bg-gray-200 text-gray-700'}`}>
                             {driver.name?.charAt(0) || 'D'}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{driver.name}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className={`font-medium truncate ${getThemeClasses.text.primary(isDarkMode)}`}>{driver.name}</p>
+                            <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
                               Added {formatDate(driver.createdAt)}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           {getComplianceBadge(compliance)}
-                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                          <ChevronRight className={`w-4 h-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
                         </div>
                       </div>
                     )
@@ -498,15 +517,15 @@ const ClientDashboard = () => {
           </div>
 
           {/* Quick Actions */}
-          <section className="bg-white rounded-[10px] p-6 border border-gray-200">
+          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-              <p className="mt-1 text-sm text-gray-500">Common tasks and shortcuts</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Quick Actions</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Common tasks and shortcuts</p>
             </div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <Button
                 variant="outline"
-                className="justify-start rounded-[10px] h-auto py-3"
+                className={`justify-start rounded-[10px] h-auto py-3 ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/add-a-driver')}
               >
                 <UserPlus className="w-4 h-4 mr-2 shrink-0" />
@@ -514,7 +533,7 @@ const ClientDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="justify-start rounded-[10px] h-auto py-3"
+                className={`justify-start rounded-[10px] h-auto py-3 ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/reminders')}
               >
                 <Bell className="w-4 h-4 mr-2 shrink-0" />
@@ -522,7 +541,7 @@ const ClientDashboard = () => {
               </Button>
               <Button
                 variant="outline"
-                className="justify-start rounded-[10px] h-auto py-3"
+                className={`justify-start rounded-[10px] h-auto py-3 ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/settings')}
               >
                 <Settings className="w-4 h-4 mr-2 shrink-0" />

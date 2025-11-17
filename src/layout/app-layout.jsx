@@ -16,6 +16,10 @@ import {
   Settings2,
   SquareTerminal,
   User,
+  Moon,
+  Sun,
+  Users,
+  FileText,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -31,10 +35,14 @@ import {
 import { ContentLoadingScreen } from "@/components/LoadingScreen";
 import { useCompany } from "@/hooks/useCompany";
 import { prefetchEssentialData, prefetchDriversData } from "@/lib/queryClient";
+import { useTheme } from "@/contexts/ThemeContext";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const AppLayout = ({ ...props }) => {
   const { isLoaded: authLoaded, getToken } = useAuth();
   const { isLoaded: userLoaded, user } = useUser();
+  const { isDarkMode, toggleTheme } = useTheme();
+  const { hasCapability, canAccess } = usePermissions();
   const companyId = user?.publicMetadata?.companyId;
   const hasPrefetched = useRef(false);
 
@@ -68,7 +76,7 @@ const AppLayout = ({ ...props }) => {
     },
     teams: [
       {
-        name: "Logilink",
+        name: "Complyo",
         logo: "/logo.png", // Use image path instead of icon
         plan:  "Compliance",
       },
@@ -162,39 +170,48 @@ const AppLayout = ({ ...props }) => {
     //   },
     // ],
     projects: [
-      {
+      canAccess('dashboard') && {
         name: "Dashboard",
         url: "/client/dashboard",
         icon: LayoutDashboard,
       },
-      {
+      canAccess('drivers') && {
         name: "Drivers",
         url: "/client/drivers",
         icon: User,
         onMouseEnter: handleDriversHover, // Prefetch on hover
       },
-      
-      {
+      canAccess('reminders') && {
         name: "Reminders",
         url: "/client/reminders",
         icon: PieChart,
       },
-      {
+      canAccess('documents') && {
         name: "Document Status",
         url: "/client/document-status",
         icon: Frame,
       },
-      {
+      canAccess('billing') && {
         name: "Billing",
         url: "/client/billing",
         icon: Map,
       },
-       {
+      canAccess('team') && {
+        name: "Team Management",
+        url: "/client/team",
+        icon: Users,
+      },
+      canAccess('audit_logs') && {
+        name: "Audit Logs",
+        url: "/client/audit-logs",
+        icon: FileText,
+      },
+      canAccess('settings') && {
         name: "Settings",
         url: "/client/settings",
         icon: Settings,
       },
-    ],
+    ].filter(Boolean), // Remove false values from conditional items
   };
 
   if (!authLoaded || !userLoaded) {
@@ -204,7 +221,7 @@ const AppLayout = ({ ...props }) => {
 
   return (
     <>
-      <div className="flex w-full h-full">
+      <div className={`flex w-full h-full ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : ''}`}>
         <div className="min-h-full w-fit">
           <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -218,6 +235,29 @@ const AppLayout = ({ ...props }) => {
             </SidebarContent>
             <SidebarFooter>
               <NavUser user={data.user} />
+              <div className="px-2 py-2">
+                <button
+                  onClick={toggleTheme}
+                  className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all text-sm ${
+                    isDarkMode
+                      ? 'bg-slate-800 text-violet-400 hover:bg-slate-700 border border-slate-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  }`}
+                  aria-label="Toggle theme"
+                >
+                  {isDarkMode ? (
+                    <>
+                      <Sun className="w-4 h-4" />
+                      <span className="font-medium">Light Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="w-4 h-4" />
+                      <span className="font-medium">Dark Mode</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </SidebarFooter>
             <SidebarRail />
           </Sidebar>

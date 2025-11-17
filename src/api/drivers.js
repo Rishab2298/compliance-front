@@ -83,3 +83,71 @@ export const deleteDriver = async (id, token) => {
 
   return response.json();
 };
+
+export const bulkCreateDrivers = async (driversData, token) => {
+  const results = {
+    successful: [],
+    failed: [],
+    limitReached: false,
+  };
+
+  console.log(`🚀 Starting bulk upload of ${driversData.length} drivers`);
+
+  for (let i = 0; i < driversData.length; i++) {
+    const driverData = driversData[i];
+
+    try {
+      const payload = {
+        firstName: driverData.firstName,
+        lastName: driverData.lastName,
+        email: driverData.email,
+        phone: driverData.phone,
+        location: driverData.location,
+        employeeId: driverData.employeeId,
+        documentOption: "skip",
+      };
+
+      console.log(`📤 Uploading driver ${i + 1}/${driversData.length}: ${payload.firstName} ${payload.lastName}`);
+      const result = await createDriver(payload, token);
+
+      console.log(`✅ Driver ${i + 1} created successfully:`, result.driver.id);
+      results.successful.push({
+        ...payload,
+        id: result.driver.id,
+      });
+    } catch (error) {
+      console.error(`❌ Driver ${i + 1} failed:`, error.message);
+
+      // Check if it's a limit error
+      if (error.message.includes('Driver limit reached') || error.message.includes('limit')) {
+        results.limitReached = true;
+        results.failed.push({
+          ...driverData,
+          error: error.message,
+          reason: 'LIMIT_REACHED',
+        });
+
+        // Add remaining drivers to failed list
+        for (let j = i + 1; j < driversData.length; j++) {
+          results.failed.push({
+            ...driversData[j],
+            error: 'Driver limit reached - not attempted',
+            reason: 'LIMIT_REACHED',
+          });
+        }
+
+        console.log(`🛑 Driver limit reached. Stopping upload. Successful: ${results.successful.length}, Failed: ${results.failed.length}`);
+        break;
+      }
+
+      results.failed.push({
+        ...driverData,
+        error: error.message,
+        reason: 'ERROR',
+      });
+    }
+  }
+
+  console.log(`✅ Bulk upload complete. Successful: ${results.successful.length}, Failed: ${results.failed.length}`);
+  return results;
+};
