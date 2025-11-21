@@ -307,7 +307,7 @@ export default function AddADriver() {
           driverId: createdDriverId,
           email: formData.email,
           phone: formData.phone,
-          requestedDocuments: companyDocumentTypes, // Use all company document types
+          requestedDocuments: companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name), // Use all company document types
           sendEmail: !!formData.email,
           sendSMS: !!formData.phone,
         };
@@ -732,7 +732,7 @@ export default function AddADriver() {
                   uploadProgress={uploadProgress}
                   setUploadProgress={setUploadProgress}
                   errors={errors}
-                  documentTypes={companyDocumentTypes}
+                  documentTypes={companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name)}
                   driverId={createdDriverId}
                   planData={currentPlanData}
                   isDarkMode={isDarkMode}
@@ -740,7 +740,7 @@ export default function AddADriver() {
               ) : (
                 <DocumentPreviewStep
                   formData={formData}
-                  documentTypes={companyDocumentTypes}
+                  documentTypes={companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name)}
                   isDarkMode={isDarkMode}
                 />
               )}
@@ -765,7 +765,7 @@ export default function AddADriver() {
               setIsProcessing={setIsProcessing}
               extractedData={extractedData}
               setExtractedData={setExtractedData}
-              documentTypes={companyDocumentTypes}
+              documentTypes={companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name)}
               isDarkMode={isDarkMode}
             />
           )}
@@ -775,7 +775,7 @@ export default function AddADriver() {
                 formData={formData}
                 updateFormData={updateFormData}
                 extractedData={extractedData}
-                documentTypes={companyDocumentTypes.map(dt => dt.name || dt)}
+                documentTypes={companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name)}
                 documentTypeConfigs={companyDocumentTypes}
                 setCurrentStep={setCurrentStep}
                 isDarkMode={isDarkMode}
