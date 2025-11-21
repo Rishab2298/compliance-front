@@ -148,9 +148,8 @@ export default function AddADriver() {
 
         if (uploadedDocs.length === 0) {
           newErrors.documents = "Please upload at least one document";
-        } else if (uploadedDocs.length < companyDocumentTypes.length) {
-          newErrors.documents = `Please upload all ${companyDocumentTypes.length} required documents (${uploadedDocs.length} uploaded so far)`;
         }
+        // Note: No requirement to upload all document types - user can upload as many as they want
       }
       // For "link" and "skip" options, no validation needed at Step 3
     }
