@@ -67,7 +67,7 @@ export default function AddADriver() {
         setLoadingDocTypes(true);
         const token = await getToken();
 
-        const response = await fetch(`${API_URL}/api/document-types/company/${companyId}`, {
+        const response = await fetch(`${API_URL}/api/document-types/company/${companyId}?includeFields=true`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -775,7 +775,8 @@ export default function AddADriver() {
                 formData={formData}
                 updateFormData={updateFormData}
                 extractedData={extractedData}
-                documentTypes={companyDocumentTypes}
+                documentTypes={companyDocumentTypes.map(dt => dt.name || dt)}
+                documentTypeConfigs={companyDocumentTypes}
                 setCurrentStep={setCurrentStep}
                 isDarkMode={isDarkMode}
               />
