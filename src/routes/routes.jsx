@@ -32,13 +32,18 @@ import PolicyEditPage from "@/super-admin/PolicyEditPage";
 import AIUsagePage from "@/super-admin/AIUsagePage";
 import SystemLogsPage from "@/super-admin/SystemLogsPage";
 import ConsentLogsPage from "@/super-admin/ConsentLogsPage";
+import SecurityLogsPage from "@/super-admin/SecurityLogsPage";
 import BillingPage from "@/super-admin/BillingPage";
 import CompaniesPage from "@/super-admin/CompaniesPage";
 import CompanyDetailPage from "@/super-admin/CompanyDetailPage";
+import UsersPage from "@/super-admin/UsersPage";
 import TeamManagement from "@/client/teamManagement";
 import AuditLogs from "@/client/auditLogs";
 import PolicyAcceptance from "@/pages/PolicyAcceptance";
 import PolicyViewer from "@/pages/PolicyViewer";
+import NotFound from "@/pages/NotFound";
+import { MyTicketsPage } from "@/client/ticketing/MyTicketsPage";
+import TicketsPage from "@/super-admin/TicketsPage";
 
 export const router = createBrowserRouter([
   {
@@ -95,7 +100,8 @@ export const router = createBrowserRouter([
       { path: "/client/smart-upload-passport", element: <Passport /> },
       { path: "/client/team", element: <TeamManagement /> },
       { path: "/client/audit-logs", element: <AuditLogs /> },
-      { path: "/client/settings", element: <Settings /> }
+      { path: "/client/settings", element: <Settings /> },
+      { path: "/client/tickets", element: <MyTicketsPage /> }
     ],
   },
   {
@@ -106,18 +112,26 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: "/super-admin/dashboard", element: <SuperAdminDashboard /> },
+      { path: "/super-admin/tickets", element: <TicketsPage /> },
       { path: "/super-admin/policies", element: <PoliciesPage /> },
       { path: "/super-admin/policies/:type", element: <PolicyEditPage /> },
       { path: "/super-admin/ai-usage", element: <AIUsagePage /> },
       { path: "/super-admin/logs", element: <SystemLogsPage /> },
       { path: "/super-admin/consent-logs", element: <ConsentLogsPage /> },
+      { path: "/super-admin/security-logs", element: <SecurityLogsPage /> },
       // Placeholder routes - you can create these pages later
       { path: "/super-admin/companies", element: <CompaniesPage /> },
       { path: "/super-admin/companies/:id", element: <CompanyDetailPage /> },
-      { path: "/super-admin/users", element: <div className="p-8 text-center">Users Page Coming Soon</div> },
+      { path: "/super-admin/users", element: <UsersPage /> },
       { path: "/super-admin/analytics", element: <div className="p-8 text-center">Analytics Page Coming Soon</div> },
       { path: "/super-admin/billing", element: <BillingPage /> },
       { path: "/super-admin/settings", element: <div className="p-8 text-center">Settings Page Coming Soon</div> },
     ],
+  },
+  // Catch-all route for 404 Not Found
+  // IMPORTANT: This must be the last route in the array
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

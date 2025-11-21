@@ -20,6 +20,7 @@ import {
   Sun,
   Users,
   FileText,
+  Ticket,
 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -180,6 +181,11 @@ const AppLayout = ({ ...props }) => {
         url: "/client/drivers",
         icon: User,
         onMouseEnter: handleDriversHover, // Prefetch on hover
+      },
+      {
+        name: "Support Tickets",
+        url: "/client/tickets",
+        icon: Ticket,
       },
       canAccess('reminders') && {
         name: "Reminders",

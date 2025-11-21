@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, FileText, Loader2 } from 'lucide-react';
 import { getLatestPublishedPolicy } from '@/api/policies';
+import { createSafeMarkup } from '@/lib/sanitize';
 
 const PolicyViewer = () => {
   const { type } = useParams();
@@ -146,7 +147,7 @@ const PolicyViewer = () => {
           <div className="p-8 border bg-slate-900/50 border-slate-800 rounded-xl backdrop-blur-sm">
             <div
               className="text-slate-300 policy-content"
-              dangerouslySetInnerHTML={{ __html: policy?.content }}
+              dangerouslySetInnerHTML={createSafeMarkup(policy?.content || '')}
             />
           </div>
         </article>

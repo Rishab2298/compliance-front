@@ -20,12 +20,15 @@ import {
   AlertCircle,
   Eye,
   Zap,
+  Ticket,
 } from 'lucide-react'
 import { useDrivers } from '@/hooks/useDrivers'
 import { useCompany } from '@/hooks/useCompany'
 import { useReminders } from '@/hooks/useReminders'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import { calculateDocumentStatus } from '@/utils/documentStatusUtils'
+import { CreateTicketModal } from './ticketing/CreateTicketModal'
 
 const ClientDashboard = () => {
   const navigate = useNavigate()
@@ -34,11 +37,14 @@ const ClientDashboard = () => {
   const { isDarkMode } = useTheme()
   const companyId = user?.publicMetadata?.companyId
 
+  const [showCreateTicketModal, setShowCreateTicketModal] = useState(false)
+
   // Fetch data using existing hooks
-  const { data: drivers = [], isLoading: driversLoading } = useDrivers()
+  const { data: driversData, isLoading: driversLoading } = useDrivers(1, 1000) // Fetch all drivers for dashboard
   const { data: company, isLoading: companyLoading } = useCompany(companyId)
   const { data: remindersData, isLoading: remindersLoading } = useReminders()
 
+  const drivers = driversData?.drivers || []
   const reminders = remindersData?.reminders || []
   const stats = remindersData?.stats || { total: 0, critical: 0, warning: 0, info: 0 }
 
@@ -73,22 +79,25 @@ const ClientDashboard = () => {
 
   const complianceRate = calculateCompliance()
 
-  // Count documents by status
+  // Count documents by status using shared utility for consistency
   const countDocumentsByStatus = () => {
     const counts = {
       expired: 0,
       expiringSoon: 0,
-      active: 0,
+      verified: 0,
       pending: 0,
     }
 
     drivers.forEach(driver => {
       const docs = driver.documents || []
       docs.forEach(doc => {
-        if (doc.status === 'EXPIRED') counts.expired++
-        else if (doc.status === 'EXPIRING_SOON') counts.expiringSoon++
-        else if (doc.status === 'ACTIVE') counts.active++
-        else if (doc.status === 'PENDING') counts.pending++
+        // Use shared utility to calculate display status
+        const displayStatus = calculateDocumentStatus(doc)
+
+        if (displayStatus === 'expired') counts.expired++
+        else if (displayStatus === 'expiring') counts.expiringSoon++
+        else if (displayStatus === 'verified') counts.verified++
+        else if (displayStatus === 'pending') counts.pending++
       })
     })
 
@@ -351,9 +360,9 @@ const ClientDashboard = () => {
                   <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-green-500/20' : 'bg-green-100'}`}>
                     <CheckCircle className={`w-5 h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} />
                   </div>
-                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.active}</span>
+                  <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.verified}</span>
                 </div>
-                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Active</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Verified</p>
                 <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Up to date</p>
               </div>
 
@@ -522,7 +531,7 @@ const ClientDashboard = () => {
               <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Quick Actions</h2>
               <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Common tasks and shortcuts</p>
             </div>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
               <Button
                 variant="outline"
                 className={`justify-start rounded-[10px] h-auto py-3 ${getThemeClasses.button.secondary(isDarkMode)}`}
@@ -547,10 +556,21 @@ const ClientDashboard = () => {
                 <Settings className="w-4 h-4 mr-2 shrink-0" />
                 <span className="text-sm">Configure Settings</span>
               </Button>
+              <Button
+                variant="outline"
+                className={`justify-start rounded-[10px] h-auto py-3 ${getThemeClasses.button.secondary(isDarkMode)}`}
+                onClick={() => setShowCreateTicketModal(true)}
+              >
+                <Ticket className="w-4 h-4 mr-2 shrink-0" />
+                <span className="text-sm">Report an Issue</span>
+              </Button>
             </div>
           </section>
         </div>
       </div>
+
+      {/* Create Ticket Modal */}
+      <CreateTicketModal open={showCreateTicketModal} onOpenChange={setShowCreateTicketModal} />
     </div>
   )
 }

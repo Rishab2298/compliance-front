@@ -189,8 +189,13 @@ const DriverDetail = () => {
   const updateDriverMutation = useUpdateDriver(driverId)
   const { data: currentPlanData } = useCurrentPlan()
   const requestDocumentsMutation = useRequestDocuments()
-  const { data: documentTypes = [] } = useDocumentTypes(companyId)
+  // Fetch document types WITH field configurations for the modal
+  const { data: documentTypeConfigs = [] } = useDocumentTypes(companyId, true)
   const { data: allDocuments = [] } = useDriverDocuments(driverId)
+
+  // Extract just the document type names for backward compatibility
+  // documentTypeConfigs already filtered to only ACTIVE types from backend
+  const documentTypes = documentTypeConfigs.map(config => config.name || config)
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false)
@@ -1102,6 +1107,7 @@ const DriverDetail = () => {
         onClose={handleDetailsModalClose}
         documents={pendingDocumentsSnapshot}
         documentTypes={documentTypes}
+        documentTypeConfigs={documentTypeConfigs}
         onSave={handleDocumentDetailsSaved}
       />
 
@@ -1112,6 +1118,7 @@ const DriverDetail = () => {
           onClose={handleEditModalClose}
           documents={editableDocuments}
           documentTypes={documentTypes}
+          documentTypeConfigs={documentTypeConfigs}
           onSave={handleDocumentDetailsSaved}
           initialDocumentId={selectedDocumentId}
         />

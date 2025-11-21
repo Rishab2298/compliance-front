@@ -15,6 +15,7 @@ import {
   Sparkles,
   ScrollText,
   FileCheck,
+  Ticket,
 } from "lucide-react";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
@@ -58,6 +59,11 @@ const SuperAdminLayout = ({ ...props }) => {
         icon: LayoutDashboard,
       },
       {
+        name: "Tickets",
+        url: "/super-admin/tickets",
+        icon: Ticket,
+      },
+      {
         name: "Policies",
         url: "/super-admin/policies",
         icon: FileText,
@@ -92,6 +98,11 @@ const SuperAdminLayout = ({ ...props }) => {
         url: "/super-admin/consent-logs",
         icon: FileCheck,
       },
+      // {
+      //   name: "Security Logs",
+      //   url: "/super-admin/security-logs",
+      //   icon: Shield,
+      // },
       {
         name: "Billing",
         url: "/super-admin/billing",

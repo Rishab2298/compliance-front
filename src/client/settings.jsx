@@ -11,13 +11,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Plus, Trash2, Save, Loader2 } from 'lucide-react'
+import { Save, Loader2 } from 'lucide-react'
 import { useUser } from '@clerk/clerk-react'
 import { useCompany, useUpdateCompany } from '@/hooks/useCompany'
-import { useCurrentPlan } from '@/hooks/useBilling'
 import { toast } from 'sonner'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import DocumentTypeManager from '@/components/DocumentTypeManager'
 
 const Settings = () => {
   const { user } = useUser()
@@ -27,23 +27,19 @@ const Settings = () => {
   // Use cached queries
   const { data: companyData, isLoading: loading } = useCompany(companyId)
   const updateCompanyMutation = useUpdateCompany(companyId)
-  const { data: currentPlanData, isLoading: planLoading } = useCurrentPlan()
 
   const [formData, setFormData] = useState({
-    documentTypes: [],
     reminderDays: [],
     notificationMethod: 'both',
     notificationRecipients: [],
     adminEmail: '',
     adminPhone: '',
   })
-  const [newDocumentType, setNewDocumentType] = useState('')
 
   // Update form data when company data is loaded
   useEffect(() => {
     if (companyData) {
       setFormData({
-        documentTypes: companyData.documentTypes || [],
         reminderDays: companyData.reminderDays || [],
         notificationMethod: companyData.notificationMethod || 'both',
         notificationRecipients: companyData.notificationRecipients || [],
@@ -83,46 +79,6 @@ const Settings = () => {
           : [...prev.reminderDays, day]
       }
     })
-  }
-
-  const addDocumentType = () => {
-    if (!newDocumentType.trim()) {
-      toast.error('Please enter a document type name')
-      return
-    }
-
-    if (formData.documentTypes.includes(newDocumentType.trim())) {
-      toast.error('This document type already exists')
-      return
-    }
-
-    // Check plan-based document type limits
-    if (currentPlanData) {
-      const maxDocTypes = currentPlanData.currentPlan?.maxDocumentsPerDriver || 1
-      const currentCount = formData.documentTypes.length
-
-      // Free plan: only 1 document type allowed
-      // -1 means unlimited
-      if (maxDocTypes !== -1 && currentCount >= maxDocTypes) {
-        toast.error("Document type limit reached", {
-          description: `Your plan allows tracking ${maxDocTypes} document type${maxDocTypes !== 1 ? 's' : ''} per driver. Please upgrade to add more.`,
-        })
-        return
-      }
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      documentTypes: [...prev.documentTypes, newDocumentType.trim()]
-    }))
-    setNewDocumentType('')
-  }
-
-  const removeDocumentType = (docType) => {
-    setFormData(prev => ({
-      ...prev,
-      documentTypes: prev.documentTypes.filter(d => d !== docType)
-    }))
   }
 
   const toggleNotificationRecipient = (recipient) => {
@@ -229,87 +185,7 @@ const Settings = () => {
           </section>
 
           {/* Document Types */}
-          <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
-            <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Types</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Manage the types of documents you track for drivers</p>
-            </div>
-
-            <div className="flex gap-3 mb-4">
-              <Input
-                placeholder="Add new document type..."
-                value={newDocumentType}
-                onChange={(e) => setNewDocumentType(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addDocumentType()}
-                className={`max-w-md rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
-              />
-              <Button
-                onClick={addDocumentType}
-                className={`rounded-[10px] shrink-0 ${getThemeClasses.button.primary(isDarkMode)}`}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Type
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {loading ? (
-                // Show skeleton cards while loading
-                [...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
-                  >
-                    <Skeleton className="h-5 w-32 rounded-[10px]" />
-                    <Skeleton className="h-4 w-4 rounded" />
-                  </div>
-                ))
-              ) : formData.documentTypes.length === 0 ? (
-                <div className="py-8 text-center col-span-full">
-                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>No document types added yet</p>
-                </div>
-              ) : (
-                formData.documentTypes.map((docType, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
-                  >
-                    <span className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{docType}</span>
-                    <button
-                      onClick={() => removeDocumentType(docType)}
-                      className={`transition-colors ${isDarkMode ? 'text-slate-500 hover:text-red-400' : 'text-gray-400 hover:text-gray-600'}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Tip and Plan Info */}
-            <div className="mt-6 space-y-3">
-              <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
-                <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  <span className="font-semibold">💡 Tip:</span> Common document types include Driver's License, CDL, Medical Certificate, Insurance Card, and Vehicle Registration.
-                </p>
-              </div>
-              {currentPlanData && (
-                <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-200'}`}>
-                  <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-                    <span className="font-semibold">📋 Plan Limits:</span> Your{' '}
-                    {currentPlanData.currentPlan?.name || 'Free'} plan allows tracking{' '}
-                    {currentPlanData.currentPlan?.maxDocumentsPerDriver === -1
-                      ? 'unlimited'
-                      : currentPlanData.currentPlan?.maxDocumentsPerDriver}{' '}
-                    document type{currentPlanData.currentPlan?.maxDocumentsPerDriver !== 1 ? 's' : ''} per driver.{' '}
-                    {currentPlanData.currentPlan?.maxDocumentsPerDriver === 1 && (
-                      <span>Upgrade to track more document types.</span>
-                    )}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
+          <DocumentTypeManager />
 
           {/* Reminder Settings */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ArrowLeft, Download, FileText, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { sanitizeHTML } from '@/lib/sanitize'
 
 const InvoiceView = () => {
   const { invoiceId } = useParams()
@@ -96,6 +97,16 @@ const InvoiceView = () => {
     const invoiceContent = document.querySelector('.invoice-content')
 
     if (printWindow && invoiceContent) {
+      // Sanitize the invoice content to prevent XSS
+      const sanitizedContent = sanitizeHTML(invoiceContent.innerHTML, {
+        ALLOWED_TAGS: [
+          'div', 'section', 'header', 'footer', 'article', 'p', 'br', 'strong', 'em', 'u',
+          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'span', 'table',
+          'thead', 'tbody', 'tr', 'td', 'th', 'img'
+        ],
+        ALLOWED_ATTR: ['class', 'id', 'src', 'alt', 'title'],
+      });
+
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -114,7 +125,7 @@ const InvoiceView = () => {
             </style>
           </head>
           <body>
-            ${invoiceContent.innerHTML}
+            ${sanitizedContent}
           </body>
         </html>
       `)

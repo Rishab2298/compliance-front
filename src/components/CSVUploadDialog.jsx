@@ -19,6 +19,7 @@ export default function CSVUploadDialog({ isOpen, onClose, onUpload }) {
   const [step, setStep] = useState(1); // 1: Upload, 2: Preview, 3: Success
 
   const requiredColumns = ["firstName", "lastName", "email", "phone", "location", "employeeId"];
+  const MAX_DRIVERS_PER_IMPORT = 100;
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -47,6 +48,15 @@ export default function CSVUploadDialog({ isOpen, onClose, onUpload }) {
 
   const validateCSV = (data, columns) => {
     const validationErrors = [];
+
+    // Check driver count limit (100 drivers max)
+    if (data.length > MAX_DRIVERS_PER_IMPORT) {
+      validationErrors.push(`Too many drivers: ${data.length} found. Maximum ${MAX_DRIVERS_PER_IMPORT} drivers per import.`);
+      setErrors(validationErrors);
+      setParsedData([]);
+      toast.error(`Cannot import more than ${MAX_DRIVERS_PER_IMPORT} drivers at once`);
+      return;
+    }
 
     // Check for required columns
     const missingColumns = requiredColumns.filter(col => !columns.includes(col));
@@ -156,6 +166,16 @@ export default function CSVUploadDialog({ isOpen, onClose, onUpload }) {
           </DialogDescription>
         </DialogHeader>
 
+        {/* Import Limit Warning Banner */}
+        <div className="p-3 border rounded-lg bg-amber-500/10 border-amber-500/30">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <p className="text-xs text-amber-200">
+              <strong>Import Limit:</strong> Maximum {MAX_DRIVERS_PER_IMPORT} drivers per import. For larger imports, split your CSV into multiple files.
+            </p>
+          </div>
+        </div>
+
         {step === 1 && (
           <div className="space-y-6">
             {/* Download Template Button */}
@@ -236,7 +256,7 @@ export default function CSVUploadDialog({ isOpen, onClose, onUpload }) {
                       {csvFile ? csvFile.name : "Click to upload CSV file"}
                     </p>
                     <p className="text-xs text-slate-400">
-                      CSV files only (Max 5MB)
+                      CSV files only • Max {MAX_DRIVERS_PER_IMPORT} drivers per import
                     </p>
                   </div>
                 </div>

@@ -23,6 +23,8 @@ const AIUsagePage = () => {
   const { isDarkMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPeriod, setFilterPeriod] = useState('all'); // all, today, week, month
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 20;
 
   // Fetch AI usage data
   const { data: aiUsageData, isLoading } = useQuery({
@@ -55,6 +57,17 @@ const AIUsagePage = () => {
     record.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     record.userEmail?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+  const startIndex = (currentPage - 1) * recordsPerPage;
+  const endIndex = startIndex + recordsPerPage;
+  const paginatedRecords = filteredRecords.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterPeriod]);
 
   return (
     <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
@@ -341,7 +354,7 @@ const AIUsagePage = () => {
                       <td className="px-6 py-4"><Skeleton className="h-5 w-20" /></td>
                     </tr>
                   ))
-                ) : filteredRecords.length === 0 ? (
+                ) : paginatedRecords.length === 0 ? (
                   <tr>
                     <td colSpan="9" className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center justify-center">
@@ -356,7 +369,7 @@ const AIUsagePage = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredRecords.map((record, index) => (
+                  paginatedRecords.map((record, index) => (
                     <tr key={index} className={isDarkMode ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50'}>
                       <td className={`px-6 py-4 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                         {record.createdAt ? format(new Date(record.createdAt), 'MMM dd, yyyy HH:mm') : '-'}
@@ -423,6 +436,40 @@ const AIUsagePage = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {!isLoading && filteredRecords.length > recordsPerPage && (
+            <div className={`flex items-center justify-between px-6 py-4 border-t ${
+              isDarkMode ? 'border-slate-700' : 'border-gray-200'
+            }`}>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredRecords.length)} of {filteredRecords.length} records
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg"
+                >
+                  Previous
+                </Button>
+                <span className={`text-sm px-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

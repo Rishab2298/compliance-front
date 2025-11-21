@@ -18,7 +18,7 @@ import {
 import { onboardingSchema } from "../schemas/onboardingSchema";
 import { useNavigate } from "react-router-dom";
 import CSVUploadDialog from "@/components/CSVUploadDialog";
-import { bulkCreateDrivers } from "@/api/drivers";
+import { bulkImportDrivers } from "@/api/drivers";
 import { upgradePlan } from "@/api/billing";
 import { toast } from "sonner";
 
@@ -45,7 +45,7 @@ export default function OnboardingDark() {
       // Step 1 - Company Information
       legalCompanyName: "",
       operatingName: "",
-      country: "",
+      country: "Canada",
       entityType: "",
       businessRegistrationNumber: "",
       registeredAddress: {
@@ -174,7 +174,7 @@ export default function OnboardingDark() {
   const handleCSVUpload = async (driversData) => {
     try {
       const token = await getToken();
-      const results = await bulkCreateDrivers(driversData, token);
+      const results = await bulkImportDrivers(driversData, token);
 
       // Update state with successful uploads
       if (results.successful.length > 0) {
@@ -492,17 +492,20 @@ export default function OnboardingDark() {
                     <button
                       key={country}
                       type="button"
-                      onClick={() => updateFormData("country", country)}
-                      className={`px-4 py-3 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
+                      disabled={true}
+                      className={`px-4 py-3 rounded-[10px] transition-all flex items-center justify-center gap-2 cursor-not-allowed opacity-60 ${
                         formData.country === country
                           ? "bg-violet-500/20 border border-violet-500 text-violet-400"
-                          : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
+                          : "bg-slate-800 border border-slate-700 text-slate-300"
                       } ${errors.country ? "border border-red-500" : ""}`}>
                       {formData.country === country && <Check className="w-4 h-4" />}
                       {country}
                     </button>
                   ))}
                 </div>
+                <p className="mt-2 text-xs text-slate-400">
+                  Currently operating in Canada only
+                </p>
                 {errors.country && (
                   <p className="mt-1 text-sm text-red-400">
                     {errors.country.message}

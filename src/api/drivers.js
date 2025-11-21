@@ -84,7 +84,58 @@ export const deleteDriver = async (id, token) => {
   return response.json();
 };
 
+/**
+ * Bulk import drivers using the optimized backend endpoint
+ * This replaces the old sequential approach with a single API call
+ * Maximum 100 drivers per import
+ */
+export const bulkImportDrivers = async (driversData, token) => {
+  console.log(`🚀 Starting bulk import of ${driversData.length} drivers via /bulk-import endpoint`);
+
+  // Validate batch size on client side
+  if (driversData.length > 100) {
+    throw new Error('Cannot import more than 100 drivers at once');
+  }
+
+  // Transform data to match backend schema
+  const drivers = driversData.map(driver => ({
+    firstName: driver.firstName,
+    lastName: driver.lastName,
+    email: driver.email,
+    phone: driver.phone,
+    location: driver.location,
+    employeeId: driver.employeeId,
+    documentOption: "skip",
+  }));
+
+  const response = await fetch(`${API_URL}/api/drivers/bulk-import`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ drivers }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || error.error || 'Failed to import drivers');
+  }
+
+  const result = await response.json();
+  console.log(`✅ Bulk import complete. Successful: ${result.results.successful.length}, Failed: ${result.results.failed.length}`);
+
+  return result.results;
+};
+
+/**
+ * DEPRECATED: Old sequential bulk create function
+ * Use bulkImportDrivers instead for better performance
+ * Keeping for backward compatibility
+ */
 export const bulkCreateDrivers = async (driversData, token) => {
+  console.warn('⚠️ bulkCreateDrivers is deprecated. Use bulkImportDrivers instead.');
+
   const results = {
     successful: [],
     failed: [],

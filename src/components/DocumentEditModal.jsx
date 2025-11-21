@@ -23,7 +23,7 @@ import { updateDocumentDetails, getDocumentDownloadUrl } from '@/api/documents';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeClasses } from '@/utils/themeClasses';
 
-const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, initialDocumentId }) => {
+const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, documentTypeConfigs = [], onSave, initialDocumentId }) => {
   const { getToken } = useAuth();
   const { isDarkMode } = useTheme();
 
@@ -40,13 +40,9 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
 
   const currentDocument = documents[currentIndex];
 
-  const [formData, setFormData] = useState({
-    type: '',
-    documentNumber: '',
-    issuedDate: '',
-    expiryDate: '',
-    notes: '',
-  });
+  // State for form data - will be populated dynamically based on document type
+  const [formData, setFormData] = useState({});
+  const [selectedDocumentTypeConfig, setSelectedDocumentTypeConfig] = useState(null);
 
   // Load image URL when document changes
   useEffect(() => {
@@ -69,23 +65,44 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
     loadImage();
   }, [currentDocument, getToken]);
 
-  // Reset form when document changes
+  // Reset form when document changes or document type changes
   useEffect(() => {
     if (currentDocument) {
-      setFormData({
-        type: currentDocument.type || '',
-        documentNumber: currentDocument.documentNumber || '',
-        issuedDate: currentDocument.issueDate
-          ? new Date(currentDocument.issueDate).toISOString().split('T')[0]
-          : '',
-        expiryDate: currentDocument.expiryDate
-          ? new Date(currentDocument.expiryDate).toISOString().split('T')[0]
-          : '',
-        notes: currentDocument.notes || '',
-      });
+      // Find the document type configuration
+      const docTypeConfig = documentTypeConfigs.find(config => config.name === currentDocument.type);
+      setSelectedDocumentTypeConfig(docTypeConfig);
+
+      // Initialize form data dynamically based on fields
+      const initialFormData = { type: currentDocument.type || '' };
+
+      if (docTypeConfig && docTypeConfig.fields) {
+        // Skip 'documentType' field as it's auto-populated
+        docTypeConfig.fields
+          .filter(field => field.name !== 'documentType')
+          .forEach(field => {
+            // Get existing value from document if available
+            const existingValue = currentDocument[field.name];
+
+            // Initialize based on field type
+            if (field.type === 'date') {
+              initialFormData[field.name] = existingValue
+                ? new Date(existingValue).toISOString().split('T')[0]
+                : '';
+            } else if (field.type === 'boolean') {
+              initialFormData[field.name] = existingValue || false;
+            } else {
+              initialFormData[field.name] = existingValue || '';
+            }
+          });
+      }
+
+      // Always include notes field
+      initialFormData.notes = currentDocument.notes || '';
+
+      setFormData(initialFormData);
       setZoom(100);
     }
-  }, [currentDocument]);
+  }, [currentDocument, documentTypeConfigs]);
 
   // Reset to initial index when modal opens
   useEffect(() => {
@@ -116,9 +133,18 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
       return;
     }
 
-    if (!formData.expiryDate) {
-      toast.error('Please enter an expiry date');
-      return;
+    // Validate required fields based on document type configuration
+    if (selectedDocumentTypeConfig && selectedDocumentTypeConfig.fields) {
+      const requiredFields = selectedDocumentTypeConfig.fields.filter(
+        field => field.required && field.name !== 'documentType'
+      );
+
+      for (const field of requiredFields) {
+        if (!formData[field.name]) {
+          toast.error(`Please enter ${field.label}`);
+          return;
+        }
+      }
     }
 
     setSaving(true);
@@ -148,6 +174,152 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
 
   const handleCancel = () => {
     onClose();
+  };
+
+  // Helper function to handle document type change
+  const handleDocumentTypeChange = (value) => {
+    setFormData((prev) => ({ ...prev, type: value }));
+
+    // Find and set the new document type configuration
+    const docTypeConfig = documentTypeConfigs.find(config => config.name === value);
+    setSelectedDocumentTypeConfig(docTypeConfig);
+
+    // Reset form fields based on new document type
+    if (docTypeConfig && docTypeConfig.fields) {
+      const newFormData = { type: value, notes: prev.notes || '' };
+
+      docTypeConfig.fields
+        .filter(field => field.name !== 'documentType')
+        .forEach(field => {
+          if (field.type === 'boolean') {
+            newFormData[field.name] = false;
+          } else {
+            newFormData[field.name] = '';
+          }
+        });
+
+      setFormData(newFormData);
+    }
+  };
+
+  // Helper function to render field based on type
+  const renderField = (field) => {
+    const value = formData[field.name] || '';
+
+    const commonLabelProps = {
+      htmlFor: field.name,
+      className: `text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`
+    };
+
+    const commonInputProps = {
+      id: field.name,
+      value: value,
+      className: `rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`
+    };
+
+    switch (field.type) {
+      case 'text':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="text"
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="date"
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'number':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="number"
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'select':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            <Select
+              value={value}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, [field.name]: val }))}
+            >
+              <SelectTrigger className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}>
+                <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
+                {field.options?.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        );
+
+      case 'multiline':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            <Textarea
+              {...commonInputProps}
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              className={`rounded-[10px] min-h-[100px] ${getThemeClasses.input.default(isDarkMode)}`}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'boolean':
+        return (
+          <div key={field.name} className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id={field.name}
+              checked={!!value}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.checked }))}
+              className={`rounded ${isDarkMode ? 'border-slate-700 bg-slate-800' : 'border-gray-300 bg-white'}`}
+            />
+            <Label htmlFor={field.name} className={`text-sm font-medium cursor-pointer ${getThemeClasses.text.primary(isDarkMode)}`}>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </Label>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   if (!currentDocument) return null;
@@ -216,16 +388,14 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
           {/* Right Side - Form */}
           <div className="w-[450px] p-6 flex flex-col">
             <div className="flex-1 space-y-6 overflow-auto">
-              {/* Document Type */}
+              {/* Document Type Selector */}
               <div className="space-y-2">
                 <Label htmlFor="type" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Document Type <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, type: value }))
-                  }
+                  onValueChange={handleDocumentTypeChange}
                 >
                   <SelectTrigger className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}>
                     <SelectValue placeholder="Select document type" />
@@ -240,62 +410,23 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                 </Select>
               </div>
 
-              {/* Document Number */}
-              <div className="space-y-2">
-                <Label htmlFor="documentNumber" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Document Number / ID
-                </Label>
-                <Input
-                  id="documentNumber"
-                  value={formData.documentNumber}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, documentNumber: e.target.value }))
-                  }
-                  placeholder="e.g., DL123456789"
-                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
-                />
-              </div>
+              {/* Dynamic Fields Based on Document Type Configuration */}
+              {selectedDocumentTypeConfig && selectedDocumentTypeConfig.fields && (
+                <>
+                  {selectedDocumentTypeConfig.fields
+                    .filter(field => field.name !== 'documentType') // Skip the documentType field
+                    .map(field => renderField(field))}
+                </>
+              )}
 
-              {/* Issued Date */}
-              <div className="space-y-2">
-                <Label htmlFor="issuedDate" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Issue Date
-                </Label>
-                <Input
-                  id="issuedDate"
-                  type="date"
-                  value={formData.issuedDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, issuedDate: e.target.value }))
-                  }
-                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
-                />
-              </div>
-
-              {/* Expiry Date */}
-              <div className="space-y-2">
-                <Label htmlFor="expiryDate" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Expiry Date <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="expiryDate"
-                  type="date"
-                  value={formData.expiryDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, expiryDate: e.target.value }))
-                  }
-                  className={`rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
-                />
-              </div>
-
-              {/* Notes */}
+              {/* Notes Field - Always show */}
               <div className="space-y-2">
                 <Label htmlFor="notes" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
                   Notes
                 </Label>
                 <Textarea
                   id="notes"
-                  value={formData.notes}
+                  value={formData.notes || ''}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, notes: e.target.value }))
                   }
@@ -306,7 +437,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
             </div>
 
             {/* Footer Buttons */}
-            <div className={`pt-6 mt-6 space-y-3 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
+            <div className="pt-6 mt-6 space-y-3 border-t border-slate-700">
               <div className="flex items-center justify-between gap-3">
                 <Button
                   variant="outline"
@@ -345,7 +476,7 @@ const DocumentEditModal = ({ isOpen, onClose, documents, documentTypes, onSave, 
                 <Button
                   onClick={handleSave}
                   disabled={saving}
-                  className={`flex-1 rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
+                  className={`flex-1 rounded-[10px] ${isDarkMode ? 'bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
                 >
                   {saving ? (
                     <>

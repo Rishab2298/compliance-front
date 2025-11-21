@@ -6,6 +6,7 @@ import { ArrowLeft, FileText, Download, Eye, CheckCircle, XCircle, Clock, AlertC
 import { useDriver, useDriverDocuments } from '@/hooks/useDrivers'
 import { getDocumentDownloadUrl } from '@/api/documents'
 import { useAuth } from '@clerk/clerk-react'
+import { calculateDocumentStatus, calculateDriverComplianceStatus } from '@/utils/documentStatusUtils'
 
 const DriverDocuments = () => {
   const { driverId } = useParams()
@@ -69,25 +70,16 @@ const DriverDocuments = () => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
   }
 
+  // Use shared utility for consistent status calculation across the app
   const getDocumentStatus = (doc) => {
-    if (!doc.expiryDate) return 'Verified'
-
-    const today = new Date()
-    const expiryDate = new Date(doc.expiryDate)
-    const daysUntilExpiry = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24))
-
-    if (daysUntilExpiry < 0) return 'Expired'
-    if (daysUntilExpiry <= 30) return 'Expiring Soon'
-    return 'Verified'
+    const status = calculateDocumentStatus(doc)
+    // Capitalize first letter for display
+    return status.charAt(0).toUpperCase() + status.slice(1)
   }
 
+  // Use shared utility for consistent compliance calculation across the app
   const getComplianceStatus = () => {
-    if (!documents || documents.length === 0) return 'No Documents'
-
-    const statuses = documents.map(doc => getDocumentStatus(doc))
-    if (statuses.includes('Expired')) return 'Critical'
-    if (statuses.includes('Expiring Soon')) return 'Warning'
-    return 'Compliant'
+    return calculateDriverComplianceStatus(documents, documents?.length || 0)
   }
 
   const handleViewDocument = async (doc) => {

@@ -6,7 +6,7 @@ import { useUser, useAuth } from '@clerk/clerk-react'
 import { useDrivers, useDocumentTypes, useDeleteDriver } from '@/hooks/useDrivers'
 import { toast } from 'sonner'
 import CSVUploadDialog from '@/components/CSVUploadDialog'
-import { bulkCreateDrivers } from '@/api/drivers'
+import { bulkImportDrivers } from '@/api/drivers'
 import { useQueryClient } from '@tanstack/react-query'
 import { Upload, AlertTriangle } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -21,15 +21,21 @@ const Drivers = () => {
   const { hasCapability } = usePermissions()
   const companyId = user?.publicMetadata?.companyId
   const [csvDialogOpen, setCsvDialogOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const limit = 20
 
   // Permission checks
   const canCreateDrivers = hasCapability('create_edit_drivers')
   const canDeleteDrivers = hasCapability('delete_documents')
 
-  // Use cached queries
-  const { data: drivers = [], isLoading: driversLoading, error: driversError } = useDrivers()
+  // Use cached queries with pagination
+  const { data: driversData, isLoading: driversLoading, error: driversError } = useDrivers(currentPage, limit)
   const { data: documentTypes = [], isLoading: docTypesLoading } = useDocumentTypes(companyId)
   const deleteDriverMutation = useDeleteDriver()
+
+  // Extract drivers and pagination from data
+  const drivers = driversData?.drivers || []
+  const pagination = driversData?.pagination || { currentPage: 1, totalPages: 1, totalCount: 0, limit: 20 }
 
   // Combined loading state
   const loading = driversLoading || docTypesLoading
@@ -64,7 +70,7 @@ const Drivers = () => {
 
     try {
       const token = await getToken()
-      const results = await bulkCreateDrivers(driversData, token)
+      const results = await bulkImportDrivers(driversData, token)
 
       // Refresh driver list if any were successful
       if (results.successful.length > 0) {
@@ -194,12 +200,48 @@ const Drivers = () => {
             </div>
           </div>
         ) : (
-          <DataTable
-            data={drivers}
-            documentTypes={documentTypes}
-            onDeleteDriver={handleDeleteDriver}
-            canDelete={canDeleteDrivers}
-          />
+          <>
+            <DataTable
+              data={drivers}
+              documentTypes={documentTypes}
+              onDeleteDriver={handleDeleteDriver}
+              canDelete={canDeleteDrivers}
+            />
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="container w-full px-6 mx-auto mt-6">
+                <div className={`rounded-[10px] border ${getThemeClasses.bg.card(isDarkMode)} p-4 flex items-center justify-between`}>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                    Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of {pagination.totalCount} drivers
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={pagination.currentPage === 1}
+                      className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
+                    >
+                      Previous
+                    </Button>
+                    <span className={`text-sm px-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                      Page {pagination.currentPage} of {pagination.totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
+                      disabled={pagination.currentPage === pagination.totalPages}
+                      className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

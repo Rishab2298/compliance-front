@@ -21,7 +21,7 @@ import { ChevronLeft, ChevronRight, Save, Loader2, ZoomIn, ZoomOut, Sparkles, Co
 import { toast } from 'sonner';
 import { updateDocumentDetails, getDocumentDownloadUrl, getCreditsBalance, scanDocumentWithAI } from '@/api/documents';
 
-const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSave }) => {
+const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, documentTypeConfigs = [], onSave }) => {
   const { getToken } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -33,13 +33,9 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
 
   const currentDocument = documents[currentIndex];
 
-  const [formData, setFormData] = useState({
-    type: '',
-    documentNumber: '',
-    issuedDate: '',
-    expiryDate: '',
-    notes: '',
-  });
+  // State for form data - will be populated dynamically based on document type
+  const [formData, setFormData] = useState({});
+  const [selectedDocumentTypeConfig, setSelectedDocumentTypeConfig] = useState(null);
 
   // Load image URL when document changes
   useEffect(() => {
@@ -62,23 +58,44 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
     loadImage();
   }, [currentDocument, getToken]);
 
-  // Reset form when document changes
+  // Reset form when document changes or document type changes
   useEffect(() => {
     if (currentDocument) {
-      setFormData({
-        type: currentDocument.type || '',
-        documentNumber: currentDocument.documentNumber || '',
-        issuedDate: currentDocument.issuedDate
-          ? new Date(currentDocument.issuedDate).toISOString().split('T')[0]
-          : '',
-        expiryDate: currentDocument.expiryDate
-          ? new Date(currentDocument.expiryDate).toISOString().split('T')[0]
-          : '',
-        notes: currentDocument.notes || '',
-      });
+      // Find the document type configuration
+      const docTypeConfig = documentTypeConfigs.find(config => config.name === currentDocument.type);
+      setSelectedDocumentTypeConfig(docTypeConfig);
+
+      // Initialize form data dynamically based on fields
+      const initialFormData = { type: currentDocument.type || '' };
+
+      if (docTypeConfig && docTypeConfig.fields) {
+        // Skip 'documentType' field as it's auto-populated
+        docTypeConfig.fields
+          .filter(field => field.name !== 'documentType')
+          .forEach(field => {
+            // Get existing value from document if available
+            const existingValue = currentDocument[field.name];
+
+            // Initialize based on field type
+            if (field.type === 'date') {
+              initialFormData[field.name] = existingValue
+                ? new Date(existingValue).toISOString().split('T')[0]
+                : '';
+            } else if (field.type === 'boolean') {
+              initialFormData[field.name] = existingValue || false;
+            } else {
+              initialFormData[field.name] = existingValue || '';
+            }
+          });
+      }
+
+      // Always include notes field
+      initialFormData.notes = currentDocument.notes || '';
+
+      setFormData(initialFormData);
       setZoom(100);
     }
-  }, [currentDocument]);
+  }, [currentDocument, documentTypeConfigs]);
 
   // Fetch credits balance on mount
   useEffect(() => {
@@ -116,9 +133,18 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
       return;
     }
 
-    if (!formData.expiryDate) {
-      toast.error('Please enter an expiry date');
-      return;
+    // Validate required fields based on document type configuration
+    if (selectedDocumentTypeConfig && selectedDocumentTypeConfig.fields) {
+      const requiredFields = selectedDocumentTypeConfig.fields.filter(
+        field => field.required && field.name !== 'documentType'
+      );
+
+      for (const field of requiredFields) {
+        if (!formData[field.name]) {
+          toast.error(`Please enter ${field.label}`);
+          return;
+        }
+      }
     }
 
     setSaving(true);
@@ -179,20 +205,36 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
       // Pre-fill form with extracted data
       const extractedData = result.extractedData;
 
-      console.log('Updating form with:', {
-        type: extractedData.type,
-        documentNumber: extractedData.documentNumber,
-        issuedDate: extractedData.issuedDate,
-        expiryDate: extractedData.expiryDate,
+      console.log('AI extracted data:', extractedData);
+
+      // Dynamically update form fields based on extracted data
+      setFormData((prev) => {
+        const updated = { ...prev };
+
+        // Update all fields that were extracted
+        Object.keys(extractedData).forEach(key => {
+          if (extractedData[key] !== undefined && extractedData[key] !== null && extractedData[key] !== '') {
+            updated[key] = extractedData[key];
+          }
+        });
+
+        console.log('Updated form data:', updated);
+        return updated;
       });
 
-      setFormData((prev) => ({
-        ...prev,
-        type: extractedData.type || prev.type,
-        documentNumber: extractedData.documentNumber || prev.documentNumber,
-        issuedDate: extractedData.issuedDate || prev.issuedDate,
-        expiryDate: extractedData.expiryDate || prev.expiryDate,
-      }));
+      // If document type was detected by AI, update the configuration AND form data
+      if (extractedData.documentType && extractedData.documentType !== formData.type) {
+        console.log('AI detected document type:', extractedData.documentType);
+        const docTypeConfig = documentTypeConfigs.find(config => config.name === extractedData.documentType);
+        if (docTypeConfig) {
+          setSelectedDocumentTypeConfig(docTypeConfig);
+          // Also update the form data's type field
+          setFormData((prev) => ({
+            ...prev,
+            type: extractedData.documentType
+          }));
+        }
+      }
 
       toast.success('Document scanned successfully', {
         description: `${result.creditsUsed} credit used. ${result.creditsRemaining} credits remaining.`,
@@ -204,6 +246,152 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
       });
     } finally {
       setScanning(false);
+    }
+  };
+
+  // Helper function to handle document type change
+  const handleDocumentTypeChange = (value) => {
+    setFormData((prev) => ({ ...prev, type: value }));
+
+    // Find and set the new document type configuration
+    const docTypeConfig = documentTypeConfigs.find(config => config.name === value);
+    setSelectedDocumentTypeConfig(docTypeConfig);
+
+    // Reset form fields based on new document type
+    if (docTypeConfig && docTypeConfig.fields) {
+      const newFormData = { type: value, notes: prev.notes || '' };
+
+      docTypeConfig.fields
+        .filter(field => field.name !== 'documentType')
+        .forEach(field => {
+          if (field.type === 'boolean') {
+            newFormData[field.name] = false;
+          } else {
+            newFormData[field.name] = '';
+          }
+        });
+
+      setFormData(newFormData);
+    }
+  };
+
+  // Helper function to render field based on type
+  const renderField = (field) => {
+    const value = formData[field.name] || '';
+
+    const commonLabelProps = {
+      htmlFor: field.name,
+      className: "text-sm font-medium text-white"
+    };
+
+    const commonInputProps = {
+      id: field.name,
+      value: value,
+      className: "rounded-[10px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+    };
+
+    switch (field.type) {
+      case 'text':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="text"
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="date"
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'number':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+            <Input
+              {...commonInputProps}
+              type="number"
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'select':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+            <Select
+              value={value}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, [field.name]: val }))}
+            >
+              <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white">
+                <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-700">
+                {field.options?.map((option) => (
+                  <SelectItem key={option} value={option} className="text-white hover:bg-slate-700">
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        );
+
+      case 'multiline':
+        return (
+          <div key={field.name} className="space-y-2">
+            <Label {...commonLabelProps}>
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+            <Textarea
+              {...commonInputProps}
+              placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
+              className="rounded-[10px] min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
+            />
+          </div>
+        );
+
+      case 'boolean':
+        return (
+          <div key={field.name} className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id={field.name}
+              checked={!!value}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.checked }))}
+              className="rounded border-slate-700 bg-slate-800"
+            />
+            <Label htmlFor={field.name} className="text-sm font-medium text-white cursor-pointer">
+              {field.label} {field.required && <span className="text-red-400">*</span>}
+            </Label>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -311,16 +499,14 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
                 </Button>
               </div>
 
-              {/* Document Type */}
+              {/* Document Type Selector */}
               <div className="space-y-2">
                 <Label htmlFor="type" className="text-sm font-medium text-white">
                   Document Type <span className="text-red-400">*</span>
                 </Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, type: value }))
-                  }
+                  onValueChange={handleDocumentTypeChange}
                 >
                   <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white">
                     <SelectValue placeholder="Select document type" />
@@ -335,62 +521,23 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, onSav
                 </Select>
               </div>
 
-              {/* Document Number */}
-              <div className="space-y-2">
-                <Label htmlFor="documentNumber" className="text-sm font-medium text-white">
-                  Document Number / ID
-                </Label>
-                <Input
-                  id="documentNumber"
-                  value={formData.documentNumber}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, documentNumber: e.target.value }))
-                  }
-                  placeholder="e.g., DL123456789"
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                />
-              </div>
+              {/* Dynamic Fields Based on Document Type Configuration */}
+              {selectedDocumentTypeConfig && selectedDocumentTypeConfig.fields && (
+                <>
+                  {selectedDocumentTypeConfig.fields
+                    .filter(field => field.name !== 'documentType') // Skip the documentType field
+                    .map(field => renderField(field))}
+                </>
+              )}
 
-              {/* Issued Date */}
-              <div className="space-y-2">
-                <Label htmlFor="issuedDate" className="text-sm font-medium text-white">
-                  Issue Date
-                </Label>
-                <Input
-                  id="issuedDate"
-                  type="date"
-                  value={formData.issuedDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, issuedDate: e.target.value }))
-                  }
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white"
-                />
-              </div>
-
-              {/* Expiry Date */}
-              <div className="space-y-2">
-                <Label htmlFor="expiryDate" className="text-sm font-medium text-white">
-                  Expiry Date <span className="text-red-400">*</span>
-                </Label>
-                <Input
-                  id="expiryDate"
-                  type="date"
-                  value={formData.expiryDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, expiryDate: e.target.value }))
-                  }
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white"
-                />
-              </div>
-
-              {/* Notes */}
+              {/* Notes Field - Always show */}
               <div className="space-y-2">
                 <Label htmlFor="notes" className="text-sm font-medium text-white">
                   Notes
                 </Label>
                 <Textarea
                   id="notes"
-                  value={formData.notes}
+                  value={formData.notes || ''}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, notes: e.target.value }))
                   }

@@ -18,7 +18,7 @@ const DocumentStatus = () => {
   const { getToken } = useAuth()
   const { isDarkMode } = useTheme()
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('all') // all, expired, expiring, valid
+  const [selectedStatus, setSelectedStatus] = useState('all') // all, expired, expiring, verified
   const [currentPage, setCurrentPage] = useState(1)
   const ITEMS_PER_PAGE = 10
 
@@ -55,23 +55,27 @@ const DocumentStatus = () => {
   const documents = data?.documents || []
   const totalPages = data?.totalPages || 1
   const totalCount = data?.totalCount || 0
-  const statusCounts = data?.statusCounts || { all: 0, expired: 0, expiring: 0, valid: 0 }
+  const statusCounts = data?.statusCounts || { all: 0, expired: 0, expiring: 0, verified: 0 }
 
   const getStatusBadge = (status) => {
     const lightVariants = {
       expired: { className: 'bg-red-100 text-red-800 border-red-200', icon: XCircle, label: 'Expired' },
       expiring: { className: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock, label: 'Expiring Soon' },
-      valid: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: 'Valid' },
+      verified: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: 'Verified' },
+      pending: { className: 'bg-gray-100 text-gray-800 border-gray-200', icon: Clock, label: 'Pending' },
+      valid: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: 'Verified' }, // Fallback for old data
     }
 
     const darkVariants = {
       expired: { className: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle, label: 'Expired' },
       expiring: { className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock, label: 'Expiring Soon' },
-      valid: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: 'Valid' },
+      verified: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: 'Verified' },
+      pending: { className: 'bg-gray-500/20 text-gray-400 border-gray-500/30', icon: Clock, label: 'Pending' },
+      valid: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: 'Verified' }, // Fallback for old data
     }
 
     const variants = isDarkMode ? darkVariants : lightVariants
-    const config = variants[status] || variants.valid
+    const config = variants[status] || variants.verified
     const Icon = config.icon
 
     return (
@@ -129,7 +133,7 @@ const DocumentStatus = () => {
     { value: 'all', label: 'All Documents', icon: FileText, count: statusCounts.all },
     { value: 'expired', label: 'Expired', icon: XCircle, count: statusCounts.expired },
     { value: 'expiring', label: 'Expiring Soon', icon: Clock, count: statusCounts.expiring },
-    { value: 'valid', label: 'Valid', icon: CheckCircle, count: statusCounts.valid },
+    { value: 'verified', label: 'Verified', icon: CheckCircle, count: statusCounts.verified },
   ]
 
   // Loading skeleton
@@ -322,6 +326,8 @@ const DocumentStatus = () => {
                           ? isDarkMode ? 'bg-red-500/20' : 'bg-red-100'
                           : doc.status === 'expiring'
                           ? isDarkMode ? 'bg-yellow-500/20' : 'bg-yellow-100'
+                          : doc.status === 'pending'
+                          ? isDarkMode ? 'bg-gray-500/20' : 'bg-gray-100'
                           : isDarkMode ? 'bg-green-500/20' : 'bg-green-100'
                       }`}>
                         <FileText className={`w-6 h-6 ${
@@ -329,6 +335,8 @@ const DocumentStatus = () => {
                             ? isDarkMode ? 'text-red-400' : 'text-red-600'
                             : doc.status === 'expiring'
                             ? isDarkMode ? 'text-yellow-400' : 'text-yellow-600'
+                            : doc.status === 'pending'
+                            ? isDarkMode ? 'text-gray-400' : 'text-gray-600'
                             : isDarkMode ? 'text-green-400' : 'text-green-600'
                         }`} />
                       </div>
@@ -419,26 +427,31 @@ const DocumentStatus = () => {
           {totalPages > 1 && (
             <section className={`flex items-center justify-between rounded-[10px] p-4 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                Page {currentPage} of {totalPages}
+                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} documents
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
                   className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  <ChevronLeft className="w-4 h-4 mr-1" />
                   Previous
                 </Button>
+                <span className={`text-sm px-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                  {currentPage} / {totalPages}
+                </span>
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   Next
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
             </section>

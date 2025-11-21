@@ -228,6 +228,11 @@ export default function DriverUploadPortal() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800">{docType}</h3>
+                        {docType === "Work Eligibility" && !uploaded && (
+                          <p className="text-xs text-gray-500">
+                            Upload: Passport, PR Card, or Work Permit
+                          </p>
+                        )}
                         {uploaded && (
                           <p className="text-sm text-green-600">Uploaded</p>
                         )}
@@ -240,6 +245,18 @@ export default function DriverUploadPortal() {
 
                   {!uploaded ? (
                     <>
+                      {docType === "Work Eligibility" && (
+                        <div className="p-3 mb-4 border-l-4 border-blue-500 rounded bg-blue-50">
+                          <p className="text-sm font-medium text-blue-900">
+                            Accepted Documents:
+                          </p>
+                          <ul className="mt-1 ml-4 text-xs text-blue-800 list-disc">
+                            <li>Passport (for Citizens)</li>
+                            <li>Permanent Resident Card / PR Card</li>
+                            <li>Work Permit</li>
+                          </ul>
+                        </div>
+                      )}
                       <label className="block">
                         <div className="flex items-center justify-center p-6 transition-all border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50">
                           <div className="text-center">

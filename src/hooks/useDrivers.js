@@ -4,18 +4,18 @@ import { useAuth } from '@clerk/clerk-react'
 const API_URL = import.meta.env.VITE_API_URL
 
 /**
- * Hook to fetch all drivers
- * Caches the result with key: ['drivers']
+ * Hook to fetch all drivers with pagination
+ * Caches the result with key: ['drivers', page, limit]
  */
-export const useDrivers = () => {
+export const useDrivers = (page = 1, limit = 50) => {
   const { getToken } = useAuth()
 
   return useQuery({
-    queryKey: ['drivers'],
+    queryKey: ['drivers', page, limit],
     queryFn: async () => {
       const token = await getToken()
       console.log('🔍 Fetching drivers from API...')
-      const response = await fetch(`${API_URL}/api/drivers?includeDocuments=true`, {
+      const response = await fetch(`${API_URL}/api/drivers?includeDocuments=true&page=${page}&limit=${limit}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const useDrivers = () => {
         console.log('First driver:', result.drivers[0])
       }
 
-      return result.drivers || []
+      return result
     },
   })
 }
@@ -176,15 +176,18 @@ export const useRequestDocuments = () => {
 /**
  * Hook to fetch document types for a company
  * Caches with key: ['documentTypes', companyId]
+ * @param {string} companyId - The company ID
+ * @param {boolean} includeFields - Whether to include field configurations (default: false for backward compatibility)
  */
-export const useDocumentTypes = (companyId) => {
+export const useDocumentTypes = (companyId, includeFields = false) => {
   const { getToken } = useAuth()
 
   return useQuery({
-    queryKey: ['documentTypes', companyId],
+    queryKey: ['documentTypes', companyId, includeFields],
     queryFn: async () => {
       const token = await getToken()
-      const response = await fetch(`${API_URL}/api/document-types/company/${companyId}`, {
+      const queryParam = includeFields ? '?includeFields=true' : ''
+      const response = await fetch(`${API_URL}/api/document-types/company/${companyId}${queryParam}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

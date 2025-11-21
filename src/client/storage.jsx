@@ -7,6 +7,7 @@ import { Folder, Search, FileText, User, AlertCircle } from 'lucide-react'
 import { useDrivers } from '@/hooks/useDrivers'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@clerk/clerk-react'
+import { calculateDriverComplianceStatus } from '@/utils/documentStatusUtils'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -16,7 +17,8 @@ const Storage = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   // Fetch all drivers with React Query caching
-  const { data: drivers = [], isLoading: driversLoading, error: driversError } = useDrivers()
+  const { data: driversData, isLoading: driversLoading, error: driversError } = useDrivers(1, 1000)
+  const drivers = driversData?.drivers || []
 
   // Fetch document counts for all drivers (cached separately)
   const { data: documentCounts = {}, isLoading: countsLoading } = useQuery({
@@ -41,16 +43,21 @@ const Storage = () => {
     cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   })
 
-  // Calculate compliance status from driver documents
+  // Calculate compliance status from driver documents using shared utility
   const getComplianceStatus = (driver) => {
     const count = documentCounts[driver.id] || 0
 
-    // If no documents, status is critical
+    // Use shared utility function for consistent compliance calculation
+    // Note: driver.documents may not be available here, so we use the legacy counts if available
+    if (driver.documents && driver.documents.length > 0) {
+      return calculateDriverComplianceStatus(driver.documents, count)
+    }
+
+    // Fallback for when documents aren't included (legacy support)
     if (count === 0) {
       return 'No Documents'
     }
 
-    // Check if driver has expiringDocumentsCount or expiredDocumentsCount
     if (driver.expiredDocumentsCount > 0) {
       return 'Critical'
     }
