@@ -14,9 +14,73 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Add your Clerk Publishable Key to the .env file");
 }
 
+const clerkAppearance = {
+  layout: {
+    logoImageUrl: "/logo.png",
+    logoPlacement: "inside",
+  },
+  variables: {
+    colorPrimary: "#2563eb", // blue-600
+    colorBackground: "#ffffff",
+    colorText: "#0f172a", // slate-900
+    colorTextSecondary: "#475569", // slate-600
+    colorDanger: "#dc2626",
+    colorSuccess: "#16a34a",
+    colorWarning: "#ea580c",
+    colorInputBackground: "#ffffff",
+    colorInputText: "#0f172a",
+    borderRadius: "0.5rem",
+    fontFamily: "system-ui, -apple-system, sans-serif",
+  },
+  elements: {
+    formButtonPrimary: {
+      background: "linear-gradient(to right, #2563eb, #1d4ed8, #0891b2)", // blue-600 -> blue-700 -> cyan-600
+      color: "#ffffff",
+      "&:hover": {
+        background: "linear-gradient(to right, #1d4ed8, #1e40af, #0e7490)",
+      },
+    },
+    card: {
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+    },
+    headerTitle: {
+      color: "#0f172a",
+    },
+    headerSubtitle: {
+      color: "#475569",
+    },
+    socialButtonsBlockButton: {
+      border: "1px solid #e2e8f0",
+      "&:hover": {
+        background: "#f8fafc",
+      },
+    },
+    formFieldInput: {
+      border: "1px solid #e2e8f0",
+      "&:focus": {
+        borderColor: "#2563eb",
+        boxShadow: "0 0 0 3px rgba(37, 99, 235, 0.1)",
+      },
+    },
+    footerActionLink: {
+      color: "#2563eb",
+      "&:hover": {
+        color: "#1d4ed8",
+      },
+    },
+    logoImage: {
+      width: "3.5rem",
+      height: "3.5rem",
+    },
+  },
+};
+
 createRoot(document.getElementById("root")).render(
   <ErrorBoundary>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      appearance={clerkAppearance}
+    >
       <QueryClientProvider client={queryClient}>
         <App />
         <Toaster />

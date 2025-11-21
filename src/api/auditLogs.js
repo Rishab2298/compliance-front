@@ -24,8 +24,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export const getAuditLogs = async (params = {}, token) => {
   const queryParams = new URLSearchParams();
 
+  // Convert page to offset for backend
+  const { page, limit, ...restParams } = params;
+  const offset = page && limit ? (page - 1) * limit : 0;
+
   // Add all non-null parameters to query string
-  Object.entries(params).forEach(([key, value]) => {
+  Object.entries({ ...restParams, offset, limit }).forEach(([key, value]) => {
     if (value !== null && value !== undefined && value !== '') {
       queryParams.append(key, value);
     }
@@ -146,7 +150,9 @@ export const verifyLogIntegrity = async (companyId = null, logType = 'audit', to
  * @returns {Promise<Blob>} - File blob for download
  */
 export const exportAuditLogs = async (params = {}, format = 'csv', token) => {
-  const queryParams = new URLSearchParams({ ...params, format });
+  // Remove page/limit from export params (export gets all matching records)
+  const { page, limit, ...restParams } = params;
+  const queryParams = new URLSearchParams({ ...restParams, format });
 
   const response = await fetch(`${API_URL}/api/audit-logs/export?${queryParams.toString()}`, {
     method: 'GET',

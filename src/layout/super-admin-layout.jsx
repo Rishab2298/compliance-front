@@ -78,11 +78,11 @@ const SuperAdminLayout = ({ ...props }) => {
         url: "/super-admin/users",
         icon: Users,
       },
-      {
-        name: "Analytics",
-        url: "/super-admin/analytics",
-        icon: BarChart3,
-      },
+      // {
+      //   name: "Analytics",
+      //   url: "/super-admin/analytics",
+      //   icon: BarChart3,
+      // },
       {
         name: "AI Usage",
         url: "/super-admin/ai-usage",
@@ -108,11 +108,11 @@ const SuperAdminLayout = ({ ...props }) => {
         url: "/super-admin/billing",
         icon: CreditCard,
       },
-      {
-        name: "Settings",
-        url: "/super-admin/settings",
-        icon: Settings,
-      },
+      // {
+      //   name: "Settings",
+      //   url: "/super-admin/settings",
+      //   icon: Settings,
+      // },
     ],
   };
 

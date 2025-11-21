@@ -79,7 +79,7 @@ const AppLayout = ({ ...props }) => {
       {
         name: "Complyo",
         logo: "/logo.png", // Use image path instead of icon
-        plan:  "Compliance",
+        plan: companyDetails?.name || "Your Company",
       },
     ],
     navMain:[],

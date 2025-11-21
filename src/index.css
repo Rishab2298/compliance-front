@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.cl-internal-1dauvpw{
+    display:none;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

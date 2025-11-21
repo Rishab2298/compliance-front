@@ -65,9 +65,7 @@ const AuditLogs = () => {
 
   // Filter states
   const [filters, setFilters] = useState({
-    category: 'all',
     action: 'all',
-    severity: 'all',
     startDate: '',
     endDate: '',
     search: '',
@@ -155,9 +153,7 @@ const AuditLogs = () => {
 
   const handleClearFilters = () => {
     setFilters({
-      category: 'all',
       action: 'all',
-      severity: 'all',
       startDate: '',
       endDate: '',
       search: '',
@@ -292,7 +288,7 @@ const AuditLogs = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className={getThemeClasses.text.primary(isDarkMode)}>Search</Label>
                 <div className="relative">
@@ -304,43 +300,6 @@ const AuditLogs = () => {
                     className={`pl-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}
                   />
                 </div>
-              </div>
-
-              {!isBillingRole && (
-                <div className="space-y-2">
-                  <Label className={getThemeClasses.text.primary(isDarkMode)}>Category</Label>
-                  <Select value={filters.category} onValueChange={(v) => handleFilterChange('category', v)}>
-                    <SelectTrigger className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
-                      <SelectValue placeholder="All" />
-                    </SelectTrigger>
-                    <SelectContent className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="AUTHENTICATION">Authentication</SelectItem>
-                      <SelectItem value="AUTHORIZATION">Authorization</SelectItem>
-                      <SelectItem value="DOCUMENT_MANAGEMENT">Documents</SelectItem>
-                      <SelectItem value="DRIVER_MANAGEMENT">Drivers</SelectItem>
-                      <SelectItem value="USER_MANAGEMENT">Users</SelectItem>
-                      <SelectItem value="BILLING">Billing</SelectItem>
-                      <SelectItem value="SYSTEM">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label className={getThemeClasses.text.primary(isDarkMode)}>Severity</Label>
-                <Select value={filters.severity} onValueChange={(v) => handleFilterChange('severity', v)}>
-                  <SelectTrigger className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}>
-                    <SelectItem value="all">All Severities</SelectItem>
-                    <SelectItem value="LOW">Low</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
-                    <SelectItem value="CRITICAL">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
