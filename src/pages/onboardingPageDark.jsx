@@ -1647,13 +1647,13 @@ export default function OnboardingDark() {
             </button>
 
             <div className="flex items-center gap-3">
-              {currentStep < totalSteps && currentStep <= 3 && (
+              {/* {currentStep < totalSteps && currentStep <= 3 && (
                 <button
                   onClick={() => setCurrentStep(totalSteps)}
                   className="px-6 py-3 font-medium transition-colors rounded-[10px] text-slate-400 hover:text-slate-300">
                   Skip to finish
                 </button>
-              )}
+              )} */}
               <button
                 onClick={handleNext}
                 disabled={isSubmitting}
