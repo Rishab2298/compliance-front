@@ -47,7 +47,7 @@ const Step5 = ({ formData, updateFormData, setCurrentStep, isProcessing, setIsPr
       toast.success(
         `Successfully scanned ${documentIds.length} document${documentIds.length !== 1 ? 's' : ''}!`,
         {
-          description: `Used ${result.totalCreditsUsed} credit${result.totalCreditsUsed !== 1 ? 's' : ''}. ${result.creditsRemaining} credits remaining.`,
+          description: `Used ${result.summary?.totalCreditsUsed || 0} credit${(result.summary?.totalCreditsUsed || 0) !== 1 ? 's' : ''}. ${result.summary?.creditsRemaining || 0} credits remaining.`,
         }
       );
 
@@ -299,22 +299,22 @@ const ManualEntrySlider = ({ formData, setCurrentStep, documentTypes = [] }) => 
   return (
     <div className="p-0 bg-white shadow-lg rounded-xl animate-fadeIn">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-4 md:p-6 border-b border-gray-200">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">
               Enter Document Details ({currentIndex + 1} of {uploadedDocuments.length})
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs md:text-sm text-gray-500">
               Fill in the details for {currentDocument.filename}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex overflow-hidden">
+      <div className="flex flex-col lg:flex-row overflow-hidden">
         {/* Left Side - Image Viewer */}
-        <div className="flex flex-col flex-1 p-6 border-r border-gray-200 bg-gray-50">
+        <div className="flex flex-col flex-1 p-4 md:p-6 border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900">Document Preview</h3>
             <div className="flex items-center gap-2">
@@ -338,7 +338,7 @@ const ManualEntrySlider = ({ formData, setCurrentStep, documentTypes = [] }) => 
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center overflow-auto bg-white rounded-[10px] border border-gray-200 min-h-[400px]">
+          <div className="flex-1 flex items-center justify-center overflow-auto bg-white rounded-[10px] border border-gray-200 min-h-[300px] md:min-h-[400px]">
             {loadingImage ? (
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
@@ -358,7 +358,7 @@ const ManualEntrySlider = ({ formData, setCurrentStep, documentTypes = [] }) => 
         </div>
 
         {/* Right Side - Form */}
-        <div className="w-[450px] p-6 flex flex-col">
+        <div className="w-full lg:w-[450px] p-4 md:p-6 flex flex-col">
           <div className="flex-1 space-y-6 overflow-auto">
             {/* Document Type */}
             <div className="space-y-2">
@@ -450,19 +450,20 @@ const ManualEntrySlider = ({ formData, setCurrentStep, documentTypes = [] }) => 
           </div>
 
           {/* Footer Buttons */}
-          <div className="pt-6 mt-6 space-y-3 border-t border-gray-200">
-            <div className="flex items-center justify-between gap-3">
+          <div className="pt-4 md:pt-6 mt-4 md:mt-6 space-y-3 border-t border-gray-200">
+            <div className="flex items-center justify-between gap-2 md:gap-3">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
-                className="rounded-[10px]"
+                className="rounded-[10px] flex-1 sm:flex-none"
+                size="sm"
               >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
+                <ChevronLeft className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Previous</span>
               </Button>
 
-              <span className="text-sm text-gray-600">
+              <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
                 {currentIndex + 1} / {uploadedDocuments.length}
               </span>
 
@@ -470,26 +471,27 @@ const ManualEntrySlider = ({ formData, setCurrentStep, documentTypes = [] }) => 
                 variant="outline"
                 onClick={handleNext}
                 disabled={currentIndex === uploadedDocuments.length - 1}
-                className="rounded-[10px]"
+                className="rounded-[10px] flex-1 sm:flex-none"
+                size="sm"
               >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="w-4 h-4 sm:ml-2" />
               </Button>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
                 onClick={handleSkip}
                 disabled={saving}
-                className="flex-1 rounded-[10px]"
+                className="w-full sm:flex-1 rounded-[10px]"
               >
                 Skip
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+                className="w-full sm:flex-1 bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
               >
                 {saving ? (
                   <>

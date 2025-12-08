@@ -34,6 +34,7 @@ import { useCompany } from '@/hooks/useCompany';
 import { useUser } from '@clerk/clerk-react';
 import CreateReminderDialog from '@/components/CreateReminderDialog';
 import CalendarView from '@/components/CalendarView';
+import { DashboardHeader } from '@/components/DashboardHeader';
 
 const Reminders = () => {
   const navigate = useNavigate();
@@ -210,71 +211,79 @@ const Reminders = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div>
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Reminders</h1>
-            {isLoading ? (
-              <Skeleton className="h-4 w-48 mt-1 rounded-[10px]" />
-            ) : (
-              <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                {stats.total} document{stats.total !== 1 ? 's' : ''} requiring attention
-                {customReminders.length > 0 && ` • ${customReminders.length} custom reminder${customReminders.length !== 1 ? 's' : ''}`}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            {/* View Mode Toggle */}
-            <div className={`flex items-center gap-1 p-1 rounded-[10px] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className={`rounded-[8px] ${
-                  viewMode === 'list'
-                    ? getThemeClasses.button.primary(isDarkMode)
-                    : isDarkMode
-                    ? 'text-slate-400 hover:text-white hover:bg-slate-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'calendar' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('calendar')}
-                className={`rounded-[8px] ${
-                  viewMode === 'calendar'
-                    ? getThemeClasses.button.primary(isDarkMode)
-                    : isDarkMode
-                    ? 'text-slate-400 hover:text-white hover:bg-slate-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <CalendarIcon className="w-4 h-4" />
-              </Button>
-            </div>
-
+      <DashboardHeader title="Reminders">
+        <div className="flex items-center gap-2">
+          {/* View Mode Toggle */}
+          <div className={`flex items-center gap-1 p-1 rounded-[10px] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
             <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-              className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className={`rounded-[8px] ${
+                viewMode === 'list'
+                  ? getThemeClasses.button.primary(isDarkMode)
+                  : isDarkMode
+                  ? 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Reminder
+              <List className="w-4 h-4" />
             </Button>
-
             <Button
-              onClick={() => navigate('/client/settings')}
-              variant="outline"
-              className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
+              variant={viewMode === 'calendar' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('calendar')}
+              className={`rounded-[8px] ${
+                viewMode === 'calendar'
+                  ? getThemeClasses.button.primary(isDarkMode)
+                  : isDarkMode
+                  ? 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
             >
-              <Bell className="w-4 h-4 mr-2" />
-              Settings
+              <CalendarIcon className="w-4 h-4" />
             </Button>
           </div>
+
+          {/* Create Reminder - responsive */}
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Create Reminder
+          </Button>
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className={`rounded-[10px] sm:hidden ${getThemeClasses.button.primary(isDarkMode)}`}
+            size="icon"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+
+          {/* Settings - hide on mobile */}
+          <Button
+            onClick={() => navigate('/client/settings')}
+            variant="outline"
+            className={`rounded-[10px] hidden md:flex ${getThemeClasses.button.secondary(isDarkMode)}`}
+          >
+            <Bell className="w-4 h-4 mr-2" />
+            Settings
+          </Button>
         </div>
-      </header>
+      </DashboardHeader>
+
+      {/* Subtitle - below header */}
+      <div className={`px-4 md:px-6 py-2 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-gray-50 border-gray-200'}`}>
+        {isLoading ? (
+          <Skeleton className="h-4 w-48 rounded-[10px]" />
+        ) : (
+          <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+            {stats.total} document{stats.total !== 1 ? 's' : ''} requiring attention
+            {customReminders.length > 0 && ` • ${customReminders.length} custom reminder${customReminders.length !== 1 ? 's' : ''}`}
+          </p>
+        )}
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

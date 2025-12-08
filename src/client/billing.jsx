@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 import CreditPurchaseModal from '@/components/CreditPurchaseModal'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import { DashboardHeader } from '@/components/DashboardHeader'
 
 const Billing = () => {
   const { user } = useUser()
@@ -155,19 +156,16 @@ const Billing = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Billing</h1>
-          {loading ? (
-            <Skeleton className="h-6 w-20 rounded-[10px]" />
-          ) : currentPlan ? (
-            <Badge className={`rounded-[10px] text-xs ${getThemeClasses.badge.success(isDarkMode)}`}>
-              <CheckCircle className="w-3.5 h-3.5 mr-1.5" />
-              {currentPlan.status.charAt(0).toUpperCase() + currentPlan.status.slice(1)}
-            </Badge>
-          ) : null}
-        </div>
-      </header>
+      <DashboardHeader title="Billing">
+        {loading ? (
+          <Skeleton className="h-6 w-20 rounded-[10px]" />
+        ) : currentPlan ? (
+          <Badge className={`rounded-[10px] text-xs ${getThemeClasses.badge.success(isDarkMode)}`}>
+            <CheckCircle className="w-3.5 h-3.5 mr-1.5" />
+            {currentPlan.status.charAt(0).toUpperCase() + currentPlan.status.slice(1)}
+          </Badge>
+        ) : null}
+      </DashboardHeader>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

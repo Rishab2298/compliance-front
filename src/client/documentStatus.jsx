@@ -10,6 +10,7 @@ import { useAuth } from '@clerk/clerk-react'
 import { getDocumentDownloadUrl } from '@/api/documents'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import { DashboardHeader } from '@/components/DashboardHeader'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -140,11 +141,7 @@ const DocumentStatus = () => {
   if (isLoading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Status</h1>
-          </div>
-        </header>
+        <DashboardHeader title="Document Status" />
 
         <div className="flex-1 py-8">
           <div className="container w-full px-6 mx-auto space-y-6">
@@ -188,11 +185,7 @@ const DocumentStatus = () => {
   if (error) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-          <div className="container flex items-center justify-between w-full px-6 mx-auto">
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Status</h1>
-          </div>
-        </header>
+        <DashboardHeader title="Document Status" />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <AlertCircle className={`w-8 h-8 ${isDarkMode ? 'text-red-400' : 'text-red-500'}`} />
@@ -217,20 +210,26 @@ const DocumentStatus = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div>
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Status</h1>
-            <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{totalCount} total document{totalCount !== 1 ? 's' : ''}</p>
-          </div>
-          <Button
-            onClick={() => navigate('/client/drivers')}
-            className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
-          >
-            View All Drivers
-          </Button>
-        </div>
-      </header>
+      <DashboardHeader title="Document Status">
+        <Button
+          onClick={() => navigate('/client/drivers')}
+          className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+        >
+          View All Drivers
+        </Button>
+        <Button
+          onClick={() => navigate('/client/drivers')}
+          className={`rounded-[10px] sm:hidden ${getThemeClasses.button.primary(isDarkMode)}`}
+          size="icon"
+        >
+          <User className="w-4 h-4" />
+        </Button>
+      </DashboardHeader>
+
+      {/* Subtitle - below header */}
+      <div className={`px-4 md:px-6 py-2 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-gray-50 border-gray-200'}`}>
+        <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{totalCount} total document{totalCount !== 1 ? 's' : ''}</p>
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

@@ -17,6 +17,7 @@ import {
 import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeClasses } from '@/utils/themeClasses';
 import { usePermissions } from '@/hooks/usePermissions';
+import { DashboardHeader } from '@/components/DashboardHeader';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -225,58 +226,57 @@ const AuditLogs = () => {
         </>
       )}
 
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div className="flex items-center gap-3">
-            <FileText className={`w-6 h-6 ${getThemeClasses.text.primary(isDarkMode)}`} />
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              Audit Logs
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => verifyMutation.mutate()}
-              disabled={verifyMutation.isPending}
-              className="gap-2"
-            >
-              <Shield className="w-4 h-4" />
-              Verify Integrity
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportMutation.mutate('csv')}
-              disabled={exportMutation.isPending}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Export CSV
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => exportMutation.mutate('json')}
-              disabled={exportMutation.isPending}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Export JSON
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={isLoading}
-              className="gap-2"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
+      <DashboardHeader title="Audit Logs">
+        <div className="flex items-center gap-2">
+          {/* Verify - hide on mobile */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => verifyMutation.mutate()}
+            disabled={verifyMutation.isPending}
+            className="gap-2 hidden md:flex"
+          >
+            <Shield className="w-4 h-4" />
+            Verify Integrity
+          </Button>
+
+          {/* Export CSV - hide text on mobile */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportMutation.mutate('csv')}
+            disabled={exportMutation.isPending}
+            className="gap-2 hidden sm:flex"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </Button>
+
+          {/* Export JSON - hide on small screens */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportMutation.mutate('json')}
+            disabled={exportMutation.isPending}
+            className="gap-2 hidden lg:flex"
+          >
+            <Download className="w-4 h-4" />
+            Export JSON
+          </Button>
+
+          {/* Refresh - always visible */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isLoading}
+            className="gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
+          </Button>
         </div>
-      </header>
+      </DashboardHeader>
 
       <main className="container px-6 py-8 mx-auto relative z-[1]">
         {/* Filters */}

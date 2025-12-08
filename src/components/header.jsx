@@ -9,7 +9,7 @@ const Header = () => {
 
   return (
    <>
-   <header className={`w-full h-[80px] flex items-center justify-between py-4 px-16 border-b ${
+   <header className={`w-full h-[80px] flex items-center justify-between py-4 px-4 md:px-8 lg:px-16 border-b ${
      isDarkMode
        ? 'bg-slate-900/95 backdrop-blur-xl border-slate-800'
        : 'bg-slate-100 border-slate-200'

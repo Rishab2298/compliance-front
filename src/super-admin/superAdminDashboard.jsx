@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import { DashboardHeader } from '@/components/DashboardHeader'
 import { useDashboardStats, useRecentActivity } from '@/hooks/useSuperAdmin'
 
 const SuperAdminDashboard = () => {
@@ -50,22 +51,19 @@ const SuperAdminDashboard = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div>
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              Super Admin Dashboard
-            </h1>
-            <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-              Welcome back, {user?.firstName || 'Admin'}
-            </p>
-          </div>
-          <Badge className={`rounded-[10px] text-xs ${getThemeClasses.badge.success(isDarkMode)}`}>
-            <Shield className="w-3.5 h-3.5 mr-1.5" />
-            Super Admin
-          </Badge>
-        </div>
-      </header>
+      <DashboardHeader title="Super Admin Dashboard">
+        <Badge className={`rounded-[10px] text-xs ${getThemeClasses.badge.success(isDarkMode)}`}>
+          <Shield className="w-3.5 h-3.5 mr-1.5" />
+          Super Admin
+        </Badge>
+      </DashboardHeader>
+
+      {/* Welcome subtitle */}
+      <div className={`px-4 md:px-6 py-2 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-gray-50 border-gray-200'}`}>
+        <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+          Welcome back, {user?.firstName || 'Admin'}
+        </p>
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

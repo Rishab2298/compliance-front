@@ -18,6 +18,7 @@ import { toast } from 'sonner'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
 import DocumentTypeManager from '@/components/DocumentTypeManager'
+import { DashboardHeader } from '@/components/DashboardHeader'
 
 const Settings = () => {
   const { user } = useUser()
@@ -102,28 +103,37 @@ const Settings = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Settings</h1>
-          <Button
-            onClick={handleSaveSettings}
-            disabled={saving}
-            className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
-          >
-            {saving ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Saving
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </div>
-      </header>
+      <DashboardHeader title="Settings">
+        <Button
+          onClick={handleSaveSettings}
+          disabled={saving}
+          className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+        >
+          {saving ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Saving
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          )}
+        </Button>
+        <Button
+          onClick={handleSaveSettings}
+          disabled={saving}
+          className={`rounded-[10px] sm:hidden ${getThemeClasses.button.primary(isDarkMode)}`}
+          size="icon"
+        >
+          {saving ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
+        </Button>
+      </DashboardHeader>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

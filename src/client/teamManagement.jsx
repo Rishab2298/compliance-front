@@ -6,6 +6,7 @@ import { Users, UserPlus, Pencil, Trash2, Mail, Shield, Eye } from 'lucide-react
 import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeClasses } from '@/utils/themeClasses';
 import { usePermissions } from '@/hooks/usePermissions';
+import { DashboardHeader } from '@/components/DashboardHeader';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -265,24 +266,24 @@ const TeamManagement = () => {
         </>
       )}
 
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div className="flex items-center gap-3">
-            <Users className={`w-6 h-6 ${getThemeClasses.text.primary(isDarkMode)}`} />
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              Team Management
-            </h1>
-          </div>
-          <Button
-            onClick={() => setInviteDialogOpen(true)}
-            disabled={teamMembers.length >= 5}
-            className={`rounded-[10px] gap-2 ${getThemeClasses.button.primary(isDarkMode)}`}
-          >
-            <UserPlus className="w-4 h-4" />
-            Invite Team Member {teamMembers.length >= 5 && '(Limit Reached)'}
-          </Button>
-        </div>
-      </header>
+      <DashboardHeader title="Team Management">
+        <Button
+          onClick={() => setInviteDialogOpen(true)}
+          disabled={teamMembers.length >= 5}
+          className={`rounded-[10px] gap-2 hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+        >
+          <UserPlus className="w-4 h-4" />
+          Invite Team Member {teamMembers.length >= 5 && '(Limit Reached)'}
+        </Button>
+        <Button
+          onClick={() => setInviteDialogOpen(true)}
+          disabled={teamMembers.length >= 5}
+          className={`rounded-[10px] sm:hidden ${getThemeClasses.button.primary(isDarkMode)}`}
+          size="icon"
+        >
+          <UserPlus className="w-4 h-4" />
+        </Button>
+      </DashboardHeader>
 
       <main className="container px-6 py-8 mx-auto relative z-[1]">
         <Card className={isDarkMode ? 'bg-slate-900/50 border-slate-800' : ''}>

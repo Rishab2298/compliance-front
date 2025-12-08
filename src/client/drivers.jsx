@@ -12,6 +12,7 @@ import { Upload, AlertTriangle } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
 import { usePermissions } from '@/hooks/usePermissions'
+import { DashboardHeader } from '@/components/DashboardHeader'
 
 const Drivers = () => {
   const { user } = useUser()
@@ -115,29 +116,36 @@ const Drivers = () => {
         </>
       )}
 
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Drivers Management</h1>
-          <div className="flex items-center gap-3">
-            {canCreateDrivers && (
+      <DashboardHeader title="Drivers Management">
+        <div className="flex items-center gap-2">
+          {canCreateDrivers && (
+            <>
               <Button
                 onClick={() => setCsvDialogOpen(true)}
                 variant="outline"
-                className={`rounded-[10px] gap-2 ${getThemeClasses.button.secondary(isDarkMode)}`}
+                className={`rounded-[10px] gap-2 hidden sm:flex ${getThemeClasses.button.secondary(isDarkMode)}`}
               >
                 <Upload className="w-4 h-4" />
                 Import CSV
               </Button>
-            )}
-            <Button
-              onClick={() => window.location.href = '/client/settings'}
-              className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
-            >
-              Settings
-            </Button>
-          </div>
+              <Button
+                onClick={() => setCsvDialogOpen(true)}
+                variant="outline"
+                className={`rounded-[10px] sm:hidden ${getThemeClasses.button.secondary(isDarkMode)}`}
+                size="icon"
+              >
+                <Upload className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+          <Button
+            onClick={() => window.location.href = '/client/settings'}
+            className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+          >
+            Settings
+          </Button>
         </div>
-      </header>
+      </DashboardHeader>
       <div className='flex-1 py-8'>
         {loading ? (
           <div className="container w-full px-6 mx-auto space-y-6">

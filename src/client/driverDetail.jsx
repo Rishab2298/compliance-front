@@ -18,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { getDocumentDownloadUrl, deleteDocument } from '@/api/documents'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
+import { DashboardHeader } from '@/components/DashboardHeader'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -604,12 +605,9 @@ const DriverDetail = () => {
   if (loading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
-          <div className="container flex items-center w-full gap-4 px-6 mx-auto">
-            <Skeleton className="h-10 w-20 rounded-[10px]" />
-            <Skeleton className="h-6 w-48 rounded-[10px]" />
-          </div>
-        </header>
+        <DashboardHeader title="Driver Details">
+          <Skeleton className="h-10 w-20 rounded-[10px]" />
+        </DashboardHeader>
         <div className="flex-1 py-8">
           <div className="container w-full px-6 mx-auto space-y-6">
             <Skeleton className="h-32 w-full rounded-[10px]" />
@@ -623,18 +621,16 @@ const DriverDetail = () => {
   if ((error || !driver) && !loading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
-          <div className="container flex items-center w-full gap-4 px-6 mx-auto">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/client/drivers')}
-              className="rounded-[10px]"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </div>
-        </header>
+        <DashboardHeader title="Driver Details">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/client/drivers')}
+            className="rounded-[10px]"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+        </DashboardHeader>
         <div className="flex-1 py-8">
           <div className="container w-full px-6 mx-auto">
             <div className="p-6 text-center border border-red-200 rounded-[10px] bg-red-50">
@@ -660,80 +656,97 @@ const DriverDetail = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 ${getThemeClasses.bg.header(isDarkMode)} ${getThemeClasses.border.primary(isDarkMode)} border-b shrink-0`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/client/drivers')}
-              className="rounded-[10px]"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Driver Details</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={handleRequestDocuments}
-              disabled={sendingRequest}
-              className="rounded-[10px]"
-            >
-              {sendingRequest ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Mailing
-                </>
-              ) : (
-                <>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Request Documents
-                </>
-              )}
-            </Button>
+      <DashboardHeader
+        title="Driver Details"
+        breadcrumbs={[
+          { label: 'Drivers', href: '/client/drivers' },
+          { label: driver.name }
+        ]}
+      >
+        <div className="flex items-center gap-2">
+          {/* Back button - mobile only */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/client/drivers')}
+            className="rounded-[10px] md:hidden"
+            size="icon"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
 
-            {!isEditing ? (
-              <Button
-                onClick={handleEdit}
-                className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
-              >
-                <Edit2 className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
+          {/* Request Documents - responsive */}
+          <Button
+            variant="outline"
+            onClick={handleRequestDocuments}
+            disabled={sendingRequest}
+            className="rounded-[10px] hidden sm:flex"
+          >
+            {sendingRequest ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Mailing
+              </>
             ) : (
               <>
-                <Button
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={saving}
-                  className="rounded-[10px]"
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Changes
-                    </>
-                  )}
-                </Button>
+                <Mail className="w-4 h-4 mr-2" />
+                Request Documents
               </>
             )}
-          </div>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleRequestDocuments}
+            disabled={sendingRequest}
+            className="rounded-[10px] sm:hidden"
+            size="icon"
+          >
+            {sendingRequest ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Mail className="w-4 h-4" />
+            )}
+          </Button>
+
+          {!isEditing ? (
+            <Button
+              onClick={handleEdit}
+              className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+            >
+              <Edit2 className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Edit</span>
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                disabled={saving}
+                className="rounded-[10px] hidden sm:flex"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" />
+                    <span className="hidden sm:inline">Saving</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Save Changes</span>
+                  </>
+                )}
+              </Button>
+            </>
+          )}
         </div>
-      </header>
+      </DashboardHeader>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

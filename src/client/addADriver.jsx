@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Check, CheckCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useUser } from "@clerk/clerk-react";
@@ -15,6 +15,7 @@ import Step6 from "@/components/add-a-driver/step6";
 import Step7 from "@/components/add-a-driver/step7";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/utils/themeClasses";
+import { DashboardHeader } from "@/components/DashboardHeader";
 
 export default function AddADriver() {
   const navigate = useNavigate();
@@ -116,9 +117,9 @@ export default function AddADriver() {
     }
   };
 
-  const updateFormData = (updates) => {
-    setFormData({ ...formData, ...updates });
-  };
+  const updateFormData = useCallback((updates) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   const validateStep = (step) => {
     const newErrors = {};
@@ -348,19 +349,55 @@ export default function AddADriver() {
   };
 
   return (
-    <div className={`fixed inset-0 w-full h-full overflow-y-auto ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-gray-50'}`}>
-      <div className="container max-w-4xl min-h-full px-6 py-8 mx-auto">
-        {/* Header */}
-        <div className="justify-center w-full mb-8 text-center">
-          <h1 className={`text-2xl font-bold text-center ${getThemeClasses.text.primary(isDarkMode)}`}>Add a Driver</h1>
-          <p className={`mt-1 text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
-            Complete the steps below to add a new driver to your roster
-          </p>
-        </div>
+    <div className={`flex flex-col w-full min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-gray-50'}`}>
+      {/* Decorative elements for dark mode */}
+      {isDarkMode && (
+        <>
+          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        </>
+      )}
 
+      {/* Header */}
+      <DashboardHeader
+        title="Add a Driver"
+        breadcrumbs={[
+          { label: 'Drivers', href: '/client/drivers' },
+          { label: 'Add Driver' }
+        ]}
+      />
+
+      {/* Subtitle */}
+      <div className={`px-4 md:px-6 py-3 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-gray-200'}`}>
+        <p className={`text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
+          Complete the steps below to add a new driver to your roster
+        </p>
+      </div>
+
+      <div className="container max-w-4xl px-4 sm:px-6 py-6 md:py-8 mx-auto">
         {/* Step Indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 md:mb-8">
+          {/* Mobile: Single line showing current step */}
+          <div className="md:hidden mb-6">
+            <div className={`text-center py-3 px-4 rounded-lg ${isDarkMode ? 'bg-slate-800/50 border border-slate-700' : 'bg-gray-100 border border-gray-200'}`}>
+              <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                Step {currentStep} of {steps.length}
+              </p>
+              <p className={`text-sm font-semibold mt-0.5 ${getThemeClasses.text.primary(isDarkMode)}`}>
+                {steps[currentStep - 1].title}
+              </p>
+            </div>
+            {/* Mini progress bar */}
+            <div className={`mt-3 h-1.5 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-800' : 'bg-gray-200'}`}>
+              <div
+                className={`h-full transition-all duration-300 ${isDarkMode ? 'bg-violet-500' : 'bg-gray-800'}`}
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Desktop: Full step indicator with circles */}
+          <div className="hidden md:flex items-center justify-between">
             {steps.map((step, index) => (
               <React.Fragment key={step.number}>
                 <div className="flex flex-col items-center">
@@ -385,7 +422,7 @@ export default function AddADriver() {
                     )}
                   </div>
                   <span
-                    className={`mt-2 text-xs font-medium ${
+                    className={`mt-2 text-xs font-medium text-center ${
                       step.number === currentStep
                         ? getThemeClasses.text.primary(isDarkMode)
                         : step.number < currentStep
@@ -904,12 +941,12 @@ export default function AddADriver() {
 
           {/* Action Buttons */}
           {currentStep <= 8 && (
-            <div className={`flex justify-between pt-6 mt-6 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
+            <div className={`flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 pt-6 mt-6 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}`}>
               <button
                 type="button"
                 onClick={handleBack}
                 disabled={isSubmitting || (currentStep === 8 && formData.documentOption === "skip")}
-                className={`px-6 py-2.5 border rounded-[10px] font-medium transition-all ${
+                className={`w-full sm:w-auto px-6 py-2.5 border rounded-[10px] font-medium transition-all order-2 sm:order-1 ${
                   isSubmitting || (currentStep === 8 && formData.documentOption === "skip")
                     ? isDarkMode
                       ? "text-slate-600 border-slate-700 cursor-not-allowed"
@@ -931,7 +968,7 @@ export default function AddADriver() {
                     : handleNext
                 }
                 disabled={isSubmitting || creatingDriver}
-                className={`px-8 py-2.5 font-medium text-white transition-all rounded-[10px] ${
+                className={`w-full sm:w-auto px-6 sm:px-8 py-2.5 font-medium text-white transition-all rounded-[10px] order-1 sm:order-2 ${
                   isSubmitting || creatingDriver
                     ? isDarkMode
                       ? "bg-slate-700 cursor-not-allowed"

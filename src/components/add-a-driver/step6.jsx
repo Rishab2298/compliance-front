@@ -343,34 +343,34 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
   return (
     <div className="p-0 bg-white shadow-lg rounded-xl animate-fadeIn">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-xl font-semibold text-gray-900">
+      <div className="p-4 md:p-6 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div className="flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900">
                 Verify Document Details ({currentIndex + 1} of {uploadedDocuments.length})
               </h2>
-              <div className="flex items-center px-2 py-1 bg-purple-100 rounded-full">
+              <div className="flex items-center px-2 py-1 bg-purple-100 rounded-full w-fit">
                 <Sparkles className="w-3 h-3 mr-1 text-purple-600" />
                 <span className="text-xs font-medium text-purple-700">AI Extracted</span>
               </div>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs md:text-sm text-gray-500">
               Review and correct the AI-extracted data for {currentDocument.filename}
             </p>
           </div>
           <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-[10px]">
             <CheckCircle className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-xs md:text-sm font-medium text-gray-900">
               {totalVerified} / {uploadedDocuments.length} verified
             </span>
           </div>
         </div>
       </div>
 
-      <div className="flex overflow-hidden">
+      <div className="flex flex-col lg:flex-row overflow-hidden">
         {/* Left Side - Image Viewer */}
-        <div className="flex flex-col flex-1 p-6 border-r border-gray-200 bg-gray-50">
+        <div className="flex flex-col flex-1 p-4 md:p-6 border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900">Document Preview</h3>
             <div className="flex items-center gap-2">
@@ -394,7 +394,7 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center overflow-auto bg-white rounded-[10px] border border-gray-200 min-h-[400px]">
+          <div className="flex-1 flex items-center justify-center overflow-auto bg-white rounded-[10px] border border-gray-200 min-h-[300px] md:min-h-[400px]">
             {loadingImage ? (
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
@@ -424,7 +424,7 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
         </div>
 
         {/* Right Side - Form */}
-        <div className="w-[450px] p-6 flex flex-col">
+        <div className="w-full lg:w-[450px] p-4 md:p-6 flex flex-col">
           <div className="flex-1 space-y-6 overflow-auto">
             {/* AI Confidence Badge */}
             {currentExtractedData?.success && (
@@ -495,19 +495,20 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
           </div>
 
           {/* Footer Buttons */}
-          <div className="pt-6 mt-6 space-y-3 border-t border-gray-200">
-            <div className="flex items-center justify-between gap-3">
+          <div className="pt-4 md:pt-6 mt-4 md:mt-6 space-y-3 border-t border-gray-200">
+            <div className="flex items-center justify-between gap-2 md:gap-3">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
-                className="rounded-[10px]"
+                className="rounded-[10px] flex-1 sm:flex-none"
+                size="sm"
               >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
+                <ChevronLeft className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Previous</span>
               </Button>
 
-              <span className="text-sm text-gray-600">
+              <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
                 {currentIndex + 1} / {uploadedDocuments.length}
               </span>
 
@@ -515,26 +516,27 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
                 variant="outline"
                 onClick={handleNext}
                 disabled={currentIndex === uploadedDocuments.length - 1}
-                className="rounded-[10px]"
+                className="rounded-[10px] flex-1 sm:flex-none"
+                size="sm"
               >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="w-4 h-4 sm:ml-2" />
               </Button>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
                 onClick={handleSkip}
                 disabled={saving || currentIndex === uploadedDocuments.length - 1}
-                className="flex-1 rounded-[10px]"
+                className="w-full sm:flex-1 rounded-[10px]"
               >
                 {currentIndex === uploadedDocuments.length - 1 ? 'Last Document' : 'Skip to Next'}
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
+                className="w-full sm:flex-1 bg-gray-800 text-white hover:bg-gray-900 rounded-[10px]"
               >
                 {saving ? (
                   <>
@@ -553,18 +555,18 @@ const Step6 = ({ formData, updateFormData, extractedData, documentTypes = [], do
             {/* Verification Status Message */}
             {totalVerified === uploadedDocuments.length ? (
               <div className="p-3 bg-green-50 border border-green-200 rounded-[10px]">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-900">
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-medium text-green-900">
                     All documents verified! Click "Next Step" to continue.
                   </span>
                 </div>
               </div>
             ) : (
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-[10px]">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-yellow-600" />
-                  <span className="text-sm font-medium text-yellow-900">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-medium text-yellow-900">
                     Please verify all {uploadedDocuments.length} documents before proceeding ({uploadedDocuments.length - totalVerified} remaining)
                   </span>
                 </div>

@@ -29,6 +29,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
 import { calculateDocumentStatus } from '@/utils/documentStatusUtils'
 import { CreateTicketModal } from './ticketing/CreateTicketModal'
+import { DashboardHeader } from '@/components/DashboardHeader'
 
 const ClientDashboard = () => {
   const navigate = useNavigate()
@@ -189,18 +190,22 @@ const ClientDashboard = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Dashboard</h1>
-          <Button
-            onClick={() => navigate('/client/add-a-driver')}
-            className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px]`}
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Add Driver
-          </Button>
-        </div>
-      </header>
+      <DashboardHeader title="Dashboard">
+        <Button
+          onClick={() => navigate('/client/add-a-driver')}
+          className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px] hidden sm:flex`}
+        >
+          <UserPlus className="w-4 h-4 mr-2" />
+          Add Driver
+        </Button>
+        <Button
+          onClick={() => navigate('/client/add-a-driver')}
+          className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px] sm:hidden`}
+          size="icon"
+        >
+          <UserPlus className="w-4 h-4" />
+        </Button>
+      </DashboardHeader>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

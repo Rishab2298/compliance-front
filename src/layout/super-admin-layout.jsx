@@ -26,6 +26,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
 } from "@/components/ui/sidebar";
 import { ContentLoadingScreen } from "@/components/LoadingScreen";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -121,48 +124,48 @@ const SuperAdminLayout = ({ ...props }) => {
   }
 
   return (
-    <>
-      <div className={`flex w-full h-full ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : ''}`}>
-        <div className="min-h-full w-fit">
-          <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
-              <TeamSwitcher teams={data.teams} />
-            </SidebarHeader>
-            <SidebarContent>
-              <NavProjects projects={data.projects} />
-            </SidebarContent>
-            <SidebarFooter>
-              <NavUser user={data.user} />
-              <div className="px-2 py-2">
-                <button
-                  onClick={toggleTheme}
-                  className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all text-sm ${
-                    isDarkMode
-                      ? 'bg-slate-800 text-violet-400 hover:bg-slate-700 border border-slate-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
-                  }`}
-                  aria-label="Toggle theme"
-                >
-                  {isDarkMode ? (
-                    <>
-                      <Sun className="w-4 h-4" />
-                      <span className="font-medium">Light Mode</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-4 h-4" />
-                      <span className="font-medium">Dark Mode</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </SidebarFooter>
-            <SidebarRail />
-          </Sidebar>
-        </div>
-        <Outlet />
+    <SidebarProvider>
+      <div className={`flex w-full h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : ''}`}>
+        <Sidebar collapsible="icon" {...props}>
+          <SidebarHeader>
+            <TeamSwitcher teams={data.teams} />
+          </SidebarHeader>
+          <SidebarContent>
+            <NavProjects projects={data.projects} />
+          </SidebarContent>
+          <SidebarFooter>
+            <NavUser user={data.user} />
+            <div className="px-2 py-2">
+              <button
+                onClick={toggleTheme}
+                className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all text-sm ${
+                  isDarkMode
+                    ? 'bg-slate-800 text-violet-400 hover:bg-slate-700 border border-slate-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                }`}
+                aria-label="Toggle theme"
+              >
+                {isDarkMode ? (
+                  <>
+                    <Sun className="w-4 h-4" />
+                    <span className="font-medium">Light Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-4 h-4" />
+                    <span className="font-medium">Dark Mode</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </SidebarFooter>
+          <SidebarRail />
+        </Sidebar>
+        <SidebarInset>
+          <Outlet />
+        </SidebarInset>
       </div>
-    </>
+    </SidebarProvider>
   );
 };
 

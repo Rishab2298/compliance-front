@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTickets } from '@/hooks/useTickets';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeClasses } from '@/utils/themeClasses';
+import { DashboardHeader } from '@/components/DashboardHeader';
 import { CreateTicketModal } from './CreateTicketModal';
 import { TicketDetailModal } from './TicketDetailModal';
 import { TicketCard } from './TicketCard';
@@ -86,27 +87,33 @@ export const MyTicketsPage = () => {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
-          <div>
-            <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>My Tickets</h1>
-            {isLoading ? (
-              <Skeleton className="h-4 w-48 mt-1 rounded-[10px]" />
-            ) : (
-              <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                {stats.total} ticket{stats.total !== 1 ? 's' : ''} • Track and manage your support tickets
-              </p>
-            )}
-          </div>
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Report Issue
-          </Button>
-        </div>
-      </header>
+      <DashboardHeader title="My Tickets">
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Report Issue
+        </Button>
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className={`rounded-[10px] sm:hidden ${getThemeClasses.button.primary(isDarkMode)}`}
+          size="icon"
+        >
+          <Plus className="w-4 h-4" />
+        </Button>
+      </DashboardHeader>
+
+      {/* Subtitle */}
+      <div className={`px-4 md:px-6 py-2 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-gray-50 border-gray-200'}`}>
+        {isLoading ? (
+          <Skeleton className="h-4 w-48 rounded-[10px]" />
+        ) : (
+          <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+            {stats.total} ticket{stats.total !== 1 ? 's' : ''} • Track and manage your support tickets
+          </p>
+        )}
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 py-8">

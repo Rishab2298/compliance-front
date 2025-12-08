@@ -215,7 +215,8 @@ const DocumentUploadStep = ({
         filename: f.file.name,
       })),
     });
-  }, [files, updateFormData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files]);
 
   const allFilesUploaded = files.length > 0 && files.every((f) => f.status === 'uploaded');
   const hasErrors = files.some((f) => f.status === 'error');
