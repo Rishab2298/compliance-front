@@ -39,6 +39,7 @@ import CompanyDetailPage from "@/super-admin/CompanyDetailPage";
 import UsersPage from "@/super-admin/UsersPage";
 import TeamManagement from "@/client/teamManagement";
 import AuditLogs from "@/client/auditLogs";
+import Notifications from "@/client/notifications";
 import PolicyAcceptance from "@/pages/PolicyAcceptance";
 import PolicyViewer from "@/pages/PolicyViewer";
 import NotFound from "@/pages/NotFound";
@@ -101,6 +102,7 @@ export const router = createBrowserRouter([
       { path: "/client/team", element: <TeamManagement /> },
       { path: "/client/audit-logs", element: <AuditLogs /> },
       { path: "/client/settings", element: <Settings /> },
+      { path: "/client/notifications", element: <Notifications /> },
       { path: "/client/tickets", element: <MyTicketsPage /> }
     ],
   },

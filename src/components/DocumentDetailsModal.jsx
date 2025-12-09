@@ -281,19 +281,19 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
 
     const commonLabelProps = {
       htmlFor: field.name,
-      className: "text-sm font-medium text-white"
+      className: "text-xs md:text-sm font-medium text-white"
     };
 
     const commonInputProps = {
       id: field.name,
       value: value,
-      className: "rounded-[10px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+      className: "rounded-[10px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 h-9 md:h-10 text-sm"
     };
 
     switch (field.type) {
       case 'text':
         return (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5 md:space-y-2">
             <Label {...commonLabelProps}>
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
@@ -308,7 +308,7 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
 
       case 'date':
         return (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5 md:space-y-2">
             <Label {...commonLabelProps}>
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
@@ -322,7 +322,7 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
 
       case 'number':
         return (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5 md:space-y-2">
             <Label {...commonLabelProps}>
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
@@ -337,7 +337,7 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
 
       case 'select':
         return (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5 md:space-y-2">
             <Label {...commonLabelProps}>
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
@@ -345,12 +345,12 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
               value={value}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, [field.name]: val }))}
             >
-              <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white">
+              <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white h-9 md:h-10 text-sm">
                 <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
               </SelectTrigger>
               <SelectContent className="bg-slate-800 border-slate-700">
                 {field.options?.map((option) => (
-                  <SelectItem key={option} value={option} className="text-white hover:bg-slate-700">
+                  <SelectItem key={option} value={option} className="text-white hover:bg-slate-700 text-sm">
                     {option}
                   </SelectItem>
                 ))}
@@ -361,14 +361,14 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
 
       case 'multiline':
         return (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5 md:space-y-2">
             <Label {...commonLabelProps}>
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
             <Textarea
               {...commonInputProps}
               placeholder={field.description || `Enter ${field.label.toLowerCase()}`}
-              className="rounded-[10px] min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+              className="rounded-[10px] min-h-[80px] md:min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 text-sm"
               onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
             />
           </div>
@@ -382,9 +382,9 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
               id={field.name}
               checked={!!value}
               onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.checked }))}
-              className="rounded border-slate-700 bg-slate-800"
+              className="rounded border-slate-700 bg-slate-800 w-4 h-4"
             />
-            <Label htmlFor={field.name} className="text-sm font-medium text-white cursor-pointer">
+            <Label htmlFor={field.name} className="text-xs md:text-sm font-medium text-white cursor-pointer">
               {field.label} {field.required && <span className="text-red-400">*</span>}
             </Label>
           </div>
@@ -398,54 +398,134 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
   if (!currentDocument) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-2/3 w-full h-[90vh] p-0 bg-slate-900 border-slate-700 text-white">
-        <DialogHeader className="p-6 pb-4 border-b border-slate-700">
-          <div className="flex items-start justify-between">
-            <div>
-              <DialogTitle className="text-xl font-semibold text-white">
-                Enter Document Details ({currentIndex + 1} of {documents.length})
-              </DialogTitle>
-              <p className="mt-1 text-sm text-slate-400">
-                Fill in the details for {currentDocument.fileName}
-              </p>
-            </div>
-            {credits !== null && (
-              <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-[10px]">
-                <Coins className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-medium text-white">{credits} credits</span>
+    <>
+      <style>{`
+        .document-details-modal {
+          max-width: 95vw !important;
+          width: 95vw !important;
+          height: 95vh !important;
+          padding: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+        }
+        .modal-layout {
+          display: flex !important;
+          flex-direction: column !important;
+          flex: 1 !important;
+          overflow: hidden !important;
+        }
+        .modal-image-section {
+          display: flex !important;
+          flex-direction: column !important;
+          max-height: 250px !important;
+          min-height: 200px !important;
+          border-bottom: 1px solid rgb(51 65 85) !important;
+          overflow: hidden !important;
+        }
+        .modal-form-section {
+          display: flex !important;
+          flex-direction: column !important;
+          flex: 1 !important;
+          width: 100% !important;
+          overflow-y: auto !important;
+          max-height: calc(95vh - 250px - 100px) !important;
+        }
+        @media (min-width: 768px) {
+          .document-details-modal {
+            max-width: 90vw !important;
+            width: 90vw !important;
+            height: 90vh !important;
+          }
+          .modal-image-section {
+            max-height: 300px !important;
+          }
+          .modal-form-section {
+            max-height: calc(90vh - 300px - 100px) !important;
+          }
+        }
+        @media (min-width: 1024px) {
+          .document-details-modal {
+            max-width: 80vw !important;
+            width: 80vw !important;
+          }
+          .modal-layout {
+            flex-direction: row !important;
+          }
+          .modal-image-section {
+            flex: 1 !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            border-bottom: none !important;
+            border-right: 1px solid rgb(51 65 85) !important;
+          }
+          .modal-form-section {
+            width: 450px !important;
+            max-height: none !important;
+          }
+        }
+        @media (min-width: 1280px) {
+          .document-details-modal {
+            max-width: 70vw !important;
+            width: 70vw !important;
+          }
+        }
+      `}</style>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent
+          className="document-details-modal bg-slate-900 border-slate-700 text-white"
+          style={{
+            maxWidth: '95vw',
+            width: '100%',
+            height: '95vh',
+            padding: 0,
+          }}
+        >
+          <DialogHeader className="p-4 md:p-6 pb-3 md:pb-4 border-b border-slate-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <DialogTitle className="text-lg md:text-xl font-semibold text-white truncate">
+                  Enter Document Details ({currentIndex + 1} of {documents.length})
+                </DialogTitle>
+                <p className="mt-1 text-xs md:text-sm text-slate-400 truncate">
+                  Fill in the details for {currentDocument.fileName}
+                </p>
               </div>
-            )}
-          </div>
-        </DialogHeader>
+              {credits !== null && (
+                <div className="flex items-center gap-2 px-3 py-1.5 md:py-2 bg-blue-500/10 border border-blue-500/30 rounded-[10px] shrink-0">
+                  <Coins className="w-3 h-3 md:w-4 md:h-4 text-blue-400" />
+                  <span className="text-xs md:text-sm font-medium text-white">{credits} credits</span>
+                </div>
+              )}
+            </div>
+          </DialogHeader>
 
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left Side - Image Viewer */}
-          <div className="flex flex-col flex-1 p-6 border-r border-slate-700 bg-slate-900/50">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-white">Document Preview</h3>
-              <div className="flex items-center gap-2">
+          <div className="modal-layout flex flex-col flex-1 overflow-hidden">
+            {/* Left Side - Image Viewer */}
+            <div className="modal-image-section flex flex-col flex-1 p-4 md:p-6 border-b border-slate-700 bg-slate-900/50">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h3 className="text-xs md:text-sm font-semibold text-white">Document Preview</h3>
+              <div className="flex items-center gap-1 md:gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setZoom(Math.max(50, zoom - 10))}
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white h-8 w-8 p-0"
                 >
-                  <ZoomOut className="w-4 h-4" />
+                  <ZoomOut className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
-                <span className="w-12 text-sm text-center text-slate-300">{zoom}%</span>
+                <span className="w-10 md:w-12 text-xs md:text-sm text-center text-slate-300">{zoom}%</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setZoom(Math.min(200, zoom + 10))}
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white h-8 w-8 p-0"
                 >
-                  <ZoomIn className="w-4 h-4" />
+                  <ZoomIn className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               </div>
             </div>
 
-            <div className="flex-1 flex items-center justify-center overflow-auto bg-slate-800/50 rounded-[10px] border border-slate-700">
+            <div className="flex-1 flex items-center justify-center overflow-auto bg-slate-800/50 rounded-[10px] border border-slate-700 min-h-0">
               {loadingImage ? (
                 <div className="flex flex-col items-center gap-3">
                   <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -455,7 +535,12 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
                 <img
                   src={imageUrl}
                   alt={currentDocument.fileName}
-                  style={{ width: `${zoom}%`, height: 'auto' }}
+                  style={{
+                    width: `${zoom}%`,
+                    height: 'auto',
+                    maxHeight: '100%',
+                    objectFit: 'contain'
+                  }}
                   className="object-contain"
                 />
               ) : (
@@ -465,17 +550,17 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
           </div>
 
           {/* Right Side - Form */}
-          <div className="w-[450px] p-6 flex flex-col">
-            <div className="flex-1 space-y-6 overflow-auto">
+          <div className="modal-form-section w-full p-4 md:p-6 flex flex-col">
+            <div className="flex-1 space-y-4 md:space-y-6 overflow-auto">
               {/* AI Scan Button - Info state with violet/purple gradient */}
-              <div className="p-4 bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-[10px] border border-violet-500/30">
-                <div className="flex items-start justify-between mb-3">
+              <div className="p-3 md:p-4 bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-[10px] border border-violet-500/30">
+                <div className="flex items-start justify-between mb-2 md:mb-3">
                   <div>
-                    <h4 className="flex items-center gap-2 text-sm font-semibold text-white">
-                      <Sparkles className="w-4 h-4 text-violet-400" />
+                    <h4 className="flex items-center gap-2 text-xs md:text-sm font-semibold text-white">
+                      <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-violet-400" />
                       AI Document Scanner
                     </h4>
-                    <p className="mt-1 text-xs text-slate-300">
+                    <p className="mt-1 text-[10px] md:text-xs text-slate-300">
                       Automatically extract document details using AI (1 credit)
                     </p>
                   </div>
@@ -483,16 +568,16 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
                 <Button
                   onClick={handleAIScan}
                   disabled={scanning || credits === null || credits < 1}
-                  className="w-full bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 text-white rounded-[10px] border-0"
+                  className="w-full bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 text-white rounded-[10px] border-0 h-9 md:h-10 text-sm"
                 >
                   {scanning ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-2 animate-spin" />
                       Scanning...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 mr-2" />
+                      <Sparkles className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                       Scan with AI
                     </>
                   )}
@@ -500,20 +585,20 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
               </div>
 
               {/* Document Type Selector */}
-              <div className="space-y-2">
-                <Label htmlFor="type" className="text-sm font-medium text-white">
+              <div className="space-y-1.5 md:space-y-2">
+                <Label htmlFor="type" className="text-xs md:text-sm font-medium text-white">
                   Document Type <span className="text-red-400">*</span>
                 </Label>
                 <Select
                   value={formData.type}
                   onValueChange={handleDocumentTypeChange}
                 >
-                  <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white">
+                  <SelectTrigger className="rounded-[10px] bg-slate-800 border-slate-700 text-white h-9 md:h-10 text-sm">
                     <SelectValue placeholder="Select document type" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800 border-slate-700">
                     {documentTypes.map((type) => (
-                      <SelectItem key={type} value={type} className="text-white hover:bg-slate-700">
+                      <SelectItem key={type} value={type} className="text-white hover:bg-slate-700 text-sm">
                         {type}
                       </SelectItem>
                     ))}
@@ -531,8 +616,8 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
               )}
 
               {/* Notes Field - Always show */}
-              <div className="space-y-2">
-                <Label htmlFor="notes" className="text-sm font-medium text-white">
+              <div className="space-y-1.5 md:space-y-2">
+                <Label htmlFor="notes" className="text-xs md:text-sm font-medium text-white">
                   Notes
                 </Label>
                 <Textarea
@@ -542,25 +627,25 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
                     setFormData((prev) => ({ ...prev, notes: e.target.value }))
                   }
                   placeholder="Additional notes about this document..."
-                  className="rounded-[10px] min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  className="rounded-[10px] min-h-[80px] md:min-h-[100px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 text-sm"
                 />
               </div>
             </div>
 
             {/* Footer Buttons */}
-            <div className="pt-6 mt-6 space-y-3 border-t border-slate-700">
-              <div className="flex items-center justify-between gap-3">
+            <div className="pt-4 md:pt-6 mt-4 md:mt-6 space-y-2 md:space-y-3 border-t border-slate-700">
+              <div className="flex items-center justify-between gap-2 md:gap-3">
                 <Button
                   variant="outline"
                   onClick={handlePrevious}
                   disabled={currentIndex === 0}
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white h-9 md:h-10 text-xs md:text-sm px-2 md:px-4"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
-                  Previous
+                  <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden sm:inline">Previous</span>
                 </Button>
 
-                <span className="text-sm text-slate-300">
+                <span className="text-xs md:text-sm text-slate-300">
                   {currentIndex + 1} / {documents.length}
                 </span>
 
@@ -568,36 +653,37 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
                   variant="outline"
                   onClick={handleNext}
                   disabled={currentIndex === documents.length - 1}
-                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                  className="rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white h-9 md:h-10 text-xs md:text-sm px-2 md:px-4"
                 >
-                  Next
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight className="w-3 h-3 md:w-4 md:h-4 md:ml-2" />
                 </Button>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-2 md:gap-3">
                 <Button
                   variant="outline"
                   onClick={handleSkip}
                   disabled={saving}
-                  className="flex-1 rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white"
+                  className="flex-1 rounded-[10px] bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:text-white h-9 md:h-10 text-xs md:text-sm"
                 >
                   Skip
                 </Button>
                 <Button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 text-white rounded-[10px] border-0"
+                  className="flex-1 bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 text-white rounded-[10px] border-0 h-9 md:h-10 text-xs md:text-sm"
                 >
                   {saving ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving
+                      <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-2 animate-spin" />
+                      <span className="hidden sm:inline">Saving</span>
                     </>
                   ) : (
                     <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save & Next
+                      <Save className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">Save & Next</span>
+                      <span className="sm:hidden">Save</span>
                     </>
                   )}
                 </Button>
@@ -607,6 +693,7 @@ const DocumentDetailsModal = ({ isOpen, onClose, documents, documentTypes, docum
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 };
 

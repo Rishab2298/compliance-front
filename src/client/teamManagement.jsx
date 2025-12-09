@@ -545,15 +545,10 @@ const TeamManagement = () => {
               </Label>
               <Select value={inviteRole} onValueChange={setInviteRole}>
                 <SelectTrigger className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}>
-                  <SelectValue placeholder="Select a role">
-                    {inviteRole && availableRoles.find(r => r.value === inviteRole)?.label}
-                  </SelectValue>
+                  <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent
                   className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}
-                  position="popper"
-                  sideOffset={5}
-                  align="start"
                 >
                   {availableRoles.map((role) => (
                     <SelectItem
@@ -610,15 +605,10 @@ const TeamManagement = () => {
               </Label>
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}>
-                  <SelectValue>
-                    {editRole && availableRoles.find(r => r.value === editRole)?.label}
-                  </SelectValue>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent
                   className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}
-                  position="popper"
-                  sideOffset={5}
-                  align="start"
                 >
                   {availableRoles.map((role) => (
                     <SelectItem

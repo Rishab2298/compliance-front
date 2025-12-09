@@ -79,8 +79,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-             
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.location.href = '/client/notifications'}>
                 <Bell />
                 Notifications
               </DropdownMenuItem>

@@ -802,6 +802,7 @@ export default function AddADriver() {
               extractedData={extractedData}
               setExtractedData={setExtractedData}
               documentTypes={companyDocumentTypes.map(dt => typeof dt === 'string' ? dt : dt.name)}
+              documentTypeConfigs={companyDocumentTypes}
               isDarkMode={isDarkMode}
             />
           )}
