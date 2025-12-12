@@ -100,7 +100,7 @@ export default function OnboardingDark() {
 
   const formData = watch();
 
-  const totalSteps = 5;
+  const totalSteps = 4;
 
   // Pre-populate admin data from Clerk user
   useEffect(() => {
@@ -226,26 +226,14 @@ export default function OnboardingDark() {
         ];
         break;
       case 2:
-        // Conditionally validate DSP fields if user selected "Yes"
-        if (formData.isAmazonDSP) {
-          fieldsToValidate = [
-            "dspCompanyName",
-            "stationCodes",
-            "dspOwnerName",
-            "opsManagerName",
-          ];
-        }
-        // No validation needed if not Amazon DSP
-        break;
-      case 3:
         fieldsToValidate = [
           "adminFullName",
           "adminEmail",
           "adminPhone",
         ];
         break;
-      case 4:
-        // Step 4 (Billing Setup) - Conditional validation based on plan
+      case 3:
+        // Step 3 (Billing Setup) - Conditional validation based on plan
         if (formData.plan !== 'Free') {
           fieldsToValidate = [
             "plan",
@@ -262,8 +250,8 @@ export default function OnboardingDark() {
           fieldsToValidate = ["plan"];
         }
         break;
-      case 5:
-        // Step 5 (Legal Consents) - Conditional validation
+      case 4:
+        // Step 4 (Legal Consents) - Conditional validation
         fieldsToValidate = ["agreeToTerms", "agreeToPrivacy"];
         // Add Data Processing Addendum if Amazon DSP
         if (formData.isAmazonDSP) {
@@ -756,220 +744,6 @@ export default function OnboardingDark() {
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
               <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
-                <Building2 className="w-8 h-8 text-violet-400" />
-              </div>
-              <h2 className="text-3xl font-bold text-white">
-                DSP Verification
-              </h2>
-              <p className="text-slate-400">
-                Tell us if you're an Amazon Delivery Service Partner
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              {/* Amazon DSP Yes/No Toggle */}
-              <div>
-                <label className="block mb-3 text-sm font-medium text-slate-300">
-                  Are you an Amazon DSP? *
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => updateFormData("isAmazonDSP", true)}
-                    className={`px-6 py-4 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
-                      formData.isAmazonDSP === true
-                        ? "bg-violet-500/20 border border-violet-500 text-violet-400"
-                        : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
-                    }`}>
-                    {formData.isAmazonDSP === true && <Check className="w-5 h-5" />}
-                    Yes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => updateFormData("isAmazonDSP", false)}
-                    className={`px-6 py-4 rounded-[10px] transition-all flex items-center justify-center gap-2 ${
-                      formData.isAmazonDSP === false
-                        ? "bg-violet-500/20 border border-violet-500 text-violet-400"
-                        : "bg-slate-800 border border-slate-700 text-slate-300 hover:border-slate-600"
-                    }`}>
-                    {formData.isAmazonDSP === false && <Check className="w-5 h-5" />}
-                    No
-                  </button>
-                </div>
-              </div>
-
-              {/* DSP Fields - Show only if Amazon DSP */}
-              {formData.isAmazonDSP && (
-                <div className="p-6 space-y-4 border border-violet-500/30 bg-violet-500/5 rounded-[10px]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Building2 className="w-5 h-5 text-violet-400" />
-                    <h3 className="text-lg font-semibold text-white">
-                      Amazon DSP Information
-                    </h3>
-                  </div>
-
-                  {/* DSP Company Name */}
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-slate-300">
-                      DSP Company Name (as per Amazon Portal) *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.dspCompanyName}
-                      onChange={(e) =>
-                        updateFormData("dspCompanyName", e.target.value)
-                      }
-                      placeholder="Enter DSP company name"
-                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
-                        errors.dspCompanyName
-                          ? "border border-red-500 focus:ring-red-500"
-                          : "border border-slate-700 focus:ring-violet-500"
-                      }`}
-                    />
-                    {errors.dspCompanyName && (
-                      <p className="mt-1 text-sm text-red-400">
-                        {errors.dspCompanyName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Station Codes */}
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-slate-300">
-                      Station Code(s) *
-                    </label>
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          id="stationCodeInput"
-                          placeholder="e.g., DLA9, DCA2"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              const input = e.target;
-                              addStationCode(input.value.trim().toUpperCase());
-                              input.value = '';
-                            }
-                          }}
-                          className={`flex-1 px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
-                            errors.stationCodes
-                              ? "border border-red-500 focus:ring-red-500"
-                              : "border border-slate-700 focus:ring-violet-500"
-                          }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const input = document.getElementById('stationCodeInput');
-                            addStationCode(input.value.trim().toUpperCase());
-                            input.value = '';
-                          }}
-                          className="px-6 py-3 bg-violet-500 hover:bg-violet-600 text-white rounded-[10px] transition-colors">
-                          Add
-                        </button>
-                      </div>
-                      {formData.stationCodes && formData.stationCodes.length > 0 && (
-                        <div className="flex flex-wrap gap-2 p-3 bg-slate-800/50 rounded-[10px]">
-                          {formData.stationCodes.map((code, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2 px-3 py-1 bg-violet-500/20 border border-violet-500/50 text-violet-300 rounded-[6px]">
-                              <span className="font-mono text-sm">{code}</span>
-                              <button
-                                type="button"
-                                onClick={() => removeStationCode(code)}
-                                className="text-violet-400 hover:text-violet-200">
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {errors.stationCodes && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.stationCodes.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* DSP Owner Name */}
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-slate-300">
-                      DSP Owner Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.dspOwnerName}
-                      onChange={(e) =>
-                        updateFormData("dspOwnerName", e.target.value)
-                      }
-                      placeholder="Enter owner name"
-                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
-                        errors.dspOwnerName
-                          ? "border border-red-500 focus:ring-red-500"
-                          : "border border-slate-700 focus:ring-violet-500"
-                      }`}
-                    />
-                    {errors.dspOwnerName && (
-                      <p className="mt-1 text-sm text-red-400">
-                        {errors.dspOwnerName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Ops Manager / Fleet Manager */}
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-slate-300">
-                      Ops Manager / Fleet Manager Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.opsManagerName}
-                      onChange={(e) =>
-                        updateFormData("opsManagerName", e.target.value)
-                      }
-                      placeholder="Enter manager name"
-                      className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
-                        errors.opsManagerName
-                          ? "border border-red-500 focus:ring-red-500"
-                          : "border border-slate-700 focus:ring-violet-500"
-                      }`}
-                    />
-                    {errors.opsManagerName && (
-                      <p className="mt-1 text-sm text-red-400">
-                        {errors.opsManagerName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* DSP ID (Optional) */}
-                  <div>
-                    <label className="block mb-2 text-sm font-medium text-slate-300">
-                      DSP ID <span className="text-slate-500">(Optional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.dspId}
-                      onChange={(e) =>
-                        updateFormData("dspId", e.target.value)
-                      }
-                      placeholder="Enter DSP ID"
-                      className="w-full px-4 py-3 text-white bg-slate-800 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-[10px]"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="mb-8 space-y-2 text-center">
-              <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
                 <Shield className="w-8 h-8 text-violet-400" />
               </div>
               <h2 className="text-3xl font-bold text-white">
@@ -1089,7 +863,7 @@ export default function OnboardingDark() {
           </div>
         );
 
-      case 4:
+      case 3:
         return (
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
@@ -1327,7 +1101,7 @@ export default function OnboardingDark() {
           </div>
         );
 
-      case 5:
+      case 4:
         const isUS = formData.country === 'United States';
         const isCanada = formData.country === 'Canada';
         const termsLink = '/policies/terms-of-service';
@@ -1593,7 +1367,7 @@ export default function OnboardingDark() {
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}></div>
             </div>
             <div className="flex justify-between mt-4">
-              {[1, 2, 3, 4, 5].map((step) => (
+              {[1, 2, 3, 4].map((step) => (
                 <div
                   key={step}
                   className={`flex flex-col items-center ${
@@ -1611,10 +1385,9 @@ export default function OnboardingDark() {
                   </div>
                   <span className="hidden mt-2 text-xs md:block">
                     {step === 1 && "Company"}
-                    {step === 2 && "DSP Info"}
-                    {step === 3 && "Admin"}
-                    {step === 4 && "Billing"}
-                    {step === 5 && "Legal"}
+                    {step === 2 && "Admin"}
+                    {step === 3 && "Billing"}
+                    {step === 4 && "Legal"}
                   </span>
                 </div>
               ))}
