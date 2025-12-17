@@ -77,6 +77,9 @@ const ConsentLogsPage = () => {
     SMS_CONSENT: 'SMS Consent',
     COOKIE_PREFERENCES: 'Cookies',
     SUPPORT_ACCESS: 'Support Access',
+    AI_FAIR_USE_POLICY: 'AI Fair Use',
+    GDPR_DATA_PROCESSING_ADDENDUM: 'GDPR Addendum',
+    COMPLAINTS_POLICY: 'Complaints',
   };
 
   const exportToCSV = () => {
@@ -203,6 +206,9 @@ const ConsentLogsPage = () => {
               <option value="SMS_CONSENT">SMS Consent</option>
               <option value="COOKIE_PREFERENCES">Cookies</option>
               <option value="SUPPORT_ACCESS">Support Access</option>
+              <option value="AI_FAIR_USE_POLICY">AI Fair Use</option>
+              <option value="GDPR_DATA_PROCESSING_ADDENDUM">GDPR Addendum</option>
+              <option value="COMPLAINTS_POLICY">Complaints</option>
             </select>
           </div>
         </div>

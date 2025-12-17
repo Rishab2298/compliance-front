@@ -19,6 +19,9 @@ const PolicyAcceptance = () => {
     SMS_CONSENT: false,
     COOKIE_PREFERENCES: false,
     SUPPORT_ACCESS: false,
+    AI_FAIR_USE_POLICY: false,
+    GDPR_DATA_PROCESSING_ADDENDUM: false,
+    COMPLAINTS_POLICY: false,
   });
 
   const policyLabels = {
@@ -28,6 +31,9 @@ const PolicyAcceptance = () => {
     SMS_CONSENT: 'SMS Consent',
     COOKIE_PREFERENCES: 'Cookie Preferences',
     SUPPORT_ACCESS: 'Support Access',
+    AI_FAIR_USE_POLICY: 'AI Fair Use Policy',
+    GDPR_DATA_PROCESSING_ADDENDUM: 'GDPR Data Processing Addendum',
+    COMPLAINTS_POLICY: 'Complaints Policy',
   };
 
   const policyDescriptions = {
@@ -37,6 +43,9 @@ const PolicyAcceptance = () => {
     SMS_CONSENT: 'I agree to receive SMS alerts from Complyo. Message frequency varies. Reply STOP to opt out, HELP for help. Message & data rates may apply. Consent is not a condition of purchase.',
     COOKIE_PREFERENCES: 'I agree to the use of cookies as described in the Cookie Policy.',
     SUPPORT_ACCESS: 'I authorize Complyo support to access my account solely to resolve an active support ticket. Access expires after 72 hours from when granted. You can revoke this permission at any time in your account settings.',
+    AI_FAIR_USE_POLICY: 'I agree to use AI features responsibly and in accordance with the AI Fair Use Policy.',
+    GDPR_DATA_PROCESSING_ADDENDUM: 'I acknowledge and agree to the GDPR Data Processing Addendum terms for data protection and compliance.',
+    COMPLAINTS_POLICY: 'I have read and understand the Complaints Policy and the process for submitting complaints.',
   };
 
   useEffect(() => {
@@ -224,7 +233,7 @@ const PolicyAcceptance = () => {
 
           {!allAccepted && (
             <p className="text-xs text-center text-red-400">
-              You must accept all 6 policies to continue
+              You must accept all 9 policies to continue
             </p>
           )}
         </div>

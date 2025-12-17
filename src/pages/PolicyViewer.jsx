@@ -28,6 +28,9 @@ const PolicyViewer = () => {
     'sms-consent': 'SMS Consent',
     'cookie-preferences': 'Cookie Policy',
     'support-access': 'Support Access Agreement',
+    'ai-fair-use-policy': 'AI Fair Use Policy',
+    'gdpr-data-processing-addendum': 'GDPR Data Processing Addendum',
+    'complaints-policy': 'Complaints Policy',
   };
 
   const policyTypeMap = {
@@ -37,6 +40,9 @@ const PolicyViewer = () => {
     'sms-consent': 'SMS_CONSENT',
     'cookie-preferences': 'COOKIE_PREFERENCES',
     'support-access': 'SUPPORT_ACCESS',
+    'ai-fair-use-policy': 'AI_FAIR_USE_POLICY',
+    'gdpr-data-processing-addendum': 'GDPR_DATA_PROCESSING_ADDENDUM',
+    'complaints-policy': 'COMPLAINTS_POLICY',
   };
 
   useEffect(() => {

@@ -60,6 +60,24 @@ const POLICY_TYPES = [
     description: "Terms for customer support access to user data",
     icon: Shield,
   },
+  {
+    type: "AI_FAIR_USE_POLICY",
+    name: "AI Fair Use Policy",
+    description: "Guidelines for fair and responsible use of AI features",
+    icon: Shield,
+  },
+  {
+    type: "GDPR_DATA_PROCESSING_ADDENDUM",
+    name: "GDPR Data Processing Addendum",
+    description: "Additional GDPR compliance terms and data processing obligations",
+    icon: FileText,
+  },
+  {
+    type: "COMPLAINTS_POLICY",
+    name: "Complaints Policy",
+    description: "Process for submitting and handling user complaints",
+    icon: FileText,
+  },
 ];
 
 const PoliciesPage = () => {
