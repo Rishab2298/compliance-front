@@ -46,7 +46,7 @@ const Drivers = () => {
     // Check permission before deleting
     if (!canDeleteDrivers) {
       toast.error('Permission denied', {
-        description: 'You do not have permission to delete drivers.',
+        description: 'You do not have permission to delete employees.',
       })
       return
     }
@@ -56,7 +56,7 @@ const Drivers = () => {
       toast.success(`${driverName} has been deleted successfully`)
     } catch (err) {
       console.error('Error deleting driver:', err)
-      toast.error(err.message || 'Failed to delete driver')
+      toast.error(err.message || 'Failed to delete employee')
     }
   }
 
@@ -64,7 +64,7 @@ const Drivers = () => {
     // Check permission before uploading
     if (!canCreateDrivers) {
       toast.error('Permission denied', {
-        description: 'You do not have permission to create drivers.',
+        description: 'You do not have permission to create employees.',
       })
       return
     }
@@ -76,13 +76,13 @@ const Drivers = () => {
       // Refresh driver list if any were successful
       if (results.successful.length > 0) {
         await queryClient.invalidateQueries({ queryKey: ['drivers'] })
-        toast.success(`Successfully imported ${results.successful.length} driver(s)`)
+        toast.success(`Successfully imported ${results.successful.length} employee(s)`)
       }
 
       // Show limit warning if limit was reached
       if (results.limitReached) {
-        toast.warning(`Driver limit reached!`, {
-          description: `Successfully added ${results.successful.length} driver(s). ${results.failed.length} driver(s) could not be added. Please upgrade your plan to add more drivers.`,
+        toast.warning(`Employee limit reached!`, {
+          description: `Successfully added ${results.successful.length} employee(s). ${results.failed.length} employee(s) could not be added. Please upgrade your plan to add more employees.`,
           duration: 8000,
         })
       } else if (results.failed.length > 0) {
@@ -90,7 +90,7 @@ const Drivers = () => {
         const failedDrivers = results.failed.slice(0, 3).map(f => `${f.firstName} ${f.lastName}: ${f.error}`).join('\n')
         const moreText = results.failed.length > 3 ? `\n...and ${results.failed.length - 3} more` : ''
 
-        toast.error(`Failed to import ${results.failed.length} driver(s)`, {
+        toast.error(`Failed to import ${results.failed.length} employee(s)`, {
           description: failedDrivers + moreText,
           duration: 6000,
         })
@@ -98,7 +98,7 @@ const Drivers = () => {
 
       // If nothing succeeded and nothing failed, something is wrong
       if (results.successful.length === 0 && results.failed.length === 0) {
-        toast.error('No drivers were imported. Please check your CSV file.')
+        toast.error('No employees were imported. Please check your CSV file.')
       }
     } catch (error) {
       console.error('Error bulk uploading drivers:', error)
@@ -116,7 +116,7 @@ const Drivers = () => {
         </>
       )}
 
-      <DashboardHeader title="Drivers Management">
+      <DashboardHeader title="Employees Management">
         <div className="flex items-center gap-2">
           {canCreateDrivers && (
             <>
@@ -203,7 +203,7 @@ const Drivers = () => {
             <div className={`p-6 rounded-[10px] border ${getThemeClasses.alert.critical(isDarkMode)}`}>
               <div className="flex items-center justify-center gap-3">
                 <AlertTriangle className={`w-5 h-5 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
-                <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>Error loading drivers: {error}</p>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>Error loading employees: {error}</p>
               </div>
             </div>
           </div>
@@ -221,7 +221,7 @@ const Drivers = () => {
               <div className="container w-full px-6 mx-auto mt-6">
                 <div className={`rounded-[10px] border ${getThemeClasses.bg.card(isDarkMode)} p-4 flex items-center justify-between`}>
                   <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of {pagination.totalCount} drivers
+                    Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of {pagination.totalCount} employees
                   </p>
                   <div className="flex items-center gap-2">
                     <Button

@@ -81,7 +81,7 @@ const BillingPage = () => {
 
 
   return (
-    <div className={`flex flex-col w-screen min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
+    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Decorative elements for dark mode */}
       {isDarkMode && (
         <>

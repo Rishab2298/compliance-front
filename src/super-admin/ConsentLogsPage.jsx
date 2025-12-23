@@ -104,7 +104,7 @@ const ConsentLogsPage = () => {
   };
 
   return (
-    <div className={`min-h-screen w-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
+    <div className={`min-h-screen w-full ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Header */}
       <div className={`border-b ${getThemeClasses.border.primary(isDarkMode)}`}>
         <div className="w-full px-6 py-6 mx-auto">

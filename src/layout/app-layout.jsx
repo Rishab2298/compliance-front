@@ -180,7 +180,7 @@ const AppLayout = ({ ...props }) => {
         icon: LayoutDashboard,
       },
       canAccess('drivers') && {
-        name: "Drivers",
+        name: "Employees",
         url: "/client/drivers",
         icon: User,
         onMouseEnter: handleDriversHover, // Prefetch on hover

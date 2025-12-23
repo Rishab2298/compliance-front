@@ -174,7 +174,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
   const baseColumns = [
     {
       accessorKey: "name",
-      header: "Driver",
+      header: "Employee",
       cell: ({ row }) => {
         const initials = row.original.name.split(' ').map(n => n[0]).join('').substring(0, 2)
         return (
@@ -343,7 +343,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
           <div className="relative flex-1 max-w-md">
             <Search className={`absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
             <Input
-              placeholder="Search drivers..."
+              placeholder="Search employees..."
               value={(table.getColumn("name")?.getFilterValue()) ?? ""}
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -357,7 +357,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
               onClick={() => navigate("/client/add-a-driver")}
               className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
             >
-              Add Driver
+              Add Employee
             </Button>
           </div>
         </div>
@@ -407,7 +407,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
                   colSpan={columns.length}
                   className={`h-24 text-sm text-center ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}
                 >
-                  No drivers found.
+                  No employees found.
                 </TableCell>
               </TableRow>
             )}
@@ -418,7 +418,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-          Showing {table.getRowModel().rows.length} of {data.length} driver(s)
+          Showing {table.getRowModel().rows.length} of {data.length} employee(s)
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -450,10 +450,10 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className={`rounded-[10px] ${isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
           <AlertDialogHeader>
-            <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>Delete Driver</AlertDialogTitle>
+            <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>Delete Employee</AlertDialogTitle>
             <AlertDialogDescription className={isDarkMode ? 'text-slate-400' : 'text-gray-600'}>
               Are you sure you want to delete <strong className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{driverToDelete?.name}</strong>?
-              This action cannot be undone. All documents and records associated with this driver will be permanently removed.
+              This action cannot be undone. All documents and records associated with this employee will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -119,7 +119,7 @@ const PolicyViewer = () => {
             </button>
             <Link
               to="/"
-              className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text"
+              className="text-2xl font-bold text-white"
             >
               Complyo
             </Link>

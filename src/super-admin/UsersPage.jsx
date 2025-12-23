@@ -91,7 +91,7 @@ const UsersPage = () => {
 
   return (
     <div
-      className={`flex flex-col w-screen min-h-screen relative ${getThemeClasses.bg.primary(
+      className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(
         isDarkMode
       )}`}
     >

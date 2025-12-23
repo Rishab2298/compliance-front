@@ -45,6 +45,15 @@ import PolicyViewer from "@/pages/PolicyViewer";
 import NotFound from "@/pages/NotFound";
 import { MyTicketsPage } from "@/client/ticketing/MyTicketsPage";
 import TicketsPage from "@/super-admin/TicketsPage";
+import HealthcareCompliancePage from "@/pages/HealthcareCompliancePage";
+import ShippingManagementPage from "@/pages/ShippingManagementPage";
+import RealEstateManagementPage from "@/pages/RealEstateManagementPage";
+import ManufacturingManagementPage from "@/pages/ManufacturingManagementPage";
+import EducationManagementPage from "@/pages/EducationManagementPage";
+import InsuranceManagementPage from "@/pages/InsuranceManagementPage";
+import SecurityGuardManagementPage from "@/pages/SecurityGuardManagementPage";
+import ServiceProvidersManagementPage from "@/pages/ServiceProvidersManagementPage";
+import GovernmentManagementPage from "@/pages/GovernmentManagementPage";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +64,15 @@ export const router = createBrowserRouter([
 
       // { path: "/onboarding-light", element: <OnboardingLight /> },
       { path: "/dashboard-sample", element: <Dashboard /> },
+      {path: "/healthcare",element:<HealthcareCompliancePage />},
+      {path: "/shipping-management",element:<ShippingManagementPage />},
+      {path:"/real-estate-management",element:<RealEstateManagementPage/>},
+      {path:"/manufacturing-management",element:<ManufacturingManagementPage/>},
+      {path:"/education-management",element:<EducationManagementPage/>},
+      {path:"/insurance-management",element:<InsuranceManagementPage/>},
+      {path:"/security-guard-management",element:<SecurityGuardManagementPage/>},
+      {path:"/service-provider-management",element:<ServiceProvidersManagementPage/>},
+      {path:"/government-management",element:<GovernmentManagementPage/>},
       { path: "/sign-up", element: <SignUpPage /> },
       { path: "/sign-in", element: <LoginPage /> },
       { path: "/onboarding-dark", element:<OnboardingDark /> },

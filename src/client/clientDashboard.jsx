@@ -173,7 +173,7 @@ const ClientDashboard = () => {
     if (limit === -1) {
       return 'Unlimited on current plan'
     } else if (limit) {
-      return `Up to ${limit} drivers on ${planName} plan`
+      return `Up to ${limit} employees on ${planName} plan`
     } else {
       return 'Based on current plan'
     }
@@ -196,7 +196,7 @@ const ClientDashboard = () => {
           className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px] hidden sm:flex`}
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          Add Driver
+          Add Employee
         </Button>
         <Button
           onClick={() => navigate('/client/add-a-driver')}
@@ -250,12 +250,12 @@ const ClientDashboard = () => {
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
               <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Overview</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Key metrics for your fleet compliance</p>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Key metrics and compliance overview</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Total Drivers</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Total Employees</Label>
                 {driversLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
@@ -326,7 +326,7 @@ const ClientDashboard = () => {
               </div>
 
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Active Drivers</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Active Employees</Label>
                 <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{totalDrivers}</p>
                 <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{getDriverLimitText(company?.plan || 'Professional')}</p>
               </div>
@@ -410,15 +410,15 @@ const ClientDashboard = () => {
             {/* Drivers with Issues */}
             <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="mb-6">
-                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Drivers Requiring Attention</h2>
-                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Non-compliant drivers with missing, expired, expiring, or pending documents</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Employees Requiring Attention</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Non-compliant employees with missing, expired, expiring, or pending documents</p>
               </div>
 
               {driversWithIssues.length === 0 ? (
                 <div className="py-8 text-center">
                   <CheckCircle className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
                   <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>All Clear!</p>
-                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>All drivers are fully compliant</p>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>All employees are fully compliant</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -470,7 +470,7 @@ const ClientDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Recently Added</h2>
-                  <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Latest drivers in the system</p>
+                  <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Latest employees in the system</p>
                 </div>
                 <Button
                   variant="outline"
@@ -485,15 +485,15 @@ const ClientDashboard = () => {
               {recentDrivers.length === 0 ? (
                 <div className="py-8 text-center">
                   <Users className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-700' : 'text-gray-300'}`} />
-                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>No Drivers Yet</p>
-                  <p className={`text-sm mb-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>Add your first driver to get started</p>
+                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>No Employees Yet</p>
+                  <p className={`text-sm mb-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>Add your first employee to get started</p>
                   <Button
                     size="sm"
                     className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
                     onClick={() => navigate('/client/add-a-driver')}
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Add Driver
+                    Add Employee
                   </Button>
                 </div>
               ) : (
@@ -543,7 +543,7 @@ const ClientDashboard = () => {
                 onClick={() => navigate('/client/add-a-driver')}
               >
                 <UserPlus className="w-4 h-4 mr-2 shrink-0" />
-                <span className="text-sm">Add New Driver</span>
+                <span className="text-sm">Add New Employee</span>
               </Button>
               <Button
                 variant="outline"

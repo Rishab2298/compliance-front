@@ -27,6 +27,9 @@ const POLICY_NAMES = {
   sms_consent: "SMS Consent",
   cookie_preferences: "Cookie Preferences",
   support_access: "Support Access",
+  ai_fair_use_policy: "AI Fair Use Policy",
+  gdpr_data_processing_addendum: "GDPR Data Processing Addendum",
+  complaints_policy: "Complaints Policy",
 };
 
 const PolicyEditPage = () => {

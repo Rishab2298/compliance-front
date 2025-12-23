@@ -212,13 +212,13 @@ const DriverDocuments = () => {
   if (!driver) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Driver not found</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Employee not found</h2>
         <Button onClick={() => navigate('/client/storage')}>Back to Storage</Button>
       </div>
     )
   }
 
-  const fullName = `${driver.firstName || ''} ${driver.lastName || ''}`.trim() || 'Unknown Driver'
+  const fullName = `${driver.firstName || ''} ${driver.lastName || ''}`.trim() || 'Unknown Employee'
   const complianceStatus = getComplianceStatus()
 
   return (
@@ -346,7 +346,7 @@ const DriverDocuments = () => {
             <section className="bg-white rounded-[10px] p-12 border border-gray-200 text-center">
               <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <h3 className="text-sm font-semibold text-gray-900 mb-1">No documents found</h3>
-              <p className="text-sm text-gray-500">This driver has no documents uploaded yet</p>
+              <p className="text-sm text-gray-500">This employee has no documents uploaded yet</p>
             </section>
           )}
         </div>

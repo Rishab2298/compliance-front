@@ -1,27 +1,17 @@
 import { z } from 'zod';
 
-// Validation helpers
-const einRegex = /^\d{2}-\d{7}$/; // Format: XX-XXXXXXX
-const canadaBusinessNumberRegex = /^\d{9}$/; // Format: 9 digits
-const usZipRegex = /^\d{5}(-\d{4})?$/; // Format: 12345 or 12345-6789
-const canadaPostalRegex = /^[A-Z]\d[A-Z]\s?\d[A-Z]\d$/i; // Format: A1A 1A1
-
 // Step 1: Company Information Schema
 export const companyInfoSchema = z.object({
   legalCompanyName: z.string().min(1, 'Legal company name is required'),
   operatingName: z.string().min(1, 'Operating name (DBA) is required'),
-  country: z.enum(['United States', 'Canada'], {
-    required_error: 'Please select a country',
-  }),
-  entityType: z.enum(['Corp', 'Inc', 'LLC', 'Ltd', 'Partnership'], {
-    required_error: 'Please select an entity type',
-  }),
+  country: z.string().min(1, 'Please select a country'),
+  entityType: z.string().min(1, 'Please select an entity type'),
   businessRegistrationNumber: z.string().min(1, 'Business registration number is required'),
   registeredAddress: z.object({
     street: z.string().min(1, 'Street address is required'),
     city: z.string().min(1, 'City is required'),
-    stateProvince: z.string().min(1, 'State/Province is required'),
-    zipPostalCode: z.string().min(1, 'ZIP/Postal code is required'),
+    stateProvince: z.string().min(1, 'State/Province/Region is required'),
+    zipPostalCode: z.string().min(1, 'Postal/ZIP code is required'),
   }),
   operatingAddresses: z.array(z.object({
     street: z.string(),
@@ -34,51 +24,7 @@ export const companyInfoSchema = z.object({
   companySize: z.string().optional(),
   statesProvinces: z.array(z.string()).optional().default([]),
   industryType: z.string().optional(),
-}).refine(
-  (data) => {
-    if (data.country === 'United States') {
-      return einRegex.test(data.businessRegistrationNumber);
-    }
-    return true;
-  },
-  {
-    message: 'EIN must be in format: XX-XXXXXXX (e.g., 12-3456789)',
-    path: ['businessRegistrationNumber'],
-  }
-).refine(
-  (data) => {
-    if (data.country === 'Canada') {
-      return canadaBusinessNumberRegex.test(data.businessRegistrationNumber);
-    }
-    return true;
-  },
-  {
-    message: 'Business Number must be 9 digits (e.g., 123456789)',
-    path: ['businessRegistrationNumber'],
-  }
-).refine(
-  (data) => {
-    if (data.country === 'United States') {
-      return usZipRegex.test(data.registeredAddress.zipPostalCode);
-    }
-    return true;
-  },
-  {
-    message: 'ZIP code must be in format: 12345 or 12345-6789',
-    path: ['registeredAddress', 'zipPostalCode'],
-  }
-).refine(
-  (data) => {
-    if (data.country === 'Canada') {
-      return canadaPostalRegex.test(data.registeredAddress.zipPostalCode);
-    }
-    return true;
-  },
-  {
-    message: 'Postal code must be in format: A1A 1A1',
-    path: ['registeredAddress', 'zipPostalCode'],
-  }
-);
+});
 
 // Step 2: DSP Verification Schema
 export const dspVerificationSchema = z.object({
@@ -226,9 +172,10 @@ export const billingSetupSchema = z.object({
 export const legalConsentsSchema = z.object({
   agreeToTerms: z.boolean(),
   agreeToPrivacy: z.boolean(),
-  agreeToDataProcessing: z.boolean().optional(),
-  agreeToSmsConsent: z.boolean().optional(),
-  agreeToSupportAccess: z.boolean().optional().default(false),
+  agreeToDataProcessing: z.boolean(),
+  agreeToAiFairUse: z.boolean(),
+  agreeToGdprDataProcessing: z.boolean(),
+  agreeToComplaints: z.boolean(),
   consentTimestamp: z.string().optional(),
   consentIpAddress: z.string().optional(),
   consentVersion: z.string().optional().default('1.0'),
@@ -244,6 +191,30 @@ export const legalConsentsSchema = z.object({
     message: 'You must agree to the Privacy Policy',
     path: ['agreeToPrivacy'],
   }
+).refine(
+  (data) => data.agreeToDataProcessing === true,
+  {
+    message: 'You must agree to the Data Processing Addendum',
+    path: ['agreeToDataProcessing'],
+  }
+).refine(
+  (data) => data.agreeToAiFairUse === true,
+  {
+    message: 'You must agree to the AI Fair Use Policy',
+    path: ['agreeToAiFairUse'],
+  }
+).refine(
+  (data) => data.agreeToGdprDataProcessing === true,
+  {
+    message: 'You must agree to the GDPR Data Processing Addendum',
+    path: ['agreeToGdprDataProcessing'],
+  }
+).refine(
+  (data) => data.agreeToComplaints === true,
+  {
+    message: 'You must agree to the Complaints Policy',
+    path: ['agreeToComplaints'],
+  }
 );
 
 // Complete Onboarding Schema - combines all steps
@@ -251,18 +222,14 @@ export const onboardingSchema = z.object({
   // Step 1 - Company Information
   legalCompanyName: z.string().min(1, 'Legal company name is required'),
   operatingName: z.string().min(1, 'Operating name (DBA) is required'),
-  country: z.enum(['United States', 'Canada'], {
-    required_error: 'Please select a country',
-  }),
-  entityType: z.enum(['Corp', 'Inc', 'LLC', 'Ltd', 'Partnership'], {
-    required_error: 'Please select an entity type',
-  }),
+  country: z.string().min(1, 'Please select a country'),
+  entityType: z.string().min(1, 'Please select an entity type'),
   businessRegistrationNumber: z.string().min(1, 'Business registration number is required'),
   registeredAddress: z.object({
     street: z.string().min(1, 'Street address is required'),
     city: z.string().min(1, 'City is required'),
-    stateProvince: z.string().min(1, 'State/Province is required'),
-    zipPostalCode: z.string().min(1, 'ZIP/Postal code is required'),
+    stateProvince: z.string().min(1, 'State/Province/Region is required'),
+    zipPostalCode: z.string().min(1, 'Postal/ZIP code is required'),
   }),
   operatingAddresses: z.array(z.object({
     street: z.string(),
@@ -309,61 +276,14 @@ export const onboardingSchema = z.object({
   // Step 5 - Legal Consents
   agreeToTerms: z.boolean(),
   agreeToPrivacy: z.boolean(),
-  agreeToDataProcessing: z.boolean().optional(),
-  agreeToSmsConsent: z.boolean().optional(),
-  agreeToSupportAccess: z.boolean().optional().default(false),
+  agreeToDataProcessing: z.boolean(),
+  agreeToAiFairUse: z.boolean(),
+  agreeToGdprDataProcessing: z.boolean(),
+  agreeToComplaints: z.boolean(),
   consentTimestamp: z.string().optional(),
   consentIpAddress: z.string().optional(),
   consentVersion: z.string().optional().default('1.0'),
 }).refine(
-  (data) => {
-    // EIN validation for US
-    if (data.country === 'United States') {
-      return einRegex.test(data.businessRegistrationNumber);
-    }
-    return true;
-  },
-  {
-    message: 'EIN must be in format: XX-XXXXXXX (e.g., 12-3456789)',
-    path: ['businessRegistrationNumber'],
-  }
-).refine(
-  (data) => {
-    // Business Number validation for Canada
-    if (data.country === 'Canada') {
-      return canadaBusinessNumberRegex.test(data.businessRegistrationNumber);
-    }
-    return true;
-  },
-  {
-    message: 'Business Number must be 9 digits (e.g., 123456789)',
-    path: ['businessRegistrationNumber'],
-  }
-).refine(
-  (data) => {
-    // ZIP code validation for US
-    if (data.country === 'United States') {
-      return usZipRegex.test(data.registeredAddress.zipPostalCode);
-    }
-    return true;
-  },
-  {
-    message: 'ZIP code must be in format: 12345 or 12345-6789',
-    path: ['registeredAddress', 'zipPostalCode'],
-  }
-).refine(
-  (data) => {
-    // Postal code validation for Canada
-    if (data.country === 'Canada') {
-      return canadaPostalRegex.test(data.registeredAddress.zipPostalCode);
-    }
-    return true;
-  },
-  {
-    message: 'Postal code must be in format: A1A 1A1',
-    path: ['registeredAddress', 'zipPostalCode'],
-  }
-).refine(
   (data) => {
     // Phone number format validation
     const phoneRegex = /^\+\d{1,3}\d{10,14}$/;
@@ -489,11 +409,8 @@ export const onboardingSchema = z.object({
   }
 ).refine(
   (data) => {
-    // Data Processing Addendum - required if Amazon DSP
-    if (data.isAmazonDSP) {
-      return data.agreeToDataProcessing === true;
-    }
-    return true;
+    // Data Processing Addendum - always required
+    return data.agreeToDataProcessing === true;
   },
   {
     message: 'You must agree to the Data Processing Addendum',
@@ -501,15 +418,30 @@ export const onboardingSchema = z.object({
   }
 ).refine(
   (data) => {
-    // SMS Consent - required if plan has SMS (not Free plan)
-    if (data.plan !== 'Free') {
-      return data.agreeToSmsConsent === true;
-    }
-    return true;
+    // AI Fair Use Policy - always required
+    return data.agreeToAiFairUse === true;
   },
   {
-    message: 'You must agree to receive SMS alerts for paid plans',
-    path: ['agreeToSmsConsent'],
+    message: 'You must agree to the AI Fair Use Policy',
+    path: ['agreeToAiFairUse'],
+  }
+).refine(
+  (data) => {
+    // GDPR Data Processing Addendum - always required
+    return data.agreeToGdprDataProcessing === true;
+  },
+  {
+    message: 'You must agree to the GDPR Data Processing Addendum',
+    path: ['agreeToGdprDataProcessing'],
+  }
+).refine(
+  (data) => {
+    // Complaints Policy - always required
+    return data.agreeToComplaints === true;
+  },
+  {
+    message: 'You must agree to the Complaints Policy',
+    path: ['agreeToComplaints'],
   }
 );
 

@@ -184,8 +184,8 @@ export default function AddADriver() {
 
         // -1 means unlimited
         if (maxDrivers !== -1 && currentDrivers >= maxDrivers) {
-          toast.error("Driver limit reached", {
-            description: `Please upgrade your plan to add more drivers. Current limit: ${maxDrivers} drivers.`,
+          toast.error("Employee limit reached", {
+            description: `Please upgrade your plan to add more employees. Current limit: ${maxDrivers} employees.`,
           });
           setCreatingDriver(false);
           return null;
@@ -234,8 +234,8 @@ export default function AddADriver() {
     // Special handling for "Skip" flow - jump directly to step 8
     if (formData.documentOption === "skip" && currentStep === 2) {
       setCurrentStep(8);
-      toast.success("Driver created successfully", {
-        description: `${formData.firstName} ${formData.lastName} has been added to your driver roster.`,
+      toast.success("Employee created successfully", {
+        description: `${formData.firstName} ${formData.lastName} has been added to your employee roster.`,
       });
       return;
     }
@@ -318,8 +318,8 @@ export default function AddADriver() {
           description: `An invitation email has been sent to ${formData.firstName} ${formData.lastName}.`,
         });
       } else {
-        toast.success("Driver created successfully", {
-          description: `${formData.firstName} ${formData.lastName} has been added to your driver roster.`,
+        toast.success("Employee created successfully", {
+          description: `${formData.firstName} ${formData.lastName} has been added to your employee roster.`,
         });
       }
 
@@ -360,17 +360,17 @@ export default function AddADriver() {
 
       {/* Header */}
       <DashboardHeader
-        title="Add a Driver"
+        title="Add an Employee"
         breadcrumbs={[
-          { label: 'Drivers', href: '/client/drivers' },
-          { label: 'Add Driver' }
+          { label: 'Employees', href: '/client/drivers' },
+          { label: 'Add Employee' }
         ]}
       />
 
       {/* Subtitle */}
       <div className={`px-4 md:px-6 py-3 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-gray-200'}`}>
         <p className={`text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
-          Complete the steps below to add a new driver to your roster
+          Complete the steps below to add a new employee to your roster
         </p>
       </div>
 
@@ -618,7 +618,7 @@ export default function AddADriver() {
                 {/* Tip */}
                 <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
                   <p className={`text-sm leading-relaxed ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    <span className="font-light">💡<strong>Tip:</strong>  Make sure to include the country code in the phone number without any spaces or hyphens. For example: <span className="font-mono font-medium">+15551234567</span> for United States or <span className="font-mono font-medium">+16131234567</span> for Canada. This ensures SMS notifications are delivered successfully to the driver.
+                    <span className="font-light">💡<strong>Tip:</strong>  Make sure to include the country code in the phone number without any spaces or hyphens. For example: <span className="font-mono font-medium">+15551234567</span> for United States or <span className="font-mono font-medium">+16131234567</span> for Canada. This ensures SMS notifications are delivered successfully to the employee.
                  </span> </p>
                 </div>
               </div>
@@ -707,10 +707,10 @@ export default function AddADriver() {
                     </div>
                     <div>
                       <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Send Link to Driver
+                        Send Link to Employee
                       </h3>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        We'll send a secure link to the driver to upload
+                        We'll send a secure link to the employee to upload
                         documents at their convenience
                       </p>
                     </div>
@@ -845,7 +845,7 @@ export default function AddADriver() {
                     Documents Skipped
                   </h3>
                   <p className={`mb-4 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    You've chosen to skip document uploads for now. You can add documents later from the driver's profile page.
+                    You've chosen to skip document uploads for now. You can add documents later from the employee's profile page.
                   </p>
                   <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50'}`}>
                     <div className="flex items-start gap-3 text-left">
@@ -853,7 +853,7 @@ export default function AddADriver() {
                       <div>
                         <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>What happens next?</p>
                         <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                          After creating the driver, you can upload documents or send them an invitation link to upload documents themselves.
+                          After creating the employee, you can upload documents or send them an invitation link to upload documents themselves.
                         </p>
                       </div>
                     </div>
@@ -866,10 +866,10 @@ export default function AddADriver() {
                     <>
                       <Loader2 className={`w-12 h-12 mx-auto mb-4 animate-spin ${isDarkMode ? 'text-violet-500' : 'text-gray-800'}`} />
                       <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Creating Driver Profile...
+                        Creating Employee Profile...
                       </h2>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Please wait while we save your driver information.
+                        Please wait while we save your employee information.
                       </p>
                     </>
                   ) : submitError ? (
@@ -889,7 +889,7 @@ export default function AddADriver() {
                         </svg>
                       </div>
                       <h2 className="mb-2 text-lg font-semibold text-red-600">
-                        Failed to Create Driver
+                        Failed to Create Employee
                       </h2>
                       <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{submitError}</p>
                       <button
@@ -907,7 +907,7 @@ export default function AddADriver() {
                       <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         {formData.documentOption === "link"
                           ? "Invitation Sent Successfully!"
-                          : "Driver Added Successfully!"}
+                          : "Employee Added Successfully!"}
                       </h2>
                       <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         {formData.documentOption === "link" ? (
@@ -917,7 +917,7 @@ export default function AddADriver() {
                           </>
                         ) : (
                           <>
-                            {formData.firstName} {formData.lastName} has been added to your driver roster.
+                            {formData.firstName} {formData.lastName} has been added to your employee roster.
                           </>
                         )}
                       </p>
@@ -925,12 +925,12 @@ export default function AddADriver() {
                         <button
                           onClick={handleNavigateToDrivers}
                           className={`px-6 py-2.5 text-white transition-all rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
-                          View All Drivers
+                          View All Employees
                         </button>
                         <button
                           onClick={() => window.location.reload()}
                           className={`px-6 py-2.5 transition-all border rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}>
-                          Add Another Driver
+                          Add Another Employee
                         </button>
                       </div>
                     </>
@@ -984,10 +984,10 @@ export default function AddADriver() {
                 ) : creatingDriver ? (
                   <span className="flex items-center">
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Driver...
+                    Creating Employee...
                   </span>
                 ) : currentStep === 8 && formData.documentOption === "skip" ? (
-                  "Go to Drivers"
+                  "Go to Employees"
                 ) : currentStep === 7 ? (
                   "Complete & Submit"
                 ) : (

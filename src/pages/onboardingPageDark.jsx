@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import {
-  Shield,
   Building2,
   ArrowRight,
   ArrowLeft,
@@ -27,6 +26,13 @@ export default function OnboardingDark() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [bulkUploadedDrivers, setBulkUploadedDrivers] = useState([]);
+  const [showOperatingAddressForm, setShowOperatingAddressForm] = useState(false);
+  const [currentOperatingAddress, setCurrentOperatingAddress] = useState({
+    street: "",
+    city: "",
+    stateProvince: "",
+    zipPostalCode: "",
+  });
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -45,7 +51,7 @@ export default function OnboardingDark() {
       // Step 1 - Company Information
       legalCompanyName: "",
       operatingName: "",
-      country: "Canada",
+      country: "",
       entityType: "",
       businessRegistrationNumber: "",
       registeredAddress: {
@@ -89,8 +95,9 @@ export default function OnboardingDark() {
       agreeToTerms: false,
       agreeToPrivacy: false,
       agreeToDataProcessing: false,
-      agreeToSmsConsent: false,
-      agreeToSupportAccess: false,
+      agreeToAiFairUse: false,
+      agreeToGdprDataProcessing: false,
+      agreeToComplaints: false,
       consentTimestamp: "",
       consentIpAddress: "",
       consentVersion: "1.0",
@@ -138,9 +145,30 @@ export default function OnboardingDark() {
     }
   }, [user, isLoaded, navigate, setValue]);
 
-  const countries = ["United States", "Canada"];
+  const countries = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon",
+    "Canada", "Cape Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+    "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
+    "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
+    "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti",
+    "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy",
+    "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos",
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi",
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
+    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau",
+    "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania",
+    "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+    "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
+    "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela",
+    "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+  ];
 
-  const entityTypes = ["Corp", "Inc", "LLC", "Ltd", "Partnership"];
+  const entityTypes = ["Corp", "Inc", "LLC", "Ltd", "Partnership", "Sole Proprietorship", "Other"];
 
   const updateFormData = (field, value) => {
     setValue(field, value, { shouldValidate: true });
@@ -169,6 +197,39 @@ export default function OnboardingDark() {
 
   const removeStationCode = (code) => {
     setValue("stationCodes", formData.stationCodes.filter(c => c !== code), { shouldValidate: true });
+  };
+
+  const addOperatingAddress = () => {
+    // Validate that all fields are filled
+    if (
+      !currentOperatingAddress.street ||
+      !currentOperatingAddress.city ||
+      !currentOperatingAddress.stateProvince ||
+      !currentOperatingAddress.zipPostalCode
+    ) {
+      toast.error("Please fill in all operating address fields");
+      return;
+    }
+
+    // Add to operatingAddresses array
+    setValue("operatingAddresses", [...formData.operatingAddresses, currentOperatingAddress], {
+      shouldValidate: true,
+    });
+
+    // Reset form and hide it
+    setCurrentOperatingAddress({
+      street: "",
+      city: "",
+      stateProvince: "",
+      zipPostalCode: "",
+    });
+    setShowOperatingAddressForm(false);
+  };
+
+  const removeOperatingAddress = (index) => {
+    setValue("operatingAddresses", formData.operatingAddresses.filter((_, i) => i !== index), {
+      shouldValidate: true,
+    });
   };
 
   const handleCSVUpload = async (driversData) => {
@@ -251,16 +312,15 @@ export default function OnboardingDark() {
         }
         break;
       case 4:
-        // Step 4 (Legal Consents) - Conditional validation
-        fieldsToValidate = ["agreeToTerms", "agreeToPrivacy"];
-        // Add Data Processing Addendum if Amazon DSP
-        if (formData.isAmazonDSP) {
-          fieldsToValidate.push("agreeToDataProcessing");
-        }
-        // Add SMS Consent if paid plan
-        if (formData.plan !== 'Free') {
-          fieldsToValidate.push("agreeToSmsConsent");
-        }
+        // Step 4 (Legal Consents) - All policies are now required
+        fieldsToValidate = [
+          "agreeToTerms",
+          "agreeToPrivacy",
+          "agreeToDataProcessing",
+          "agreeToAiFairUse",
+          "agreeToGdprDataProcessing",
+          "agreeToComplaints"
+        ];
         break;
     }
 
@@ -475,25 +535,21 @@ export default function OnboardingDark() {
                 <label className="block mb-2 text-sm font-medium text-slate-300">
                   Country *
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <select
+                  value={formData.country}
+                  onChange={(e) => updateFormData("country", e.target.value)}
+                  className={`w-full px-4 py-3 text-white bg-slate-800 focus:outline-none focus:ring-2 rounded-[10px] ${
+                    errors.country
+                      ? "border border-red-500 focus:ring-red-500"
+                      : "border border-slate-700 focus:ring-violet-500"
+                  }`}>
+                  <option value="">Select a country</option>
                   {countries.map((country) => (
-                    <button
-                      key={country}
-                      type="button"
-                      disabled={true}
-                      className={`px-4 py-3 rounded-[10px] transition-all flex items-center justify-center gap-2 cursor-not-allowed opacity-60 ${
-                        formData.country === country
-                          ? "bg-violet-500/20 border border-violet-500 text-violet-400"
-                          : "bg-slate-800 border border-slate-700 text-slate-300"
-                      } ${errors.country ? "border border-red-500" : ""}`}>
-                      {formData.country === country && <Check className="w-4 h-4" />}
+                    <option key={country} value={country}>
                       {country}
-                    </button>
+                    </option>
                   ))}
-                </div>
-                <p className="mt-2 text-xs text-slate-400">
-                  Currently operating in Canada only
-                </p>
+                </select>
                 {errors.country && (
                   <p className="mt-1 text-sm text-red-400">
                     {errors.country.message}
@@ -531,42 +587,32 @@ export default function OnboardingDark() {
               </div>
 
               {/* Business Registration Number */}
-              {formData.country && (
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-slate-300">
-                    {formData.country === "United States"
-                      ? "EIN (Employer Identification Number) *"
-                      : "Business Number / Corporation Number *"}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.businessRegistrationNumber}
-                    onChange={(e) =>
-                      updateFormData("businessRegistrationNumber", e.target.value)
-                    }
-                    placeholder={
-                      formData.country === "United States"
-                        ? "XX-XXXXXXX (e.g., 12-3456789)"
-                        : "123456789 (9 digits)"
-                    }
-                    className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
-                      errors.businessRegistrationNumber
-                        ? "border border-red-500 focus:ring-red-500"
-                        : "border border-slate-700 focus:ring-violet-500"
-                    }`}
-                  />
-                  {errors.businessRegistrationNumber && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.businessRegistrationNumber.message}
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-slate-500">
-                    {formData.country === "United States"
-                      ? "Format: XX-XXXXXXX (two digits, hyphen, seven digits)"
-                      : "Format: 9 digits (no spaces or hyphens)"}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-slate-300">
+                  Business Registration Number *
+                </label>
+                <input
+                  type="text"
+                  value={formData.businessRegistrationNumber}
+                  onChange={(e) =>
+                    updateFormData("businessRegistrationNumber", e.target.value)
+                  }
+                  placeholder="e.g., 123456789, XX-XXXXXXX, or your country's format"
+                  className={`w-full px-4 py-3 text-white bg-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
+                    errors.businessRegistrationNumber
+                      ? "border border-red-500 focus:ring-red-500"
+                      : "border border-slate-700 focus:ring-violet-500"
+                  }`}
+                />
+                {errors.businessRegistrationNumber && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.businessRegistrationNumber.message}
                   </p>
-                </div>
-              )}
+                )}
+                <p className="mt-1 text-xs text-slate-500">
+                  Enter your EIN, Corporation Number, Tax ID, or equivalent registration number
+                </p>
+              </div>
 
               {/* Registered Address */}
               <div className="p-4 border border-slate-700 bg-slate-800/50 rounded-[10px]">
@@ -629,7 +675,7 @@ export default function OnboardingDark() {
                     </div>
                     <div>
                       <label className="block mb-1 text-xs font-medium text-slate-400">
-                        {formData.country === "Canada" ? "Province *" : "State *"}
+                        State/Province/Region *
                       </label>
                       <input
                         type="text"
@@ -640,7 +686,7 @@ export default function OnboardingDark() {
                             stateProvince: e.target.value,
                           }, { shouldValidate: true })
                         }
-                        placeholder={formData.country === "Canada" ? "e.g., Ontario" : "e.g., California"}
+                        placeholder="e.g., Ontario, California, etc."
                         className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
                           errors.registeredAddress?.stateProvince
                             ? "border border-red-500 focus:ring-red-500"
@@ -656,7 +702,7 @@ export default function OnboardingDark() {
                   </div>
                   <div>
                     <label className="block mb-1 text-xs font-medium text-slate-400">
-                      {formData.country === "Canada" ? "Postal Code *" : "ZIP Code *"}
+                      Postal Code / ZIP Code *
                     </label>
                     <input
                       type="text"
@@ -667,9 +713,7 @@ export default function OnboardingDark() {
                           zipPostalCode: e.target.value,
                         }, { shouldValidate: true })
                       }
-                      placeholder={
-                        formData.country === "Canada" ? "A1A 1A1" : "12345"
-                      }
+                      placeholder="e.g., A1A 1A1, 12345, etc."
                       className={`w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 rounded-[10px] ${
                         errors.registeredAddress?.zipPostalCode
                           ? "border border-red-500 focus:ring-red-500"
@@ -691,7 +735,12 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.sameAsRegistered}
-                    onChange={(e) => updateFormData("sameAsRegistered", e.target.checked)}
+                    onChange={(e) => {
+                      updateFormData("sameAsRegistered", e.target.checked);
+                      if (e.target.checked) {
+                        setShowOperatingAddressForm(false);
+                      }
+                    }}
                     className="w-4 h-4 rounded text-violet-500 bg-slate-700 border-slate-600 focus:ring-violet-500"
                   />
                   Operating address is same as registered address
@@ -701,11 +750,136 @@ export default function OnboardingDark() {
                     <p className="mb-3 text-xs text-slate-400">
                       Add your operating/warehouse addresses
                     </p>
-                    <button
-                      type="button"
-                      className="text-sm text-violet-400 hover:text-violet-300">
-                      + Add Operating Address
-                    </button>
+
+                    {/* Display saved operating addresses */}
+                    {formData.operatingAddresses.length > 0 && (
+                      <div className="mb-3 space-y-2">
+                        {formData.operatingAddresses.map((address, index) => (
+                          <div
+                            key={index}
+                            className="p-3 bg-slate-900 border border-slate-700 rounded-[10px] flex justify-between items-start">
+                            <div className="text-xs text-slate-300">
+                              <p>{address.street}</p>
+                              <p>
+                                {address.city}, {address.stateProvince} {address.zipPostalCode}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeOperatingAddress(index)}
+                              className="text-xs text-red-400 hover:text-red-300">
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {!showOperatingAddressForm && (
+                      <button
+                        type="button"
+                        onClick={() => setShowOperatingAddressForm(true)}
+                        className="text-sm text-violet-400 hover:text-violet-300">
+                        + Add Operating Address
+                      </button>
+                    )}
+
+                    {showOperatingAddressForm && (
+                      <div className="mt-3 space-y-3">
+                        <div>
+                          <label className="block mb-1 text-xs font-medium text-slate-400">
+                            Street Address *
+                          </label>
+                          <input
+                            type="text"
+                            value={currentOperatingAddress.street}
+                            onChange={(e) =>
+                              setCurrentOperatingAddress({
+                                ...currentOperatingAddress,
+                                street: e.target.value,
+                              })
+                            }
+                            placeholder="123 Main Street"
+                            className="w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-slate-700 rounded-[10px]"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block mb-1 text-xs font-medium text-slate-400">
+                              City *
+                            </label>
+                            <input
+                              type="text"
+                              value={currentOperatingAddress.city}
+                              onChange={(e) =>
+                                setCurrentOperatingAddress({
+                                  ...currentOperatingAddress,
+                                  city: e.target.value,
+                                })
+                              }
+                              placeholder="City"
+                              className="w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-slate-700 rounded-[10px]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block mb-1 text-xs font-medium text-slate-400">
+                              State/Province/Region *
+                            </label>
+                            <input
+                              type="text"
+                              value={currentOperatingAddress.stateProvince}
+                              onChange={(e) =>
+                                setCurrentOperatingAddress({
+                                  ...currentOperatingAddress,
+                                  stateProvince: e.target.value,
+                                })
+                              }
+                              placeholder="e.g., Ontario, California, etc."
+                              className="w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-slate-700 rounded-[10px]"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block mb-1 text-xs font-medium text-slate-400">
+                            Postal Code / ZIP Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={currentOperatingAddress.zipPostalCode}
+                            onChange={(e) =>
+                              setCurrentOperatingAddress({
+                                ...currentOperatingAddress,
+                                zipPostalCode: e.target.value,
+                              })
+                            }
+                            placeholder="e.g., A1A 1A1, 12345, etc."
+                            className="w-full px-3 py-2 text-sm text-white bg-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-slate-700 rounded-[10px]"
+                          />
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowOperatingAddressForm(false);
+                              setCurrentOperatingAddress({
+                                street: "",
+                                city: "",
+                                stateProvince: "",
+                                zipPostalCode: "",
+                              });
+                            }}
+                            className="px-4 py-2 text-sm text-slate-300 bg-slate-700 hover:bg-slate-600 rounded-[10px] transition-colors">
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={addOperatingAddress}
+                            className="px-4 py-2 text-sm text-white bg-violet-600 hover:bg-violet-700 rounded-[10px] transition-colors">
+                            Save Address
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -744,7 +918,7 @@ export default function OnboardingDark() {
           <div className="space-y-6">
             <div className="mb-8 space-y-2 text-center">
               <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
-                <Shield className="w-8 h-8 text-violet-400" />
+                <img src="/logo.png" alt="Complyo Logo" className="w-8 h-8" />
               </div>
               <h2 className="text-3xl font-bold text-white">
                 Primary Admin Account
@@ -850,7 +1024,7 @@ export default function OnboardingDark() {
               {/* Info Box */}
               <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded-[10px]">
                 <div className="flex gap-3">
-                  <Shield className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
+                  <img src="/logo.png" alt="Complyo Logo" className="w-5 h-5 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-violet-300">Primary Administrator</p>
                     <p className="mt-1 text-sm text-slate-300">
@@ -1107,9 +1281,9 @@ export default function OnboardingDark() {
         const termsLink = '/policies/terms-of-service';
         const privacyLink = '/policies/privacy-policy';
         const dpaLink = '/policies/data-processing-agreement';
-        const smsConsentLink = '/policies/sms-consent';
-        const cookieLink = '/policies/cookie-preferences';
-        const supportAccessLink = '/policies/support-access';
+        const aiFairUseLink = '/policies/ai-fair-use-policy';
+        const gdprDpaLink = '/policies/gdpr-data-processing-addendum';
+        const complaintsLink = '/policies/complaints-policy';
 
         return (
           <div className="space-y-6">
@@ -1148,6 +1322,9 @@ export default function OnboardingDark() {
                       </a>
                       . <span className="text-red-400">*</span>
                     </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Our Terms of Service outline the rules and regulations for using Complyo's services, including user responsibilities and limitations.
+                    </p>
                   </div>
                 </label>
                 {errors.agreeToTerms && (
@@ -1179,6 +1356,9 @@ export default function OnboardingDark() {
                       </a>
                       . <span className="text-red-400">*</span>
                     </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Our Privacy Policy explains how we collect, use, and protect your personal information and driver data.
+                    </p>
                   </div>
                 </label>
                 {errors.agreeToPrivacy && (
@@ -1186,132 +1366,140 @@ export default function OnboardingDark() {
                 )}
               </div>
 
-              {/* Data Processing Addendum (Required for DSPs) */}
-              {formData.isAmazonDSP && (
-                <div className={`p-4 border rounded-[10px] ${
-                  errors.agreeToDataProcessing ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
-                }`}>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.agreeToDataProcessing}
-                      onChange={(e) => updateFormData("agreeToDataProcessing", e.target.checked)}
-                      className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
-                    />
-                    <div className="flex-1">
-                      <p className="text-sm text-slate-300">
-                        I agree that Complyo processes documents and personal information under the{' '}
-                        <a
-                          href={dpaLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
-                          Data Processing Addendum
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                        . <span className="text-red-400">*</span>
-                      </p>
-                    </div>
-                  </label>
-                  {errors.agreeToDataProcessing && (
-                    <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToDataProcessing.message}</p>
-                  )}
-                </div>
-              )}
-
-              {/* SMS Consent (Required if SMS Enabled - paid plans) */}
-              {formData.plan !== 'Free' && (
-                <div className={`p-4 border rounded-[10px] ${
-                  errors.agreeToSmsConsent ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
-                }`}>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.agreeToSmsConsent}
-                      onChange={(e) => updateFormData("agreeToSmsConsent", e.target.checked)}
-                      className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
-                    />
-                    <div className="flex-1">
-                      <p className="text-sm text-slate-300">
-                        I agree to receive{' '}
-                        <a
-                          href={smsConsentLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
-                          SMS alerts
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                        {' '}from Complyo. Message frequency varies. Reply STOP to opt out, HELP for help. Message & data rates may apply. Consent is not a condition of purchase. <span className="text-red-400">*</span>
-                      </p>
-                      <p className="mt-2 text-xs text-slate-500">
-                        By checking this box, you authorize Complyo to send automated text messages to the mobile number provided. Standard messaging rates apply.
-                      </p>
-                    </div>
-                  </label>
-                  {errors.agreeToSmsConsent && (
-                    <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToSmsConsent.message}</p>
-                  )}
-                </div>
-              )}
-
-              {/* Cookie Preferences (Required) */}
+              {/* Data Processing Addendum (Required) */}
               <div className={`p-4 border rounded-[10px] ${
-                errors.agreeToCookies ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+                errors.agreeToDataProcessing ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
               }`}>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.agreeToCookies || true}
-                    onChange={(e) => updateFormData("agreeToCookies", e.target.checked)}
+                    checked={formData.agreeToDataProcessing}
+                    onChange={(e) => updateFormData("agreeToDataProcessing", e.target.checked)}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
                     <p className="text-sm text-slate-300">
-                      I agree to the use of{' '}
+                      I agree that Complyo processes documents and personal information under the{' '}
                       <a
-                        href={cookieLink}
+                        href={dpaLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
-                        cookies
+                        Data Processing Addendum
                         <ExternalLink className="w-3 h-3" />
                       </a>
-                      {' '}as described in the Cookie Policy. <span className="text-red-400">*</span>
-                    </p>
-                  </div>
-                </label>
-              </div>
-
-              {/* Support Access (Required) */}
-              <div className={`p-4 border rounded-[10px] ${
-                errors.agreeToSupportAccess ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
-              }`}>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.agreeToSupportAccess}
-                    onChange={(e) => updateFormData("agreeToSupportAccess", e.target.checked)}
-                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm text-slate-300">
-                      I authorize Complyo{' '}
-                      <a
-                        href={supportAccessLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
-                        support to access
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                      {' '}my account solely to resolve an active support ticket. <span className="text-red-400">*</span>
+                      . <span className="text-red-400">*</span>
                     </p>
                     <p className="mt-2 text-xs text-slate-500">
-                      Access expires after 72 hours from when granted. You can revoke this permission at any time in your account settings.
+                      This addendum defines how Complyo processes, stores, and protects your data in compliance with applicable regulations.
                     </p>
                   </div>
                 </label>
+                {errors.agreeToDataProcessing && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToDataProcessing.message}</p>
+                )}
+              </div>
+
+              {/* AI Fair Use Policy (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToAiFairUse ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToAiFairUse}
+                    onChange={(e) => updateFormData("agreeToAiFairUse", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I agree to the{' '}
+                      <a
+                        href={aiFairUseLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        AI Fair Use Policy
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      . <span className="text-red-400">*</span>
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Our AI Fair Use Policy outlines acceptable use of AI-powered features including document analysis, data extraction, and compliance checking.
+                    </p>
+                  </div>
+                </label>
+                {errors.agreeToAiFairUse && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToAiFairUse.message}</p>
+                )}
+              </div>
+
+              {/* GDPR Data Processing Addendum (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToGdprDataProcessing ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToGdprDataProcessing}
+                    onChange={(e) => updateFormData("agreeToGdprDataProcessing", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I agree to the{' '}
+                      <a
+                        href={gdprDpaLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        GDPR Data Processing Addendum
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      . <span className="text-red-400">*</span>
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      This addendum ensures compliance with GDPR requirements for data processing, security, and user rights protection.
+                    </p>
+                  </div>
+                </label>
+                {errors.agreeToGdprDataProcessing && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToGdprDataProcessing.message}</p>
+                )}
+              </div>
+
+              {/* Complaints Policy (Required) */}
+              <div className={`p-4 border rounded-[10px] ${
+                errors.agreeToComplaints ? 'border-red-500 bg-red-500/5' : 'border-slate-700 bg-slate-800/50'
+              }`}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToComplaints}
+                    onChange={(e) => updateFormData("agreeToComplaints", e.target.checked)}
+                    className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-300">
+                      I agree to the{' '}
+                      <a
+                        href={complaintsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300">
+                        Complaints Policy
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                      . <span className="text-red-400">*</span>
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Our Complaints Policy outlines the process for raising concerns, filing complaints, and resolving disputes with Complyo.
+                    </p>
+                  </div>
+                </label>
+                {errors.agreeToComplaints && (
+                  <p className="mt-2 ml-8 text-xs text-red-400">{errors.agreeToComplaints.message}</p>
+                )}
               </div>
 
               {/* Region Notice */}
@@ -1341,11 +1529,11 @@ export default function OnboardingDark() {
         {/* Header */}
         <div className="p-6 md:p-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-[10px] bg-gradient-to-br from-blue-600 via-violet-600 to-purple-600">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="p-2 rounded-[10px] ">
+              <img src="/logo.png" alt="Complyo Logo" className="w-8 h-8" />
             </div>
-            <span className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text">
-              DSP ComplianceManager
+            <span className="text-xl font-bold font-white">
+              Complyo.io
             </span>
           </div>
         </div>

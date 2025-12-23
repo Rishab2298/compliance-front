@@ -605,7 +605,7 @@ const DriverDetail = () => {
   if (loading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <DashboardHeader title="Driver Details">
+        <DashboardHeader title="Employee Details">
           <Skeleton className="h-10 w-20 rounded-[10px]" />
         </DashboardHeader>
         <div className="flex-1 py-8">
@@ -621,7 +621,7 @@ const DriverDetail = () => {
   if ((error || !driver) && !loading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <DashboardHeader title="Driver Details">
+        <DashboardHeader title="Employee Details">
           <Button
             variant="ghost"
             onClick={() => navigate('/client/drivers')}
@@ -634,7 +634,7 @@ const DriverDetail = () => {
         <div className="flex-1 py-8">
           <div className="container w-full px-6 mx-auto">
             <div className="p-6 text-center border border-red-200 rounded-[10px] bg-red-50">
-              <p className="text-sm text-red-800">Driver not found</p>
+              <p className="text-sm text-red-800">Employee not found</p>
             </div>
           </div>
         </div>
@@ -657,9 +657,9 @@ const DriverDetail = () => {
 
       {/* Header */}
       <DashboardHeader
-        title="Driver Details"
+        title="Employee Details"
         breadcrumbs={[
-          { label: 'Drivers', href: '/client/drivers' },
+          { label: 'Employees', href: '/client/drivers' },
           { label: driver.name }
         ]}
       >
@@ -766,12 +766,12 @@ const DriverDetail = () => {
                   <div className="flex-1">
                     {isEditing ? (
                       <div className="max-w-md">
-                        <Label className={`text-xs font-medium tracking-wider ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Driver Name</Label>
+                        <Label className={`text-xs font-medium tracking-wider ${getThemeClasses.text.secondary(isDarkMode)} uppercase`}>Employee Name</Label>
                         <Input
                           value={formData.name}
                           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                           className="mt-2 rounded-[10px]"
-                          placeholder="Enter driver name"
+                          placeholder="Enter employee name"
                         />
                       </div>
                     ) : (
@@ -899,7 +899,7 @@ const DriverDetail = () => {
               <div>
                 <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Upload Documents</h2>
                 <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  Add new documents for this driver
+                  Add new documents for this employee
                 </p>
               </div>
               {showUpload ? (

@@ -192,8 +192,8 @@ export const getRoleDisplayName = (dspRole) => {
  */
 export const getAvailableDSPRoles = () => {
   return [
-    { value: 'COMPLIANCE_MANAGER', label: 'Compliance Manager', description: 'Full access to drivers & documents' },
-    { value: 'HR_LEAD', label: 'HR Lead', description: 'Manage drivers & upload documents' },
+    { value: 'COMPLIANCE_MANAGER', label: 'Compliance Manager', description: 'Full access to employees & documents' },
+    { value: 'HR_LEAD', label: 'HR Lead', description: 'Manage employees & upload documents' },
     { value: 'VIEWER', label: 'Viewer', description: 'Read-only access' },
     { value: 'BILLING', label: 'Billing', description: 'Billing & subscriptions only' },
   ];

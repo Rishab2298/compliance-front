@@ -97,8 +97,8 @@ const Settings = () => {
       {/* Decorative elements for dark mode */}
       {isDarkMode && (
         <>
-          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed top-0 rounded-full pointer-events-none left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
+          <div className="fixed bottom-0 rounded-full pointer-events-none right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
         </>
       )}
 
@@ -260,7 +260,7 @@ const Settings = () => {
             <div className="mt-6 space-y-3">
               <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-200'}`}>
                 <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-                  <span className="font-semibold">⏰ Automatic Reminders:</span> Your reminder notifications are sent automatically every day at <span className="font-semibold">8:00 AM Eastern Time</span> (New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!
+                  <span className="font-semibold"> Automatic Reminders:</span> Your reminder notifications are sent automatically every day at <span className="font-semibold">8:00 AM Eastern Time</span> (New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!
                 </p>
               </div>
               <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
@@ -352,7 +352,7 @@ const Settings = () => {
                         className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
                       >
                         <Skeleton className="h-5 w-20 rounded-[10px]" />
-                        <Skeleton className="h-6 w-11 rounded-full" />
+                        <Skeleton className="h-6 rounded-full w-11" />
                       </div>
                     ))
                   ) : (

@@ -28,7 +28,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import PublicLayout from "@/components/PublicLayout";
 
-export default function LandingPage() {
+export default function LandingPageCopy() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
@@ -119,48 +119,48 @@ export default function LandingPage() {
     {
       icon: <Clock />,
       title: "Save Hours Every Week",
-      desc: "Automate document tracking & reminders",
+      desc: "Eliminate manual expiration tracking",
     },
     {
       icon: <TrendingUp />,
-      title: "Real-Time Compliance",
-      desc: "Instant visibility into employee status",
+      title: "Never Miss a Deadline",
+      desc: "Automated alerts for every employee credential",
     },
     {
       icon: <Lock />,
-      title: "Secure S3 Storage",
-      desc: "Bank-grade encryption for all documents",
+      title: "AWS Cloud Storage",
+      desc: "Bank-grade encryption for employee documents",
     },
     {
       icon: <Award />,
-      title: "AI-Powered Accuracy",
-      desc: "Extract data from documents instantly",
+      title: "Stay Audit-Ready",
+      desc: "Generate compliance reports instantly",
     },
   ];
 
   const howItWorks = [
     {
       step: "1",
-      title: "Add Employees & Configure",
-      desc: "Set up your company, add employees, and configure document types you want to track",
+      title: "Add Employees & Credentials",
+      desc: "Set up your organization, add employees, and define the licenses, certifications, and permits you need to track",
       icon: <Users />,
     },
     {
       step: "2",
-      title: "Upload or Send Links",
-      desc: "Upload documents directly, use AI extraction, or send secure upload links to employees via email/SMS",
+      title: "Collect Employee Documents",
+      desc: "Upload credentials directly with AI extraction, or send secure upload links to employees via email/SMS",
       icon: <Upload />,
     },
     {
       step: "3",
-      title: "Review & Verify",
-      desc: "AI extracts document data. Review, edit if needed, and mark documents as verified, expired, or expiring",
+      title: "Review Expiration Dates",
+      desc: "AI automatically extracts expiry dates from employee documents. Review, verify, and edit before finalizing",
       icon: <CheckCircle />,
     },
     {
       step: "4",
-      title: "Automated Reminders",
-      desc: "Set custom reminder intervals. System automatically sends email/SMS alerts before expiry dates",
+      title: "Set Automated Alerts",
+      desc: "Configure custom reminder intervals. System sends multi-channel alerts to employees before credentials expire",
       icon: <Bell />,
     },
   ];
@@ -348,19 +348,19 @@ export default function LandingPage() {
             <div className="space-y-8">
               <div className="inline-block">
                 <span className="px-4 py-2 text-sm text-blue-400 border rounded-full bg-blue-500/10 border-blue-500/20">
-                  Employee Document Compliance Made Simple
+                  Employee Expiration Tracking Made Simple
                 </span>
               </div>
               <h1 className="text-5xl font-bold leading-tight md:text-7xl">
-                Keep Every Employee
+                Never Miss an
                 <span className="text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text">
                   {" "}
-                  Compliant
+                  Employee Deadline
                 </span>{" "}
-                Effortlessly
+                Again
               </h1>
               <p className={`text-xl ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                Track employee documents, get AI-powered data extraction, send automated reminders, and maintain real-time compliance scores - all in one platform.
+                Centralize employee license and certification tracking. AI extracts expiration dates, automated reminders keep your team compliant, and real-time dashboards give you complete visibility.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <SignInButton>
@@ -467,11 +467,11 @@ export default function LandingPage() {
               Everything You Need for
               <span className="text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text">
                 {" "}
-                Compliance Excellence
+                Employee Compliance
               </span>
             </h2>
             <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-              Powerful features designed for modern delivery service providers
+              Powerful features designed to keep employee credentials current and compliant
             </p>
           </div>
 
@@ -506,14 +506,14 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold md:text-5xl">
-              Get Compliant in
+              Stay Compliant in
               <span className="text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text">
                 {" "}
                 Four Simple Steps
               </span>
             </h2>
             <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-              From onboarding to compliance in minutes, not hours
+              From employee onboarding to credential tracking in minutes
             </p>
           </div>
 
@@ -557,7 +557,7 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-              Flexible pricing that grows with your fleet
+              Flexible pricing that scales with your team
             </p>
           </div>
 
@@ -623,10 +623,10 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-cyan-400/20 to-transparent"></div>
             <div className="relative z-10">
               <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
-                Ready to Automate Employee Compliance?
+                Ready to Automate Expiration Tracking?
               </h2>
               <p className="mb-8 text-xl text-blue-50">
-                Start free with 5 employees. No credit card required. Upgrade anytime.
+                Keep employee credentials current. Start free with 5 employees. No credit card required.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <SignInButton>
