@@ -69,11 +69,19 @@ export default function LandingPage() {
   // Persist theme to localStorage
   useEffect(() => {
     localStorage.setItem('theme', theme);
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: theme }));
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  };
+  // Listen for theme changes from other components
+  useEffect(() => {
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
+    };
+
+    window.addEventListener('themeChange', handleThemeChange);
+    return () => window.removeEventListener('themeChange', handleThemeChange);
+  }, []);
 
 
   const features = [

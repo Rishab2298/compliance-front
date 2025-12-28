@@ -265,14 +265,14 @@ export default function DriverUploadPortal() {
                               Click to upload or drag and drop
                             </p>
                             <p className="mt-1 text-xs text-gray-500">
-                              JPG, JPEG, PNG only (Max 10MB)
+                              JPG, JPEG, PNG, PDF (Max 10MB)
                             </p>
                           </div>
                         </div>
                         <input
                           type="file"
                           className="hidden"
-                          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                          accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
                           onChange={(e) => handleFileSelect(docType, e.target.files[0])}
                         />
                       </label>

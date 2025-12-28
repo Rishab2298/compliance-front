@@ -24,10 +24,12 @@ import CreditPurchaseModal from '@/components/CreditPurchaseModal'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
 import { DashboardHeader } from '@/components/DashboardHeader'
+import { useTranslation } from 'react-i18next'
 
 const Billing = () => {
   const { user } = useUser()
   const { isDarkMode } = useTheme()
+  const { t } = useTranslation()
   const [billingInterval, setBillingInterval] = useState('monthly')
   const [showCreditModal, setShowCreditModal] = useState(false)
   const [loadingPlan, setLoadingPlan] = useState(null) // Track which plan is loading
@@ -85,7 +87,7 @@ const Billing = () => {
         window.location.href = result.checkoutUrl
       }
     } catch (error) {
-      toast.error('Failed to purchase credits', {
+      toast.error(t('billing.toasts.failedToPurchaseCredits'), {
         description: error.message,
       })
     } finally {
@@ -97,13 +99,13 @@ const Billing = () => {
     if (!currentPlan) return
 
     if (planName === currentPlan.name) {
-      toast.info('You are already on this plan')
+      toast.info(t('billing.toasts.alreadyOnPlan'))
       return
     }
 
     if (planName === 'Enterprise') {
-      toast.info('Contact sales for Enterprise pricing', {
-        description: 'Email us at sales@complyo.io',
+      toast.info(t('billing.toasts.contactSales'), {
+        description: t('billing.toasts.contactSalesDesc'),
       })
       return
     }
@@ -125,12 +127,12 @@ const Billing = () => {
           window.location.href = result.checkoutUrl
         }
       } else {
-        toast.info('Downgrades not available in UI', {
-          description: 'Contact support to downgrade',
+        toast.info(t('billing.toasts.downgradeNotAvailable'), {
+          description: t('billing.toasts.downgradeDesc'),
         })
       }
     } catch (error) {
-      toast.error('Failed to change plan', {
+      toast.error(t('billing.toasts.failedToChangePlan'), {
         description: error.message,
       })
     } finally {
@@ -156,7 +158,7 @@ const Billing = () => {
       )}
 
       {/* Header */}
-      <DashboardHeader title="Billing">
+      <DashboardHeader title={t('billing.title')}>
         {loading ? (
           <Skeleton className="h-6 w-20 rounded-[10px]" />
         ) : currentPlan ? (
@@ -168,20 +170,20 @@ const Billing = () => {
       </DashboardHeader>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Overview Section */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Current Plan</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Your subscription and usage details</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.currentPlan.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.currentPlan.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {/* Current Plan Box */}
               <div className={`p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
-                <p className={`mb-3 text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Plan</p>
+                <p className={`mb-3 text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.currentPlan.plan')}</p>
                 {loading ? (
                   <>
                     <Skeleton className="h-10 w-24 mb-2 rounded-[10px]" />
@@ -198,7 +200,7 @@ const Billing = () => {
                     )}
                     {currentPlan.nextBillingDate && (
                       <p className={`mt-3 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Next billing: {formatDate(currentPlan.nextBillingDate)}
+                        {t('billing.currentPlan.nextBilling')}: {formatDate(currentPlan.nextBillingDate)}
                       </p>
                     )}
                   </>
@@ -208,7 +210,7 @@ const Billing = () => {
               {/* Drivers Usage Box */}
               <div className={`p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <p className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Drivers</p>
+                  <p className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.currentPlan.drivers')}</p>
                   {loading ? (
                     <Skeleton className="h-4 w-8 rounded-[10px]" />
                   ) : (
@@ -249,7 +251,7 @@ const Billing = () => {
               {/* AI Credits Box */}
               <div className={`p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <p className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>AI Credits</p>
+                  <p className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.currentPlan.aiCredits')}</p>
                   <Button
                     size="sm"
                     variant="ghost"
@@ -257,7 +259,7 @@ const Billing = () => {
                     disabled={loading}
                     className={`h-7 text-xs font-medium rounded-[10px] -mr-2 ${isDarkMode ? 'text-violet-400 hover:text-violet-300 hover:bg-slate-700' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'}`}
                   >
-                    Buy More
+                    {t('billing.currentPlan.buyMore')}
                   </Button>
                 </div>
                 {loading ? (
@@ -269,11 +271,11 @@ const Billing = () => {
                   <>
                     <p className={`text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>
                       {currentPlan.aiCredits.current}
-                      <span className={`ml-1 text-base font-normal ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>available</span>
+                      <span className={`ml-1 text-base font-normal ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>{t('billing.currentPlan.available')}</span>
                     </p>
                     {currentPlan.aiCredits.monthly > 0 && (
                       <p className={`mt-3 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        {currentPlan.aiCredits.monthly} credits refill monthly
+                        {currentPlan.aiCredits.monthly} {t('billing.currentPlan.creditsRefill')}
                       </p>
                     )}
                   </>
@@ -288,9 +290,9 @@ const Billing = () => {
               <div className="flex items-start gap-3">
                 <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-yellow-400' : 'text-gray-600'}`} />
                 <div className="flex-1">
-                  <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Running Low on Credits</h3>
+                  <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.lowCreditsAlert.title')}</h3>
                   <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    You have less than 5 AI credits remaining. Purchase more to continue scanning documents.
+                    {t('billing.lowCreditsAlert.description')}
                   </p>
                 </div>
                 <Button
@@ -298,7 +300,7 @@ const Billing = () => {
                   onClick={() => setShowCreditModal(true)}
                   className={`rounded-[10px] flex-shrink-0 ${getThemeClasses.button.primary(isDarkMode)}`}
                 >
-                  Buy Credits
+                  {t('billing.lowCreditsAlert.buyCredits')}
                 </Button>
               </div>
             </section>
@@ -308,8 +310,8 @@ const Billing = () => {
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="flex items-end justify-between mb-6">
               <div>
-                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Available Plans</h2>
-                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Choose the plan that fits your needs</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.plans.title')}</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.subtitle')}</p>
               </div>
 
               {/* Billing Toggle */}
@@ -326,7 +328,7 @@ const Billing = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Monthly
+                  {t('billing.plans.monthly')}
                 </button>
                 <button
                   onClick={() => setBillingInterval('yearly')}
@@ -340,8 +342,8 @@ const Billing = () => {
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Yearly
-                  <span className={`text-xs ${isDarkMode ? 'text-slate-500' : 'text-gray-500'}`}>-20%</span>
+                  {t('billing.plans.yearly')}
+                  <span className={`text-xs ${isDarkMode ? 'text-slate-500' : 'text-gray-500'}`}>{t('billing.plans.yearlyDiscount')}</span>
                 </button>
               </div>
             </div>
@@ -396,14 +398,14 @@ const Billing = () => {
                     {isPopular && !isCurrent && (
                       <div className="absolute top-0 right-0">
                         <div className={`text-xs font-medium px-3 py-1 rounded-bl-[10px] rounded-tr-[10px] ${isDarkMode ? 'bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 text-white' : 'bg-gray-800 text-white'}`}>
-                          Popular
+                          {t('billing.plans.popular')}
                         </div>
                       </div>
                     )}
                     {isCurrent && (
                       <div className="absolute top-0 right-0">
                         <div className={`text-xs font-medium px-3 py-1 rounded-bl-[10px] rounded-tr-[10px] ${isDarkMode ? 'bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 text-white' : 'bg-gray-800 text-white'}`}>
-                          Current
+                          {t('billing.plans.current')}
                         </div>
                       </div>
                     )}
@@ -411,20 +413,20 @@ const Billing = () => {
                     <div className="mb-6">
                       <h3 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{plan.name}</h3>
                       {plan.name === 'Enterprise' ? (
-                        <p className={`text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>Custom</p>
+                        <p className={`text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.plans.custom')}</p>
                       ) : (
                         <div className="flex items-baseline gap-1">
                           <span className={`text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>
                             ${billingInterval === 'monthly' ? plan.price : plan.yearlyPrice}
                           </span>
                           <span className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                            /{billingInterval === 'monthly' ? 'mo' : 'yr'}
+                            /{billingInterval === 'monthly' ? t('billing.plans.mo') : t('billing.plans.yr')}
                           </span>
                         </div>
                       )}
                       {billingInterval === 'yearly' && plan.name !== 'Enterprise' && (
                         <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                          Save ${(plan.price * 12 - plan.yearlyPrice).toFixed(0)}/year
+                          {t('billing.plans.save')} ${(plan.price * 12 - plan.yearlyPrice).toFixed(0)}/{t('billing.plans.year')}
                         </p>
                       )}
                     </div>
@@ -433,34 +435,34 @@ const Billing = () => {
                       <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <span>
-                          {plan.maxDrivers === -1 ? 'Unlimited' : `${plan.maxDrivers}`} drivers
+                          {plan.maxDrivers === -1 ? t('billing.plans.unlimited') : `${plan.maxDrivers}`} {t('billing.plans.drivers')}
                         </span>
                       </li>
                       <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <span>
-                          {plan.maxDocumentsPerDriver === -1 ? 'Unlimited' : plan.maxDocumentsPerDriver} docs per driver
+                          {plan.maxDocumentsPerDriver === -1 ? t('billing.plans.unlimited') : plan.maxDocumentsPerDriver} {t('billing.plans.docsPerDriver')}
                         </span>
                       </li>
                       <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <span>
-                          {plan.monthlyAICredits === -1 ? 'Unlimited' : `${plan.monthlyAICredits}`} AI credits/mo
+                          {plan.monthlyAICredits === -1 ? t('billing.plans.unlimited') : `${plan.monthlyAICredits}`} {t('billing.plans.aiCreditsPerMonth')}
                         </span>
                       </li>
                       <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
-                        <span>{plan.features?.sms ? 'Email + SMS' : 'Email'} reminders</span>
+                        <span>{plan.features?.sms ? t('billing.plans.emailSmsReminders') : t('billing.plans.emailReminders')}</span>
                       </li>
                       {plan.name === 'Professional' && (
                         <>
                           <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                             <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
-                            <span>Priority support</span>
+                            <span>{t('billing.plans.prioritySupport')}</span>
                           </li>
                           <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                             <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
-                            <span>Advanced analytics</span>
+                            <span>{t('billing.plans.advancedAnalytics')}</span>
                           </li>
                         </>
                       )}
@@ -468,11 +470,11 @@ const Billing = () => {
                         <>
                           <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                             <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
-                            <span>Dedicated support</span>
+                            <span>{t('billing.plans.dedicatedSupport')}</span>
                           </li>
                           <li className={`flex items-start gap-2 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                             <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
-                            <span>Custom integrations</span>
+                            <span>{t('billing.plans.customIntegrations')}</span>
                           </li>
                         </>
                       )}
@@ -495,17 +497,17 @@ const Billing = () => {
                       {isLoading ? (
                         <span className="flex items-center justify-center gap-2">
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Processing...
+                          {t('billing.plans.processing')}
                         </span>
                       ) : isCurrent ? (
-                        'Current Plan'
+                        t('billing.plans.currentPlan')
                       ) : plan.name === 'Enterprise' ? (
                         <>
-                          Contact Sales <ExternalLink className="w-4 h-4 ml-1.5" />
+                          {t('billing.plans.contactSales')} <ExternalLink className="w-4 h-4 ml-1.5" />
                         </>
                       ) : (
                         <>
-                          Upgrade <ChevronRight className="w-4 h-4 ml-1.5" />
+                          {t('billing.plans.upgrade')} <ChevronRight className="w-4 h-4 ml-1.5" />
                         </>
                       )}
                     </Button>
@@ -556,41 +558,41 @@ const Billing = () => {
                       <h3 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.name}</h3>
                       {currentPlan.name === 'Free' && (
                         <Badge className={`rounded-[10px] text-xs ${isDarkMode ? 'bg-violet-500/20 text-violet-400 border-violet-500/30' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>
-                          Current
+                          {t('billing.plans.current')}
                         </Badge>
                       )}
                     </div>
                     <p className={`max-w-2xl mb-5 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                      Perfect for trying out Complyo. Get started with basic features at no cost.
+                      {t('billing.plans.freePlan.description')}
                     </p>
 
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                       <div className="flex items-start gap-2.5">
                         <CheckCircle className={`flex-shrink-0 w-4 h-4 mt-1 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <div>
-                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.maxDrivers} Drivers</p>
-                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>Limited capacity</p>
+                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.maxDrivers} {t('billing.currentPlan.drivers')}</p>
+                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.freePlan.limitedCapacity')}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2.5">
                         <CheckCircle className={`flex-shrink-0 w-4 h-4 mt-1 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <div>
                           <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.maxDocumentsPerDriver} Doc per Driver</p>
-                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>Basic tracking</p>
+                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.freePlan.basicTracking')}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2.5">
                         <CheckCircle className={`flex-shrink-0 w-4 h-4 mt-1 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <div>
-                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.initialAICredits} AI Credits</p>
-                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>One-time only</p>
+                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{freePlan.initialAICredits} {t('billing.currentPlan.aiCredits')}</p>
+                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.freePlan.oneTimeOnly')}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2.5">
                         <CheckCircle className={`flex-shrink-0 w-4 h-4 mt-1 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                         <div>
-                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Email Reminders</p>
-                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>Basic alerts</p>
+                          <p className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.plans.emailReminders')}</p>
+                          <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.freePlan.basicAlerts')}</p>
                         </div>
                       </div>
                     </div>
@@ -598,10 +600,10 @@ const Billing = () => {
 
                   <div className="flex-shrink-0 ml-8 text-right">
                     <p className={`mb-1 text-4xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>$0</p>
-                    <p className={`mb-4 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Forever free</p>
+                    <p className={`mb-4 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.plans.freePlan.foreverFree')}</p>
                     {currentPlan.name !== 'Free' && (
                       <Button variant="outline" disabled className={`opacity-50 rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}>
-                        Contact Support
+                        {t('billing.plans.freePlan.contactSupport')}
                       </Button>
                     )}
                   </div>
@@ -616,12 +618,12 @@ const Billing = () => {
             <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Invoices & Billing History</h3>
+                  <h3 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.invoices.title')}</h3>
                   {billingHistoryLoading ? (
                     <Skeleton className="h-3 w-32 mt-1 rounded-[10px]" />
                   ) : (
                     <p className={`text-xs mt-1 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                      {billingHistoryData.length > 0 ? `${billingHistoryData.length} total transactions` : 'No transactions yet'}
+                      {billingHistoryData.length > 0 ? `${billingHistoryData.length} ${t('billing.invoices.totalTransactions')}` : t('billing.invoices.noTransactions')}
                     </p>
                   )}
                 </div>
@@ -663,9 +665,9 @@ const Billing = () => {
                   <div className={`p-3 rounded-[10px] mb-3 ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
                     <FileText className={`w-6 h-6 ${isDarkMode ? 'text-slate-600' : 'text-gray-400'}`} />
                   </div>
-                  <p className={`mb-1 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>No invoices yet</p>
+                  <p className={`mb-1 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('billing.invoices.noInvoices')}</p>
                   <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    Your billing history will appear here after your first transaction
+                    {t('billing.invoices.description')}
                   </p>
                 </div>
               ) : (
@@ -691,16 +693,16 @@ const Billing = () => {
                                 ? getThemeClasses.badge.success(isDarkMode)
                                 : isDarkMode ? 'bg-slate-700 text-slate-400 border-slate-600' : 'bg-gray-100 text-gray-600 border-gray-200'
                             }`}>
-                              {invoice.status || 'PAID'}
+                              {invoice.status || t('billing.invoices.paid')}
                             </Badge>
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{formatDate(invoice.paidAt || invoice.createdAt)}</p>
                             <span className={`text-xs ${isDarkMode ? 'text-slate-600' : 'text-gray-400'}`}>•</span>
                             {invoice.plan ? (
-                              <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{invoice.plan} Plan</p>
+                              <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{invoice.plan} {t('billing.invoices.plan')}</p>
                             ) : (
-                              <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Credit Purchase</p>
+                              <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('billing.invoices.creditPurchase')}</p>
                             )}
                           </div>
                         </div>

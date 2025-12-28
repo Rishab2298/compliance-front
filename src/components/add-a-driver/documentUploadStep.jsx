@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { getPresignedUrls, uploadToS3, createDocumentRecord } from "@/api/documents";
 import { validateFile, canUploadMoreDocuments, formatFileSize, ALLOWED_FILE_EXTENSIONS } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const DocumentUploadStep = ({
   planData // Plan data for checking document limits
 }) => {
   const { getToken } = useAuth();
+  const { t } = useTranslation();
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -23,18 +25,18 @@ const DocumentUploadStep = ({
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Upload Documents</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('addEmployee.step3.title')}</h2>
           <p className="mt-1 text-sm text-gray-500">
-            No document types configured
+            {t('addEmployee.step3.noDocTypesTitle')}
           </p>
         </div>
         <div className="p-8 text-center border-2 border-gray-200 border-dashed rounded-[10px]">
           <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
           <h3 className="mb-2 text-sm font-semibold text-gray-900">
-            No document types configured
+            {t('addEmployee.step3.noDocTypesTitle')}
           </h3>
           <p className="text-sm text-gray-500">
-            Please configure document types in your company settings first.
+            {t('addEmployee.step3.noDocTypesDesc')}
           </p>
         </div>
       </div>
@@ -84,7 +86,7 @@ const DocumentUploadStep = ({
     // Show errors for invalid files
     if (invalidFiles.length > 0) {
       invalidFiles.forEach(({ file, errors }) => {
-        toast.error(`${file.name} validation failed`, {
+        toast.error(`${file.name} ${t('addEmployee.step3.toasts.validationFailed')}`, {
           description: errors.join('. '),
         });
       });
@@ -105,8 +107,8 @@ const DocumentUploadStep = ({
 
     if (!uploadCheck.canUpload) {
       const errorTitle = uploadCheck.reason === 'plan-limit'
-        ? "Plan limit reached"
-        : "Document types needed";
+        ? t('addEmployee.step3.toasts.planLimitReached')
+        : t('addEmployee.step3.toasts.documentTypesNeeded');
 
       toast.error(errorTitle, {
         description: uploadCheck.message,
@@ -184,13 +186,13 @@ const DocumentUploadStep = ({
         )
       );
 
-      toast.success(`${fileItem.file.name} uploaded successfully!`);
+      toast.success(`${fileItem.file.name} ${t('addEmployee.step3.toasts.uploadedSuccess')}`);
     } catch (error) {
       console.error('Error uploading file:', error);
       setFiles((prev) =>
         prev.map((f) => (f.id === fileItem.id ? { ...f, status: 'error', progress: 0 } : f))
       );
-      toast.error(`Failed to upload ${fileItem.file.name}: ${error.message}`);
+      toast.error(`${t('addEmployee.step3.toasts.uploadFailed')} ${fileItem.file.name}: ${error.message}`);
     }
   };
 
@@ -225,9 +227,9 @@ const DocumentUploadStep = ({
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Upload Documents</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('addEmployee.step3.title')}</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Upload and enter details for all required documents
+          {t('addEmployee.step3.subtitle')}
         </p>
       </div>
 
@@ -238,7 +240,7 @@ const DocumentUploadStep = ({
             <FileText className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">
-                Required Documents ({documentTypes.length})
+                {t('addEmployee.step3.requiredDocuments')} ({documentTypes.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {documentTypes.map((type, index) => (
@@ -249,7 +251,7 @@ const DocumentUploadStep = ({
                 ))}
               </div>
               <p className="mt-2 text-xs text-blue-700">
-                Please upload all documents listed above
+                {t('addEmployee.step3.pleaseUploadAll')}
               </p>
             </div>
           </div>
@@ -269,15 +271,15 @@ const DocumentUploadStep = ({
       >
         <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
         <h3 className="mb-2 text-sm font-semibold text-gray-900">
-          Upload Documents
+          {t('addEmployee.step3.title')}
         </h3>
         <p className="mb-4 text-sm text-gray-500">
-          Drag and drop files here, or click to browse
+          {t('addEmployee.step3.dragAndDrop')}
         </p>
         <input
           type="file"
           multiple
-          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+          accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
           onChange={handleFileSelect}
           className="hidden"
           id="file-upload"
@@ -289,11 +291,11 @@ const DocumentUploadStep = ({
             className="rounded-[10px]"
             onClick={() => document.getElementById('file-upload').click()}
           >
-            Select Files
+            {t('addEmployee.step3.selectFiles')}
           </Button>
         </label>
         <p className="mt-2 text-xs text-gray-400">
-          Supported: JPG, JPEG, PNG only (Max 10MB per file)
+          {t('addEmployee.step3.supportedFormats')}
         </p>
       </div>
 
@@ -302,10 +304,10 @@ const DocumentUploadStep = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-gray-900">
-              Uploaded Files ({files.length})
+              {t('addEmployee.step3.uploadedFiles')} ({files.length})
             </h4>
             <p className="text-sm text-gray-500">
-              {files.length} of {documentTypes.length} documents uploaded
+              {files.length} {t('addEmployee.step3.of')} {documentTypes.length} {t('addEmployee.step3.documentsUploaded')}
             </p>
           </div>
 
@@ -357,30 +359,30 @@ const DocumentUploadStep = ({
                       {fileItem.file.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {(fileItem.file.size / 1024 / 1024).toFixed(2)} MB
+                      {(fileItem.file.size / 1024 / 1024).toFixed(2)} {t('addEmployee.step3.mb')}
                     </p>
 
                     {/* Status */}
                     <div className="flex items-center gap-1 mt-1">
                       {fileItem.status === 'pending' && (
-                        <span className="text-xs text-gray-500">Pending...</span>
+                        <span className="text-xs text-gray-500">{t('addEmployee.step3.status.pending')}</span>
                       )}
                       {fileItem.status === 'uploading' && (
                         <>
                           <Loader2 className="w-3 h-3 text-blue-600 animate-spin" />
-                          <span className="text-xs text-blue-600">Uploading {fileItem.progress}%</span>
+                          <span className="text-xs text-blue-600">{t('addEmployee.step3.status.uploading')} {fileItem.progress}%</span>
                         </>
                       )}
                       {fileItem.status === 'uploaded' && (
                         <>
                           <Check className="w-3 h-3 text-green-600" />
-                          <span className="text-xs text-green-600">Uploaded</span>
+                          <span className="text-xs text-green-600">{t('addEmployee.step3.status.uploaded')}</span>
                         </>
                       )}
                       {fileItem.status === 'error' && (
                         <>
                           <AlertCircle className="w-3 h-3 text-red-600" />
-                          <span className="text-xs text-red-600">Failed</span>
+                          <span className="text-xs text-red-600">{t('addEmployee.step3.status.failed')}</span>
                         </>
                       )}
                     </div>
@@ -416,7 +418,7 @@ const DocumentUploadStep = ({
               <div className="flex items-center gap-2">
                 <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
                 <p className="text-sm font-medium text-blue-900">
-                  Uploading documents to secure storage...
+                  {t('addEmployee.step3.uploadingToStorage')}
                 </p>
               </div>
             </div>
@@ -427,7 +429,7 @@ const DocumentUploadStep = ({
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-red-600" />
                 <p className="text-sm font-medium text-red-900">
-                  Some files failed to upload. Please remove and try again.
+                  {t('addEmployee.step3.someFilesFailed')}
                 </p>
               </div>
             </div>
@@ -438,7 +440,7 @@ const DocumentUploadStep = ({
               <div className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-600" />
                 <p className="text-sm font-medium text-green-900">
-                  All documents uploaded successfully! Click "Next Step" to continue.
+                  {t('addEmployee.step3.allUploaded')}
                 </p>
               </div>
             </div>
@@ -456,7 +458,7 @@ const DocumentUploadStep = ({
       {/* Tip */}
       <div className="p-4 bg-gray-100 border border-gray-200 rounded-[10px]">
         <p className="text-sm text-gray-900">
-          <span className="font-semibold">💡 Tip:</span> Upload all required document images. You'll enter document details in the next steps using AI or manually.
+          {t('addEmployee.step3.tip')}
         </p>
       </div>
     </div>

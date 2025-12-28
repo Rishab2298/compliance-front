@@ -21,7 +21,10 @@ import {
   Users,
   FileText,
   Ticket,
+  Languages,
+  ChevronDown,
 } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
@@ -36,6 +39,12 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ContentLoadingScreen } from "@/components/LoadingScreen";
 import { useCompany } from "@/hooks/useCompany";
 import { prefetchEssentialData, prefetchDriversData } from "@/lib/queryClient";
@@ -47,8 +56,23 @@ const AppLayout = ({ ...props }) => {
   const { isLoaded: userLoaded, user } = useUser();
   const { isDarkMode, toggleTheme } = useTheme();
   const { hasCapability, canAccess } = usePermissions();
+  const { i18n } = useTranslation();
   const companyId = user?.publicMetadata?.companyId;
   const hasPrefetched = useRef(false);
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('language', lng);
+  };
+
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   // Use React Query for company data
   const { data: companyDetails } = useCompany(companyId);
@@ -230,8 +254,12 @@ const AppLayout = ({ ...props }) => {
 
   return (
     <SidebarProvider>
-      <div className={`flex w-full h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : ''}`}>
-        <Sidebar collapsible="icon" {...props}>
+      <div className={`flex w-full h-screen overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-white'}`}>
+        <Sidebar
+          collapsible="true"
+          className={isDarkMode ? 'bg-slate-900 border-r border-slate-800' : 'bg-white border-r border-slate-200'}
+          {...props}
+        >
           <SidebarHeader>
             <TeamSwitcher teams={data.teams} />
           </SidebarHeader>
@@ -243,7 +271,53 @@ const AppLayout = ({ ...props }) => {
           </SidebarContent>
           <SidebarFooter>
             <NavUser user={data.user} />
-            <div className="px-2 py-2">
+            <div className="px-2 py-2 space-y-2">
+              {/* Language Selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all text-sm ${
+                      isDarkMode
+                        ? 'bg-slate-800 text-violet-400 hover:bg-slate-700 border border-slate-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                    }`}
+                  >
+                    <Languages className="w-4 h-4" />
+                    <span className="flex-1 font-medium text-left">{currentLanguage.flag} {currentLanguage.label}</span>
+                    <ChevronDown className="w-4 h-4 opacity-50" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="start"
+                  className={`min-w-[200px] ${
+                    isDarkMode
+                      ? 'bg-slate-800 border-slate-700'
+                      : 'bg-white border-gray-300'
+                  }`}
+                >
+                  {languages.map((lang) => (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`flex items-center gap-2 cursor-pointer ${
+                        i18n.language === lang.code
+                          ? isDarkMode
+                            ? 'bg-violet-600/20 text-violet-400'
+                            : 'bg-blue-50 text-blue-700'
+                          : isDarkMode
+                          ? 'text-gray-300 hover:bg-slate-700'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <span className="text-lg">{lang.flag}</span>
+                      <span className="font-medium">{lang.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
                 className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg transition-all text-sm ${
@@ -269,7 +343,7 @@ const AppLayout = ({ ...props }) => {
           </SidebarFooter>
           <SidebarRail />
         </Sidebar>
-        <SidebarInset>
+        <SidebarInset >
           <Outlet />
         </SidebarInset>
       </div>

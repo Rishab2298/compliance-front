@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth, useUser } from '@clerk/clerk-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
@@ -36,6 +37,7 @@ const ClientDashboard = () => {
   const { getToken } = useAuth()
   const { user } = useUser()
   const { isDarkMode } = useTheme()
+  const { t } = useTranslation()
   const companyId = user?.publicMetadata?.companyId
 
   const [showCreateTicketModal, setShowCreateTicketModal] = useState(false)
@@ -180,7 +182,7 @@ const ClientDashboard = () => {
   }
 
   return (
-    <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)} relative`}>
+    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Decorative elements for dark mode */}
       {isDarkMode && (
         <>
@@ -190,13 +192,13 @@ const ClientDashboard = () => {
       )}
 
       {/* Header */}
-      <DashboardHeader title="Dashboard">
+      <DashboardHeader title={t('dashboard.title')}>
         <Button
           onClick={() => navigate('/client/add-a-driver')}
           className={`${getThemeClasses.button.primary(isDarkMode)} rounded-[10px] hidden sm:flex`}
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          Add Employee
+          {t('dashboard.addEmployee')}
         </Button>
         <Button
           onClick={() => navigate('/client/add-a-driver')}
@@ -208,7 +210,7 @@ const ClientDashboard = () => {
       </DashboardHeader>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Critical Alerts */}
@@ -218,17 +220,17 @@ const ClientDashboard = () => {
                 <AlertTriangle className={`w-5 h-5 mt-0.5 shrink-0 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
                 <div className="flex-1">
                   <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-red-300' : 'text-red-900'}`}>
-                    Critical Compliance Issues
+                    {t('dashboard.criticalCompliance.title')}
                   </h3>
                   <div className={`flex flex-wrap gap-4 text-sm ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>
                     {docCounts.expired > 0 && (
                       <span>
-                        {docCounts.expired} expired document{docCounts.expired !== 1 ? 's' : ''}
+                        {docCounts.expired} {docCounts.expired !== 1 ? t('dashboard.criticalCompliance.expiredDocumentsPlural') : t('dashboard.criticalCompliance.expiredDocuments')}
                       </span>
                     )}
                     {stats.critical > 0 && (
                       <span>
-                        {stats.critical} expiring in &lt;7 days
+                        {stats.critical} {t('dashboard.criticalCompliance.expiringIn7Days')}
                       </span>
                     )}
                   </div>
@@ -239,7 +241,7 @@ const ClientDashboard = () => {
                   className={`rounded-[10px] ${isDarkMode ? 'border-red-500/30 text-red-400 hover:bg-red-500/10' : 'border-red-300 text-red-700 hover:bg-red-100'}`}
                   onClick={() => navigate('/client/document-status')}
                 >
-                  View Details
+                  {t('dashboard.criticalCompliance.viewDetails')}
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
@@ -249,53 +251,53 @@ const ClientDashboard = () => {
           {/* Overview Stats */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Overview</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Key metrics and compliance overview</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.overview.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Total Employees</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.totalEmployees')}</Label>
                 {driversLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{totalDrivers}</p>
                 )}
-                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Active in system</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.activeInSystem')}</p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/drivers')}>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Compliance Rate</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.complianceRate')}</Label>
                 {driversLoading || companyLoading ? (
                   <Skeleton className="h-9 w-20 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{complianceRate}%</p>
                 )}
                 <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  {driversLoading || companyLoading ? ' ' : complianceRate >= 90 ? 'Excellent' : complianceRate >= 70 ? 'Good' : 'Needs attention'}
+                  {driversLoading || companyLoading ? ' ' : complianceRate >= 90 ? t('dashboard.overview.excellent') : complianceRate >= 70 ? t('dashboard.overview.good') : t('dashboard.overview.needsAttention')}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/reminders')}>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Expiring Soon</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.expiringSoon')}</Label>
                 {remindersLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{stats.total}</p>
                 )}
                 <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  {remindersLoading ? ' ' : `${stats.critical} critical • ${stats.warning} warning`}
+                  {remindersLoading ? ' ' : `${stats.critical} ${t('dashboard.overview.critical')} • ${stats.warning} ${t('dashboard.overview.warning')}`}
                 </p>
               </div>
 
               <div className="cursor-pointer" onClick={() => navigate('/client/document-status')}>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Pending Review</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.pendingReview')}</Label>
                 {driversLoading ? (
                   <Skeleton className="h-9 w-16 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.pending}</p>
                 )}
-                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Awaiting verification</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.overview.awaitingVerification')}</p>
               </div>
             </div>
           </section>
@@ -304,8 +306,8 @@ const ClientDashboard = () => {
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Credits & Usage</h2>
-                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Current plan: {company?.plan || 'Professional'}</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.credits.title')}</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.credits.currentPlan')}: {company?.plan || 'Professional'}</p>
               </div>
               <Button
                 variant="outline"
@@ -313,20 +315,20 @@ const ClientDashboard = () => {
                 className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/billing')}
               >
-                Manage Plan
+                {t('dashboard.credits.managePlan')}
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>AI Credits Remaining</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.credits.aiCreditsRemaining')}</Label>
                 <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{company?.aiCredits || 0}</p>
-                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Used for document scanning and processing</p>
+                <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.credits.usedFor')}</p>
               </div>
 
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Active Employees</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.credits.activeEmployees')}</Label>
                 <p className={`mt-2 text-3xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{totalDrivers}</p>
                 <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{getDriverLimitText(company?.plan || 'Professional')}</p>
               </div>
@@ -335,7 +337,7 @@ const ClientDashboard = () => {
             {company?.aiCredits < 5 && (
               <div className={`mt-6 p-4 rounded-[10px] ${isDarkMode ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-yellow-50 border border-yellow-200'}`}>
                 <p className={`text-sm ${isDarkMode ? 'text-yellow-300' : 'text-yellow-900'}`}>
-                  <span className="font-semibold">⚠️ Low Credits:</span> You have less than 5 AI credits remaining. Consider upgrading your plan or purchasing additional credits.
+                  <span className="font-semibold">⚠️ {t('dashboard.credits.lowCredits')}</span> {t('dashboard.credits.lowCreditsMessage')}
                 </p>
               </div>
             )}
@@ -345,8 +347,8 @@ const ClientDashboard = () => {
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Document Status</h2>
-                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Overview of all documents by status</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.documentStatus.title')}</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.documentStatus.subtitle')}</p>
               </div>
               <Button
                 variant="outline"
@@ -354,7 +356,7 @@ const ClientDashboard = () => {
                 className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 onClick={() => navigate('/client/document-status')}
               >
-                View All
+                {t('dashboard.documentStatus.viewAll')}
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
@@ -367,8 +369,8 @@ const ClientDashboard = () => {
                   </div>
                   <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.verified}</span>
                 </div>
-                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Verified</p>
-                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Up to date</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.documentStatus.verified')}</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.documentStatus.upToDate')}</p>
               </div>
 
               <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-yellow-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
@@ -378,8 +380,8 @@ const ClientDashboard = () => {
                   </div>
                   <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.expiringSoon}</span>
                 </div>
-                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Expiring Soon</p>
-                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Action needed</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.documentStatus.expiringSoon')}</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.documentStatus.actionNeeded')}</p>
               </div>
 
               <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-red-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
@@ -389,8 +391,8 @@ const ClientDashboard = () => {
                   </div>
                   <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.expired}</span>
                 </div>
-                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Expired</p>
-                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Urgent</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.documentStatus.expired')}</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.documentStatus.urgent')}</p>
               </div>
 
               <div className={`p-4 rounded-[10px] border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700 hover:border-blue-500/30' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}`}>
@@ -400,8 +402,8 @@ const ClientDashboard = () => {
                   </div>
                   <span className={`text-2xl font-bold ${getThemeClasses.text.primary(isDarkMode)}`}>{docCounts.pending}</span>
                 </div>
-                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Pending</p>
-                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>Under review</p>
+                <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.documentStatus.pending')}</p>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.documentStatus.underReview')}</p>
               </div>
             </div>
           </section>
@@ -410,15 +412,15 @@ const ClientDashboard = () => {
             {/* Drivers with Issues */}
             <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="mb-6">
-                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Employees Requiring Attention</h2>
-                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Non-compliant employees with missing, expired, expiring, or pending documents</p>
+                <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.employeesAttention.title')}</h2>
+                <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.employeesAttention.subtitle')}</p>
               </div>
 
               {driversWithIssues.length === 0 ? (
                 <div className="py-8 text-center">
                   <CheckCircle className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
-                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>All Clear!</p>
-                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>All employees are fully compliant</p>
+                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.employeesAttention.allClear')}</p>
+                  <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.employeesAttention.allCompliant')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -432,10 +434,10 @@ const ClientDashboard = () => {
 
                     // Build issue description
                     const issues = []
-                    if (missingDocs > 0) issues.push(`${missingDocs} missing`)
-                    if (expiredDocs > 0) issues.push(`${expiredDocs} expired`)
-                    if (expiringSoon > 0) issues.push(`${expiringSoon} expiring soon`)
-                    if (pendingDocs > 0) issues.push(`${pendingDocs} pending`)
+                    if (missingDocs > 0) issues.push(`${missingDocs} ${t('dashboard.employeesAttention.missing')}`)
+                    if (expiredDocs > 0) issues.push(`${expiredDocs} ${t('dashboard.employeesAttention.expired')}`)
+                    if (expiringSoon > 0) issues.push(`${expiringSoon} ${t('dashboard.employeesAttention.expiringSoon')}`)
+                    if (pendingDocs > 0) issues.push(`${pendingDocs} ${t('dashboard.employeesAttention.pending')}`)
 
                     return (
                       <div
@@ -469,8 +471,8 @@ const ClientDashboard = () => {
             <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Recently Added</h2>
-                  <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Latest employees in the system</p>
+                  <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.recentlyAdded.title')}</h2>
+                  <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.recentlyAdded.subtitle')}</p>
                 </div>
                 <Button
                   variant="outline"
@@ -478,22 +480,22 @@ const ClientDashboard = () => {
                   className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                   onClick={() => navigate('/client/drivers')}
                 >
-                  View All
+                  {t('dashboard.recentlyAdded.viewAll')}
                 </Button>
               </div>
 
               {recentDrivers.length === 0 ? (
                 <div className="py-8 text-center">
                   <Users className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-700' : 'text-gray-300'}`} />
-                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>No Employees Yet</p>
-                  <p className={`text-sm mb-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>Add your first employee to get started</p>
+                  <p className={`text-sm font-medium mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.recentlyAdded.noEmployees')}</p>
+                  <p className={`text-sm mb-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.recentlyAdded.addFirstEmployee')}</p>
                   <Button
                     size="sm"
                     className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
                     onClick={() => navigate('/client/add-a-driver')}
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Add Employee
+                    {t('dashboard.addEmployee')}
                   </Button>
                 </div>
               ) : (
@@ -514,7 +516,7 @@ const ClientDashboard = () => {
                           <div className="flex-1 min-w-0">
                             <p className={`font-medium truncate ${getThemeClasses.text.primary(isDarkMode)}`}>{driver.name}</p>
                             <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                              Added {formatDate(driver.createdAt)}
+                              {t('dashboard.recentlyAdded.added')} {formatDate(driver.createdAt)}
                             </p>
                           </div>
                         </div>
@@ -533,8 +535,8 @@ const ClientDashboard = () => {
           {/* Quick Actions */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-4">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Quick Actions</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Common tasks and shortcuts</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('dashboard.quickActions.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('dashboard.quickActions.subtitle')}</p>
             </div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
               <Button
@@ -543,7 +545,7 @@ const ClientDashboard = () => {
                 onClick={() => navigate('/client/add-a-driver')}
               >
                 <UserPlus className="w-4 h-4 mr-2 shrink-0" />
-                <span className="text-sm">Add New Employee</span>
+                <span className="text-sm">{t('dashboard.quickActions.addNewEmployee')}</span>
               </Button>
               <Button
                 variant="outline"
@@ -551,7 +553,7 @@ const ClientDashboard = () => {
                 onClick={() => navigate('/client/reminders')}
               >
                 <Bell className="w-4 h-4 mr-2 shrink-0" />
-                <span className="text-sm">View Reminders</span>
+                <span className="text-sm">{t('dashboard.quickActions.viewReminders')}</span>
               </Button>
               <Button
                 variant="outline"
@@ -559,7 +561,7 @@ const ClientDashboard = () => {
                 onClick={() => navigate('/client/settings')}
               >
                 <Settings className="w-4 h-4 mr-2 shrink-0" />
-                <span className="text-sm">Configure Settings</span>
+                <span className="text-sm">{t('dashboard.quickActions.configureSettings')}</span>
               </Button>
               <Button
                 variant="outline"
@@ -567,7 +569,7 @@ const ClientDashboard = () => {
                 onClick={() => setShowCreateTicketModal(true)}
               >
                 <Ticket className="w-4 h-4 mr-2 shrink-0" />
-                <span className="text-sm">Report an Issue</span>
+                <span className="text-sm">{t('dashboard.quickActions.reportIssue')}</span>
               </Button>
             </div>
           </section>

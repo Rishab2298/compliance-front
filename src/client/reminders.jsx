@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ import { DashboardHeader } from '@/components/DashboardHeader';
 const Reminders = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
   const { user } = useUser();
   const companyId = user?.publicMetadata?.companyId;
 
@@ -66,11 +68,11 @@ const Reminders = () => {
   const handleCreateReminder = async (reminderData) => {
     try {
       await createReminderMutation.mutateAsync(reminderData);
-      toast.success('Custom reminder created successfully');
+      toast.success(t('reminders.toasts.customReminderCreated'));
       setIsCreateDialogOpen(false);
     } catch (error) {
       console.error('Error creating reminder:', error);
-      toast.error(error.message || 'Failed to create reminder');
+      toast.error(error.message || t('reminders.toasts.customReminderFailed'));
       throw error;
     }
   };
@@ -78,10 +80,10 @@ const Reminders = () => {
   const handleDeleteReminder = async (reminderId) => {
     try {
       await deleteReminderMutation.mutateAsync(reminderId);
-      toast.success('Reminder deleted successfully');
+      toast.success(t('reminders.toasts.reminderDeleted'));
     } catch (error) {
       console.error('Error deleting reminder:', error);
-      toast.error(error.message || 'Failed to delete reminder');
+      toast.error(error.message || t('reminders.toasts.reminderDeleteFailed'));
     }
   };
 
@@ -111,9 +113,9 @@ const Reminders = () => {
         documentId,
         channel: 'EMAIL',
       });
-      toast.success(`Reminder sent to ${driverName}`);
+      toast.success(t('reminders.toasts.reminderSent', { name: driverName }));
     } catch (error) {
-      toast.error(`Failed to send reminder: ${error.message}`);
+      toast.error(`${t('reminders.toasts.reminderFailed')}: ${error.message}`);
     }
   };
 
@@ -132,17 +134,17 @@ const Reminders = () => {
       critical: {
         className: 'bg-red-100 text-red-800 border-red-200',
         icon: AlertCircle,
-        label: 'Critical',
+        label: t('reminders.urgencyBadges.critical'),
       },
       warning: {
         className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
         icon: Clock,
-        label: 'Warning',
+        label: t('reminders.urgencyBadges.warning'),
       },
       info: {
         className: 'bg-blue-100 text-blue-800 border-blue-200',
         icon: CheckCircle,
-        label: 'Info',
+        label: t('reminders.urgencyBadges.info'),
       },
     };
 
@@ -150,17 +152,17 @@ const Reminders = () => {
       critical: {
         className: 'bg-red-500/20 text-red-400 border-red-500/30',
         icon: AlertCircle,
-        label: 'Critical',
+        label: t('reminders.urgencyBadges.critical'),
       },
       warning: {
         className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
         icon: Clock,
-        label: 'Warning',
+        label: t('reminders.urgencyBadges.warning'),
       },
       info: {
         className: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
         icon: CheckCircle,
-        label: 'Info',
+        label: t('reminders.urgencyBadges.info'),
       },
     };
 
@@ -181,37 +183,29 @@ const Reminders = () => {
   const filterOptions = [
     {
       value: 'all',
-      label: 'All Reminders',
+      label: t('reminders.filterOptions.allReminders'),
       icon: FileText,
       count: stats.total,
     },
     {
       value: 'critical',
-      label: 'Critical',
+      label: t('reminders.filterOptions.critical'),
       icon: AlertCircle,
       count: stats.critical,
     },
     {
       value: 'warning',
-      label: 'Warning',
+      label: t('reminders.filterOptions.warning'),
       icon: Clock,
       count: stats.warning,
     },
-    { value: 'info', label: 'Info', icon: CheckCircle, count: stats.info },
+    { value: 'info', label: t('reminders.filterOptions.info'), icon: CheckCircle, count: stats.info },
   ];
 
   return (
-    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
-      {/* Decorative elements for dark mode */}
-      {isDarkMode && (
-        <>
-          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        </>
-      )}
-
+    <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Header */}
-      <DashboardHeader title="Reminders">
+      <DashboardHeader title={t('reminders.title')}>
         <div className="flex items-center gap-2">
           {/* View Mode Toggle */}
           <div className={`flex items-center gap-1 p-1 rounded-[10px] ${isDarkMode ? 'bg-slate-800' : 'bg-gray-100'}`}>
@@ -251,7 +245,7 @@ const Reminders = () => {
             className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Create Reminder
+            {t('reminders.buttons.createReminder')}
           </Button>
           <Button
             onClick={() => setIsCreateDialogOpen(true)}
@@ -268,7 +262,7 @@ const Reminders = () => {
             className={`rounded-[10px] hidden md:flex ${getThemeClasses.button.secondary(isDarkMode)}`}
           >
             <Bell className="w-4 h-4 mr-2" />
-            Settings
+            {t('reminders.buttons.settings')}
           </Button>
         </div>
       </DashboardHeader>
@@ -279,14 +273,14 @@ const Reminders = () => {
           <Skeleton className="h-4 w-48 rounded-[10px]" />
         ) : (
           <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-            {stats.total} document{stats.total !== 1 ? 's' : ''} requiring attention
-            {customReminders.length > 0 && ` • ${customReminders.length} custom reminder${customReminders.length !== 1 ? 's' : ''}`}
+            {stats.total} {stats.total !== 1 ? t('reminders.subtitle.documents') : t('reminders.subtitle.document')} {t('reminders.subtitle.requiringAttention')}
+            {customReminders.length > 0 && ` • ${customReminders.length} ${customReminders.length !== 1 ? t('reminders.subtitle.customReminders') : t('reminders.subtitle.customReminder')}`}
           </p>
         )}
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
           {/* Reminder Settings Info */}
           {reminderSettings.length > 0 && (
@@ -295,11 +289,10 @@ const Reminders = () => {
                 <Bell className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                 <div>
                   <p className={`text-sm font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-900'}`}>
-                    Active Reminder Intervals
+                    {t('reminders.activeIntervals.title')}
                   </p>
                   <p className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
-                    You'll receive reminders {reminderSettings.join(', ')} before
-                    document expiry
+                    {t('reminders.activeIntervals.description', { intervals: reminderSettings.join(', ') })}
                   </p>
                 </div>
               </div>
@@ -307,7 +300,7 @@ const Reminders = () => {
           )}
 
           {/* Filter Cards */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {filterOptions.map((filter) => (
               <Card
                 key={filter.value}
@@ -371,7 +364,7 @@ const Reminders = () => {
               <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
               <Input
                 type="text"
-                placeholder="Search by driver name, document type..."
+                placeholder={t('reminders.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`pl-10 rounded-[10px] ${getThemeClasses.input.default(isDarkMode)}`}
@@ -422,7 +415,7 @@ const Reminders = () => {
               <div className={`rounded-[10px] p-12 border text-center ${isDarkMode ? 'bg-red-500/10 border-red-500/30' : 'bg-red-50 border-red-200'}`}>
                 <AlertCircle className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-red-400' : 'text-red-500'}`} />
                 <h3 className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-red-300' : 'text-red-900'}`}>
-                  Failed to load reminders
+                  {t('reminders.error.title')}
                 </h3>
                 <p className={`text-sm mb-4 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
                   {error.message}
@@ -431,21 +424,21 @@ const Reminders = () => {
                   onClick={() => window.location.reload()}
                   className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
                 >
-                  Retry
+                  {t('reminders.buttons.retry')}
                 </Button>
               </div>
             ) : filteredReminders.length === 0 ? (
               <div className={`rounded-[10px] p-12 border text-center ${getThemeClasses.bg.card(isDarkMode)}`}>
                 <FileText className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-slate-600' : 'text-gray-300'}`} />
                 <h3 className={`text-sm font-semibold mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  No reminders found
+                  {t('reminders.emptyState.title')}
                 </h3>
                 <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {searchQuery
-                    ? 'Try adjusting your search query'
+                    ? t('reminders.emptyState.searchDescription')
                     : selectedFilter !== 'all'
-                    ? `No ${selectedFilter} reminders at this time`
-                    : 'All documents are up to date!'}
+                    ? t('reminders.emptyState.filterDescription', { filter: selectedFilter })
+                    : t('reminders.emptyState.allUpToDate')}
                 </p>
               </div>
             ) : (
@@ -479,7 +472,7 @@ const Reminders = () => {
 
                       {/* Document Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                        <div className="flex flex-wrap items-center gap-3 mb-1">
                           <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                             {reminder.documentType}
                           </h3>
@@ -494,23 +487,23 @@ const Reminders = () => {
                             }`}
                           >
                             {reminder.daysUntilExpiry < 0
-                              ? `${Math.abs(reminder.daysUntilExpiry)} days overdue`
-                              : `${reminder.daysUntilExpiry} days remaining`}
+                              ? `${Math.abs(reminder.daysUntilExpiry)} ${t('reminders.reminderCard.daysOverdue')}`
+                              : `${reminder.daysUntilExpiry} ${t('reminders.reminderCard.daysRemaining')}`}
                           </span>
                         </div>
                         <div className={`flex items-center gap-4 text-xs flex-wrap ${getThemeClasses.text.secondary(isDarkMode)}`}>
                           <span className="flex items-center gap-1">
                             <User className="w-3 h-3" />
-                            {reminder.driver?.name || 'Unknown Driver'}
+                            {reminder.driver?.name || t('reminders.reminderCard.unknownDriver')}
                           </span>
                           {reminder.driver?.employeeId && (
                             <>
                               <span>•</span>
-                              <span>ID: {reminder.driver.employeeId}</span>
+                              <span>{t('reminders.reminderCard.id')}: {reminder.driver.employeeId}</span>
                             </>
                           )}
                           <span>•</span>
-                          <span>Expires: {formatDate(reminder.expiryDate)}</span>
+                          <span>{t('reminders.reminderCard.expires')}: {formatDate(reminder.expiryDate)}</span>
                         </div>
                       </div>
 
@@ -523,7 +516,7 @@ const Reminders = () => {
                             navigate(`/client/driver/${reminder.driver?.id}`)
                           }
                           className={`rounded-[10px] ${isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
-                          title="View Driver"
+                          title={t('reminders.buttons.viewDriver')}
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -538,7 +531,7 @@ const Reminders = () => {
                           }
                           disabled={sendReminderMutation.isPending}
                           className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
-                          title="Send Reminder Now"
+                          title={t('reminders.buttons.sendReminderNow')}
                         >
                           {sendReminderMutation.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

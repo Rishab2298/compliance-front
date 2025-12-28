@@ -17,6 +17,7 @@ import {
 import { onboardingSchema } from "../schemas/onboardingSchema";
 import { useNavigate } from "react-router-dom";
 import CSVUploadDialog from "@/components/CSVUploadDialog";
+import PolicyModal from "@/components/PolicyModal";
 import { bulkImportDrivers } from "@/api/drivers";
 import { upgradePlan } from "@/api/billing";
 import { toast } from "sonner";
@@ -33,6 +34,10 @@ export default function OnboardingDark() {
     stateProvince: "",
     zipPostalCode: "",
   });
+
+  // Policy modal state
+  const [activePolicyModal, setActivePolicyModal] = useState(null);
+
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -172,6 +177,48 @@ export default function OnboardingDark() {
 
   const updateFormData = (field, value) => {
     setValue(field, value, { shouldValidate: true });
+  };
+
+  // Policy configuration mapping
+  const policyConfig = {
+    agreeToTerms: {
+      type: 'TERMS_OF_SERVICE',
+      label: 'Terms of Service'
+    },
+    agreeToPrivacy: {
+      type: 'PRIVACY_POLICY',
+      label: 'Privacy Policy'
+    },
+    agreeToDataProcessing: {
+      type: 'DATA_PROCESSING_AGREEMENT',
+      label: 'Data Processing Addendum'
+    },
+    agreeToAiFairUse: {
+      type: 'AI_FAIR_USE_POLICY',
+      label: 'AI Fair Use Policy'
+    },
+    agreeToGdprDataProcessing: {
+      type: 'GDPR_DATA_PROCESSING_ADDENDUM',
+      label: 'GDPR Data Processing Addendum'
+    },
+    agreeToComplaints: {
+      type: 'COMPLAINTS_POLICY',
+      label: 'Complaints Policy'
+    }
+  };
+
+  // Policy modal handlers
+  const handlePolicyCheckboxClick = (fieldName) => {
+    setActivePolicyModal(fieldName);
+  };
+
+  const handlePolicyAccept = (fieldName) => {
+    updateFormData(fieldName, true);
+    setActivePolicyModal(null);
+  };
+
+  const handlePolicyModalClose = () => {
+    setActivePolicyModal(null);
   };
 
   // Format phone number to ensure it starts with country code
@@ -1059,8 +1106,7 @@ export default function OnboardingDark() {
                 {[
                   { name: 'Free', price: '$0', features: ['Basic features', 'Email support'] },
                   { name: 'Starter', price: '$49', features: ['All Free features', 'SMS notifications', 'Priority support'] },
-                  { name: 'Professional', price: '$149', features: ['All Starter features', 'Advanced analytics', 'API access'] },
-                  { name: 'Enterprise', price: 'Custom', features: ['All Professional features', 'Dedicated support', 'Custom integrations'] }
+                  { name: 'Professional', price: '$149', features: ['All Starter features', 'Advanced analytics', 'API access'] }
                 ].map((plan) => (
                   <button
                     key={plan.name}
@@ -1306,7 +1352,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToTerms}
-                    onChange={(e) => updateFormData("agreeToTerms", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToTerms');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1340,7 +1389,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToPrivacy}
-                    onChange={(e) => updateFormData("agreeToPrivacy", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToPrivacy');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1374,7 +1426,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToDataProcessing}
-                    onChange={(e) => updateFormData("agreeToDataProcessing", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToDataProcessing');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1408,7 +1463,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToAiFairUse}
-                    onChange={(e) => updateFormData("agreeToAiFairUse", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToAiFairUse');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1442,7 +1500,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToGdprDataProcessing}
-                    onChange={(e) => updateFormData("agreeToGdprDataProcessing", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToGdprDataProcessing');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1476,7 +1537,10 @@ export default function OnboardingDark() {
                   <input
                     type="checkbox"
                     checked={formData.agreeToComplaints}
-                    onChange={(e) => updateFormData("agreeToComplaints", e.target.checked)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handlePolicyCheckboxClick('agreeToComplaints');
+                    }}
                     className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
                   />
                   <div className="flex-1">
@@ -1648,6 +1712,17 @@ export default function OnboardingDark() {
         onClose={() => setCsvDialogOpen(false)}
         onUpload={handleCSVUpload}
       />
+
+      {activePolicyModal && (
+        <PolicyModal
+          isOpen={!!activePolicyModal}
+          onClose={handlePolicyModalClose}
+          onAccept={() => handlePolicyAccept(activePolicyModal)}
+          policyType={policyConfig[activePolicyModal].type}
+          policyLabel={policyConfig[activePolicyModal].label}
+          isCurrentlyChecked={formData[activePolicyModal]}
+        />
+      )}
     </div>
   );
 }

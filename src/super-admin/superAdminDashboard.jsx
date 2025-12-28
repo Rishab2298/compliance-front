@@ -41,12 +41,12 @@ const SuperAdminDashboard = () => {
   const loading = statsLoading
 
   return (
-    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
+    <div className={`flex flex-col min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Decorative elements for dark mode */}
       {isDarkMode && (
         <>
-          <div className="fixed top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed top-0 rounded-full pointer-events-none left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
+          <div className="fixed bottom-0 rounded-full pointer-events-none right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
         </>
       )}
 
@@ -67,7 +67,7 @@ const SuperAdminDashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 py-8">
-        <div className="container w-full px-6 mx-auto space-y-6">
+        <div className="w-full px-6 space-y-6">
 
           {/* Overview Stats */}
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

@@ -54,6 +54,8 @@ import InsuranceManagementPage from "@/pages/InsuranceManagementPage";
 import SecurityGuardManagementPage from "@/pages/SecurityGuardManagementPage";
 import ServiceProvidersManagementPage from "@/pages/ServiceProvidersManagementPage";
 import GovernmentManagementPage from "@/pages/GovernmentManagementPage";
+import ComplaintRegistration from "@/pages/complaintRegistration";
+import ContactPage from "@/pages/ContactPage";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +75,8 @@ export const router = createBrowserRouter([
       {path:"/security-guard-management",element:<SecurityGuardManagementPage/>},
       {path:"/service-provider-management",element:<ServiceProvidersManagementPage/>},
       {path:"/government-management",element:<GovernmentManagementPage/>},
+      { path: "/complaints", element: <ComplaintRegistration /> },
+      { path: "/contact", element: <ContactPage /> },
       { path: "/sign-up", element: <SignUpPage /> },
       { path: "/sign-in", element: <LoginPage /> },
       { path: "/onboarding-dark", element:<OnboardingDark /> },

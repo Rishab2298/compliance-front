@@ -92,7 +92,7 @@ const BillingPage = () => {
 
       {/* Header */}
       <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
+        <div className="flex items-center justify-between w-full px-6 mx-auto">
           <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Billing & Revenue</h1>
           {!isLoading && data && (
             <Badge className={`rounded-[10px] text-xs ${getThemeClasses.badge.success(isDarkMode)}`}>
@@ -104,7 +104,7 @@ const BillingPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 py-8">
-        <div className="container w-full px-6 mx-auto space-y-6">
+        <div className="w-full px-6 space-y-6">
 
           {/* Revenue Stats */}
           <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

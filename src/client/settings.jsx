@@ -15,6 +15,7 @@ import { Save, Loader2 } from 'lucide-react'
 import { useUser } from '@clerk/clerk-react'
 import { useCompany, useUpdateCompany } from '@/hooks/useCompany'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/utils/themeClasses'
 import DocumentTypeManager from '@/components/DocumentTypeManager'
@@ -23,6 +24,7 @@ import { DashboardHeader } from '@/components/DashboardHeader'
 const Settings = () => {
   const { user } = useUser()
   const { isDarkMode } = useTheme()
+  const { t } = useTranslation()
   const companyId = user?.publicMetadata?.companyId
 
   // Use cached queries
@@ -53,10 +55,10 @@ const Settings = () => {
   const handleSaveSettings = async () => {
     try {
       await updateCompanyMutation.mutateAsync(formData)
-      toast.success('Settings saved successfully')
+      toast.success(t('settings.toasts.settingsSaved'))
     } catch (error) {
       console.error('Error saving settings:', error)
-      toast.error('Failed to save settings')
+      toast.error(t('settings.toasts.settingsFailed'))
     }
   }
 
@@ -69,7 +71,7 @@ const Settings = () => {
 
       // If max is already selected and trying to add more, show error
       if (isMaxSelected) {
-        toast.error('Maximum of 3 reminder intervals allowed')
+        toast.error(t('settings.toasts.maxReminders'))
         return prev
       }
 
@@ -103,7 +105,7 @@ const Settings = () => {
       )}
 
       {/* Header */}
-      <DashboardHeader title="Settings">
+      <DashboardHeader title={t('settings.title')}>
         <Button
           onClick={handleSaveSettings}
           disabled={saving}
@@ -112,12 +114,12 @@ const Settings = () => {
           {saving ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Saving
+              {t('settings.saving')}
             </>
           ) : (
             <>
               <Save className="w-4 h-4 mr-2" />
-              Save Changes
+              {t('settings.saveChanges')}
             </>
           )}
         </Button>
@@ -136,52 +138,52 @@ const Settings = () => {
       </DashboardHeader>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Company Info */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Company Information</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>View your company details</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.companyInfo.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.companyInfo.subtitle')}</p>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Company Name</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.companyInfo.companyName')}</Label>
                 {loading ? (
                   <Skeleton className="h-5 w-32 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    {companyData?.name || 'N/A'}
+                    {companyData?.name || t('settings.companyInfo.na')}
                   </p>
                 )}
               </div>
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Company Size</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.companyInfo.companySize')}</Label>
                 {loading ? (
                   <Skeleton className="h-5 w-24 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    {companyData?.companySize || 'N/A'}
+                    {companyData?.companySize || t('settings.companyInfo.na')}
                   </p>
                 )}
               </div>
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Operating Region</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.companyInfo.operatingRegion')}</Label>
                 {loading ? (
                   <Skeleton className="h-5 w-28 mt-2 rounded-[10px]" />
                 ) : (
                   <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    {companyData?.operatingRegion || 'N/A'}
+                    {companyData?.operatingRegion || t('settings.companyInfo.na')}
                   </p>
                 )}
               </div>
               <div>
-                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>Plan</Label>
+                <Label className={`text-xs font-medium tracking-wider uppercase ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.companyInfo.plan')}</Label>
                 {loading ? (
                   <Skeleton className="h-5 w-20 mt-2 rounded-[10px]" />
                 ) : (
-                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{companyData?.plan || 'Free'}</p>
+                  <p className={`mt-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{companyData?.plan || t('settings.companyInfo.free')}</p>
                 )}
               </div>
             </div>
@@ -189,7 +191,7 @@ const Settings = () => {
             {/* Tip */}
             <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
               <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
-                <span className="font-semibold">💡 Tip:</span> Need to update your company information? Contact support to make changes to these details.
+                {t('settings.companyInfo.tip')}
               </p>
             </div>
           </section>
@@ -200,8 +202,8 @@ const Settings = () => {
           {/* Reminder Settings */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Reminder Settings</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Choose up to 3 reminder intervals before document expiration</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.reminderSettings.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.reminderSettings.subtitle')}</p>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -244,14 +246,14 @@ const Settings = () => {
 
             {formData.reminderDays.length >= 3 && (
               <p className={`mt-3 text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                Maximum of 3 reminder intervals selected
+                {t('settings.reminderSettings.maxSelected')}
               </p>
             )}
 
 {!loading && formData.reminderDays.length > 0 && (
               <div className={`mt-4 p-4 rounded-[10px] ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-50'}`}>
                 <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  <span className="font-semibold">Selected ({formData.reminderDays.length}/3):</span> {formData.reminderDays.join(', ')}
+                  <span className="font-semibold">{t('settings.reminderSettings.selected')} ({formData.reminderDays.length}/3):</span> {formData.reminderDays.join(', ')}
                 </p>
               </div>
             )}
@@ -260,12 +262,12 @@ const Settings = () => {
             <div className="mt-6 space-y-3">
               <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-200'}`}>
                 <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-                  <span className="font-semibold"> Automatic Reminders:</span> Your reminder notifications are sent automatically every day at <span className="font-semibold">8:00 AM Eastern Time</span> (New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!
+                  <span className="font-semibold">{t('settings.reminderSettings.automaticReminders')}</span> {t('settings.reminderSettings.automaticRemindersDesc')} <span className="font-semibold">{t('settings.reminderSettings.automaticRemindersTime')}</span> {t('settings.reminderSettings.automaticRemindersLocation')}
                 </p>
               </div>
               <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
                 <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  <span className="font-semibold">💡 Tip:</span> We recommend setting reminders at 30, 15, and 7 days to ensure you never miss a document expiration.
+                  {t('settings.reminderSettings.tip')}
                 </p>
               </div>
             </div>
@@ -274,14 +276,14 @@ const Settings = () => {
           {/* Notification Preferences */}
           <section className={`rounded-[10px] p-6 border ${getThemeClasses.bg.card(isDarkMode)}`}>
             <div className="mb-6">
-              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Preferences</h2>
-              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>Configure how you receive compliance alerts</p>
+              <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.notificationPreferences.title')}</h2>
+              <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{t('settings.notificationPreferences.subtitle')}</p>
             </div>
 
             <div className="max-w-2xl space-y-6">
               {/* Admin Email */}
               <div className="space-y-2">
-                <Label htmlFor="adminEmail" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Admin Email</Label>
+                <Label htmlFor="adminEmail" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.notificationPreferences.adminEmail')}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full rounded-[10px]" />
                 ) : (
@@ -300,7 +302,7 @@ const Settings = () => {
 
               {/* Admin Phone */}
               <div className="space-y-2">
-                <Label htmlFor="adminPhone" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Admin Phone Number</Label>
+                <Label htmlFor="adminPhone" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.notificationPreferences.adminPhone')}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full rounded-[10px]" />
                 ) : (
@@ -319,7 +321,7 @@ const Settings = () => {
 
               {/* Notification Method */}
               <div className="space-y-2">
-                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Method</Label>
+                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.notificationPreferences.notificationMethod')}</Label>
                 {loading ? (
                   <Skeleton className="h-10 w-full rounded-[10px]" />
                 ) : (
@@ -333,9 +335,9 @@ const Settings = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
-                      <SelectItem value="email">Email Only</SelectItem>
-                      <SelectItem value="sms">SMS Only</SelectItem>
-                      <SelectItem value="both">Email & SMS</SelectItem>
+                      <SelectItem value="email">{t('settings.notificationPreferences.emailOnly')}</SelectItem>
+                      <SelectItem value="sms">{t('settings.notificationPreferences.smsOnly')}</SelectItem>
+                      <SelectItem value="both">{t('settings.notificationPreferences.both')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -343,7 +345,7 @@ const Settings = () => {
 
               {/* Notification Recipients */}
               <div className="space-y-3">
-                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Notification Recipients</Label>
+                <Label className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('settings.notificationPreferences.notificationRecipients')}</Label>
                 <div className="space-y-2">
                   {loading ? (
                     [...Array(2)].map((_, i) => (
@@ -362,10 +364,10 @@ const Settings = () => {
                         className={`flex items-center justify-between p-4 rounded-[10px] border ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}
                       >
                         <Label
-                          className={`text-sm font-medium capitalize cursor-pointer ${getThemeClasses.text.primary(isDarkMode)}`}
+                          className={`text-sm font-medium cursor-pointer ${getThemeClasses.text.primary(isDarkMode)}`}
                           htmlFor={`recipient-${recipient}`}
                         >
-                          {recipient}
+                          {t(`settings.notificationPreferences.${recipient}`)}
                         </Label>
                         <Switch
                           id={`recipient-${recipient}`}
@@ -382,7 +384,7 @@ const Settings = () => {
             {/* Tip */}
             <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
               <p className={`text-sm ${getThemeClasses.text.primary(isDarkMode)}`}>
-                <span className="font-semibold">💡 Tip:</span> Enable driver notifications to keep your team informed about their document expiration dates automatically.
+                {t('settings.notificationPreferences.tip')}
               </p>
             </div>
           </section>
@@ -397,12 +399,12 @@ const Settings = () => {
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving Changes
+                  {t('settings.savingChanges')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Save All Changes
+                  {t('settings.saveAllChanges')}
                 </>
               )}
             </Button>

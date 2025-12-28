@@ -8,26 +8,17 @@ const PublicLayout = ({ children }) => {
   });
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setTheme(localStorage.getItem('theme') || 'dark');
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
     };
 
-    // Listen for theme changes
-    window.addEventListener('storage', handleStorageChange);
-
-    // Poll for theme changes in the same tab
-    const interval = setInterval(() => {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme !== theme) {
-        setTheme(currentTheme);
-      }
-    }, 100);
+    // Listen for custom theme change events
+    window.addEventListener('themeChange', handleThemeChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
+      window.removeEventListener('themeChange', handleThemeChange);
     };
-  }, [theme]);
+  }, []);
 
   return (
     <div className={`w-screen min-h-screen transition-colors duration-300 ${

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { FileText, Search, User, AlertCircle, CheckCircle, Clock, XCircle, ChevronLeft, ChevronRight, Eye, Download } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@clerk/clerk-react'
@@ -18,6 +19,7 @@ const DocumentStatus = () => {
   const navigate = useNavigate()
   const { getToken } = useAuth()
   const { isDarkMode } = useTheme()
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all') // all, expired, expiring, verified
   const [currentPage, setCurrentPage] = useState(1)
@@ -60,19 +62,19 @@ const DocumentStatus = () => {
 
   const getStatusBadge = (status) => {
     const lightVariants = {
-      expired: { className: 'bg-red-100 text-red-800 border-red-200', icon: XCircle, label: 'Expired' },
-      expiring: { className: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock, label: 'Expiring Soon' },
-      verified: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: 'Verified' },
-      pending: { className: 'bg-gray-100 text-gray-800 border-gray-200', icon: Clock, label: 'Pending' },
-      valid: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: 'Verified' }, // Fallback for old data
+      expired: { className: 'bg-red-100 text-red-800 border-red-200', icon: XCircle, label: t('documentStatus.statusBadges.expired') },
+      expiring: { className: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock, label: t('documentStatus.statusBadges.expiringSoon') },
+      verified: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: t('documentStatus.statusBadges.verified') },
+      pending: { className: 'bg-gray-100 text-gray-800 border-gray-200', icon: Clock, label: t('documentStatus.statusBadges.pending') },
+      valid: { className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle, label: t('documentStatus.statusBadges.verified') }, // Fallback for old data
     }
 
     const darkVariants = {
-      expired: { className: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle, label: 'Expired' },
-      expiring: { className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock, label: 'Expiring Soon' },
-      verified: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: 'Verified' },
-      pending: { className: 'bg-gray-500/20 text-gray-400 border-gray-500/30', icon: Clock, label: 'Pending' },
-      valid: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: 'Verified' }, // Fallback for old data
+      expired: { className: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle, label: t('documentStatus.statusBadges.expired') },
+      expiring: { className: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock, label: t('documentStatus.statusBadges.expiringSoon') },
+      verified: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: t('documentStatus.statusBadges.verified') },
+      pending: { className: 'bg-gray-500/20 text-gray-400 border-gray-500/30', icon: Clock, label: t('documentStatus.statusBadges.pending') },
+      valid: { className: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle, label: t('documentStatus.statusBadges.verified') }, // Fallback for old data
     }
 
     const variants = isDarkMode ? darkVariants : lightVariants
@@ -131,19 +133,19 @@ const DocumentStatus = () => {
   }
 
   const statusFilters = [
-    { value: 'all', label: 'All Documents', icon: FileText, count: statusCounts.all },
-    { value: 'expired', label: 'Expired', icon: XCircle, count: statusCounts.expired },
-    { value: 'expiring', label: 'Expiring Soon', icon: Clock, count: statusCounts.expiring },
-    { value: 'verified', label: 'Verified', icon: CheckCircle, count: statusCounts.verified },
+    { value: 'all', label: t('documentStatus.statusFilters.allDocuments'), icon: FileText, count: statusCounts.all },
+    { value: 'expired', label: t('documentStatus.statusFilters.expired'), icon: XCircle, count: statusCounts.expired },
+    { value: 'expiring', label: t('documentStatus.statusFilters.expiringSoon'), icon: Clock, count: statusCounts.expiring },
+    { value: 'verified', label: t('documentStatus.statusFilters.verified'), icon: CheckCircle, count: statusCounts.verified },
   ]
 
   // Loading skeleton
   if (isLoading) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <DashboardHeader title="Document Status" />
+        <DashboardHeader title={t('documentStatus.title')} />
 
-        <div className="flex-1 py-8">
+        <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
           <div className="container w-full px-6 mx-auto space-y-6">
             {/* Status Cards Skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -185,13 +187,13 @@ const DocumentStatus = () => {
   if (error) {
     return (
       <div className={`flex flex-col w-full min-h-screen ${getThemeClasses.bg.primary(isDarkMode)}`}>
-        <DashboardHeader title="Document Status" />
+        <DashboardHeader title={t('documentStatus.title')} />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <AlertCircle className={`w-8 h-8 ${isDarkMode ? 'text-red-400' : 'text-red-500'}`} />
-            <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>Failed to load documents: {error.message}</p>
+            <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{t('documentStatus.error.failedToLoad')}: {error.message}</p>
             <Button onClick={() => window.location.reload()} className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
-              Retry
+              {t('documentStatus.buttons.retry')}
             </Button>
           </div>
         </div>
@@ -210,12 +212,12 @@ const DocumentStatus = () => {
       )}
 
       {/* Header */}
-      <DashboardHeader title="Document Status">
+      <DashboardHeader title={t('documentStatus.title')}>
         <Button
           onClick={() => navigate('/client/drivers')}
           className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
         >
-          View All Drivers
+          {t('documentStatus.buttons.viewAllDrivers')}
         </Button>
         <Button
           onClick={() => navigate('/client/drivers')}
@@ -228,11 +230,13 @@ const DocumentStatus = () => {
 
       {/* Subtitle - below header */}
       <div className={`px-4 md:px-6 py-2 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-gray-50 border-gray-200'}`}>
-        <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{totalCount} total document{totalCount !== 1 ? 's' : ''}</p>
+        <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
+          {totalCount} {totalCount !== 1 ? t('documentStatus.subtitlePlural') : t('documentStatus.subtitle')}
+        </p>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Status Cards */}
@@ -291,7 +295,7 @@ const DocumentStatus = () => {
               <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
               <Input
                 type="text"
-                placeholder="Search by driver name, document type..."
+                placeholder={t('documentStatus.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -305,7 +309,7 @@ const DocumentStatus = () => {
           {/* Documents List */}
           <section className="space-y-3">
             {documents.map((doc) => {
-              const fullName = `${doc.driver.firstName || ''} ${doc.driver.lastName || ''}`.trim() || 'Unknown Driver'
+              const fullName = `${doc.driver.firstName || ''} ${doc.driver.lastName || ''}`.trim() || t('documentStatus.documentCard.unknownDriver')
               const daysUntilExpiry = getDaysUntilExpiry(doc.expiryDate)
 
               return (
@@ -343,7 +347,7 @@ const DocumentStatus = () => {
                       {/* Document Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-1">
-                          <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{doc.type || 'Document'}</h3>
+                          <h3 className={`text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>{doc.type || t('documentStatus.documentCard.document')}</h3>
                           {getStatusBadge(doc.status)}
                         </div>
                         <div className={`flex items-center gap-4 text-xs flex-wrap ${getThemeClasses.text.secondary(isDarkMode)}`}>
@@ -352,9 +356,9 @@ const DocumentStatus = () => {
                             {fullName}
                           </span>
                           <span>•</span>
-                          <span>Employee ID: {doc.driver.employeeId}</span>
+                          <span>{t('documentStatus.documentCard.employeeId')}: {doc.driver.employeeId}</span>
                           <span>•</span>
-                          <span>Expires: {formatDate(doc.expiryDate)}</span>
+                          <span>{t('documentStatus.documentCard.expires')}: {formatDate(doc.expiryDate)}</span>
                           {daysUntilExpiry !== null && (
                             <>
                               <span>•</span>
@@ -366,8 +370,8 @@ const DocumentStatus = () => {
                                   : getThemeClasses.text.secondary(isDarkMode)
                               }>
                                 {daysUntilExpiry < 0
-                                  ? `${Math.abs(daysUntilExpiry)} days overdue`
-                                  : `${daysUntilExpiry} days remaining`}
+                                  ? `${Math.abs(daysUntilExpiry)} ${t('documentStatus.documentCard.daysOverdue')}`
+                                  : `${daysUntilExpiry} ${t('documentStatus.documentCard.daysRemaining')}`}
                               </span>
                             </>
                           )}
@@ -383,7 +387,7 @@ const DocumentStatus = () => {
                           className={`rounded-[10px] ${isDarkMode ? 'hover:bg-slate-700 hover:text-violet-400' : ''}`}
                         >
                           <User className="w-4 h-4 mr-2" />
-                          View Driver
+                          {t('documentStatus.buttons.viewDriver')}
                         </Button>
                         <Button
                           variant="ghost"
@@ -413,11 +417,11 @@ const DocumentStatus = () => {
           {documents.length === 0 && (
             <section className={`rounded-[10px] p-12 border text-center ${getThemeClasses.bg.card(isDarkMode)}`}>
               <FileText className={`w-12 h-12 mx-auto mb-3 ${isDarkMode ? 'text-slate-700' : 'text-gray-300'}`} />
-              <h3 className={`text-sm font-semibold mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>No documents found</h3>
+              <h3 className={`text-sm font-semibold mb-1 ${getThemeClasses.text.primary(isDarkMode)}`}>{t('documentStatus.emptyState.title')}</h3>
               <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                 {searchQuery
-                  ? 'Try adjusting your search query'
-                  : 'No documents match the selected status filter'}
+                  ? t('documentStatus.emptyState.searchDescription')
+                  : t('documentStatus.emptyState.filterDescription')}
               </p>
             </section>
           )}
@@ -426,7 +430,7 @@ const DocumentStatus = () => {
           {totalPages > 1 && (
             <section className={`flex items-center justify-between rounded-[10px] p-4 border ${getThemeClasses.bg.card(isDarkMode)}`}>
               <div className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} documents
+                {t('documentStatus.pagination.showing')} {((currentPage - 1) * ITEMS_PER_PAGE) + 1} {t('documentStatus.pagination.to')} {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} {t('documentStatus.pagination.of')} {totalCount} {t('documentStatus.pagination.documents')}
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -437,7 +441,7 @@ const DocumentStatus = () => {
                   className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
-                  Previous
+                  {t('documentStatus.buttons.previous')}
                 </Button>
                 <span className={`text-sm px-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>
                   {currentPage} / {totalPages}
@@ -449,7 +453,7 @@ const DocumentStatus = () => {
                   disabled={currentPage === totalPages}
                   className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                 >
-                  Next
+                  {t('documentStatus.buttons.next')}
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

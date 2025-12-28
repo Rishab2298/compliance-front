@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import { toast } from 'sonner';
 
 export const CreateTicketModal = ({ open, onOpenChange }) => {
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
   const createTicket = useCreateTicket();
 
   const [formData, setFormData] = useState({
@@ -36,34 +38,34 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
   const [errors, setErrors] = useState({});
 
   const categories = [
-    { value: 'BUG', label: 'Bug / Issue' },
-    { value: 'FEATURE_REQUEST', label: 'Feature Request' },
-    { value: 'SUPPORT', label: 'Support' },
-    { value: 'DOCUMENTATION', label: 'Documentation' },
-    { value: 'PERFORMANCE', label: 'Performance' },
-    { value: 'OTHER', label: 'Other' },
+    { value: 'BUG', label: t('createTicket.categories.bug') },
+    { value: 'FEATURE_REQUEST', label: t('createTicket.categories.featureRequest') },
+    { value: 'SUPPORT', label: t('createTicket.categories.support') },
+    { value: 'DOCUMENTATION', label: t('createTicket.categories.documentation') },
+    { value: 'PERFORMANCE', label: t('createTicket.categories.performance') },
+    { value: 'OTHER', label: t('createTicket.categories.other') },
   ];
 
   const priorities = [
-    { value: 'LOW', label: 'Low' },
-    { value: 'MEDIUM', label: 'Medium' },
-    { value: 'HIGH', label: 'High' },
-    { value: 'CRITICAL', label: 'Critical' },
+    { value: 'LOW', label: t('createTicket.priorities.low') },
+    { value: 'MEDIUM', label: t('createTicket.priorities.medium') },
+    { value: 'HIGH', label: t('createTicket.priorities.high') },
+    { value: 'CRITICAL', label: t('createTicket.priorities.critical') },
   ];
 
   const validate = () => {
     const newErrors = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
+      newErrors.title = t('createTicket.errors.titleRequired');
     } else if (formData.title.length > 100) {
-      newErrors.title = 'Title must be less than 100 characters';
+      newErrors.title = t('createTicket.errors.titleTooLong');
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = t('createTicket.errors.descriptionRequired');
     } else if (formData.description.length < 10) {
-      newErrors.description = 'Description must be at least 10 characters';
+      newErrors.description = t('createTicket.errors.descriptionTooShort');
     }
 
     setErrors(newErrors);
@@ -90,7 +92,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
         metadata,
       });
 
-      toast.success('Ticket created successfully!');
+      toast.success(t('createTicket.toasts.success'));
 
       // Reset form
       setFormData({
@@ -103,7 +105,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
 
       onOpenChange(false);
     } catch (error) {
-      toast.error(error.message || 'Failed to create ticket');
+      toast.error(error.message || t('createTicket.toasts.error'));
     }
   };
 
@@ -123,10 +125,10 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
       <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <DialogHeader>
           <DialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>
-            Report an Issue
+            {t('createTicket.title')}
           </DialogTitle>
           <DialogDescription className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-            Describe the issue you're experiencing or the feature you'd like to request.
+            {t('createTicket.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -134,13 +136,13 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
           {/* Title */}
           <div>
             <Label htmlFor="title" className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-              Title <span className="text-red-500">*</span>
+              {t('createTicket.form.title')} <span className="text-red-500">{t('createTicket.form.required')}</span>
             </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Brief description of the issue"
+              placeholder={t('createTicket.form.titlePlaceholder')}
               className={`mt-1 rounded-[10px] ${
                 errors.title
                   ? 'border-red-500 focus:ring-red-500'
@@ -157,7 +159,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
               </p>
             )}
             <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              {formData.title.length}/100 characters
+              {formData.title.length}/100 {t('createTicket.form.charactersCount')}
             </p>
           </div>
 
@@ -165,7 +167,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="category" className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                Category <span className="text-red-500">*</span>
+                {t('createTicket.form.category')} <span className="text-red-500">{t('createTicket.form.required')}</span>
               </Label>
               <Select
                 value={formData.category}
@@ -194,7 +196,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
 
             <div>
               <Label htmlFor="priority" className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                Priority <span className="text-red-500">*</span>
+                {t('createTicket.form.priority')} <span className="text-red-500">{t('createTicket.form.required')}</span>
               </Label>
               <Select
                 value={formData.priority}
@@ -225,13 +227,13 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
           {/* Description */}
           <div>
             <Label htmlFor="description" className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-              Description <span className="text-red-500">*</span>
+              {t('createTicket.form.description')} <span className="text-red-500">{t('createTicket.form.required')}</span>
             </Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Please provide as much detail as possible..."
+              placeholder={t('createTicket.form.descriptionPlaceholder')}
               rows={6}
               className={`mt-1 rounded-[10px] ${
                 errors.description
@@ -248,7 +250,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
               </p>
             )}
             <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Minimum 10 characters
+              {t('createTicket.form.minimumCharacters')}
             </p>
           </div>
 
@@ -261,7 +263,7 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
               disabled={createTicket.isPending}
               className="rounded-[10px]"
             >
-              Cancel
+              {t('createTicket.buttons.cancel')}
             </Button>
             <Button
               type="submit"
@@ -271,10 +273,10 @@ export const CreateTicketModal = ({ open, onOpenChange }) => {
               {createTicket.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  {t('createTicket.buttons.creating')}
                 </>
               ) : (
-                'Create Ticket'
+                t('createTicket.buttons.createTicket')
               )}
             </Button>
           </div>

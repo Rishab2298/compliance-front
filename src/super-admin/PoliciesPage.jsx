@@ -159,7 +159,7 @@ const PoliciesPage = () => {
     (policiesStatus.filter((p) => p.hasPublished).length / POLICY_TYPES.length) * 100;
 
   return (
-    <div className={`flex flex-col w-full min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
+    <div className={`flex flex-col min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
       {/* Decorative elements for dark mode */}
       {isDarkMode && (
         <>

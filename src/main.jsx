@@ -7,11 +7,41 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "./components/ui/sonner";
 import { queryClient } from "./lib/queryClient";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import * as Sentry from "@sentry/react";
+import './i18n/config'; // Initialize i18n
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Add your Clerk Publishable Key to the .env file");
+}
+
+// Initialize Sentry for frontend error tracking (production only)
+if (import.meta.env.VITE_SENTRY_DSN && import.meta.env.PROD) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: "production",
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: true, // Mask all text for privacy
+        blockAllMedia: true, // Block all media for privacy
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // 10% of transactions
+    // Session Replay
+    replaysSessionSampleRate: 0.1, // 10% of sessions
+    replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
+  });
+
+  console.log("✅ Sentry initialized for frontend (production mode)");
+} else {
+  if (import.meta.env.PROD) {
+    console.log("⚠️  Sentry DSN not configured - error tracking disabled in production");
+  } else {
+    console.log("ℹ️  Sentry disabled in development mode");
+  }
 }
 
 const clerkAppearance = {

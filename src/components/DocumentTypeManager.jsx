@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Plus, Trash2, Edit2, Save, X, Settings, Sparkles, Lock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
   useDocumentTypeConfigs,
   useFieldTypes,
@@ -46,6 +47,7 @@ import { getThemeClasses } from '@/utils/themeClasses';
 
 const DocumentTypeManager = () => {
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
   const { data: documentTypeConfigs = [], isLoading, error } = useDocumentTypeConfigs();
   const { data: fieldTypes = [] } = useFieldTypes();
   const { data: currentPlanData } = useCurrentPlan();
@@ -125,34 +127,34 @@ const DocumentTypeManager = () => {
   const confirmDelete = async () => {
     try {
       await deleteMutation.mutateAsync(selectedDocType.name);
-      toast.success(`Document type "${selectedDocType.name}" deleted successfully`);
+      toast.success(`${t('documentTypeManager.toasts.deleted')}: "${selectedDocType.name}"`);
       setShowDeleteDialog(false);
       setSelectedDocType(null);
     } catch (error) {
-      toast.error(error.message || 'Failed to delete document type');
+      toast.error(error.message || t('documentTypeManager.toasts.deleteFailed'));
     }
   };
 
   const addFieldToForm = () => {
     // Validation
     if (!newField.name.trim()) {
-      toast.error('Please enter a field name');
+      toast.error(t('documentTypeManager.toasts.enterFieldName'));
       return;
     }
     if (!newField.label.trim()) {
-      toast.error('Please enter a field label');
+      toast.error(t('documentTypeManager.toasts.enterFieldLabel'));
       return;
     }
 
     // Check for duplicate field names
     if (formData.fields.some(f => f.name === newField.name)) {
-      toast.error('A field with this name already exists');
+      toast.error(t('documentTypeManager.toasts.duplicateField'));
       return;
     }
 
     // Validate field name format
     if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(newField.name)) {
-      toast.error('Field name must start with a letter and contain only letters, numbers, and underscores');
+      toast.error(t('documentTypeManager.toasts.invalidFieldName'));
       return;
     }
 
@@ -184,12 +186,12 @@ const DocumentTypeManager = () => {
   const saveDocumentType = async () => {
     // Validation
     if (!formData.name.trim()) {
-      toast.error('Please enter a document type name');
+      toast.error(t('documentTypeManager.toasts.enterDocTypeName'));
       return;
     }
 
     if (formData.extractionMode === 'fields' && formData.fields.length === 0) {
-      toast.error('Please add at least one field for field extraction mode');
+      toast.error(t('documentTypeManager.toasts.atLeastOneField'));
       return;
     }
 
@@ -202,7 +204,7 @@ const DocumentTypeManager = () => {
           extractionMode: formData.extractionMode,
           fields: formData.fields,
         });
-        toast.success(`Document type "${formData.name}" created successfully`);
+        toast.success(`"${formData.name}" ${t('documentTypeManager.toasts.created')}`);
         setShowCreateDialog(false);
       } else {
         // Update existing document type
@@ -214,12 +216,12 @@ const DocumentTypeManager = () => {
             fields: formData.fields,
           },
         });
-        toast.success(`Document type "${formData.name}" updated successfully`);
+        toast.success(`"${formData.name}" ${t('documentTypeManager.toasts.updated')}`);
         setShowEditDialog(false);
       }
       resetForm();
     } catch (error) {
-      toast.error(error.message || 'Failed to save document type');
+      toast.error(error.message || t('documentTypeManager.toasts.saveFailed'));
     }
   };
 
@@ -252,10 +254,13 @@ const DocumentTypeManager = () => {
       console.log('Plan check:', { planType, activeCount, currentActiveStatus, maxActiveTypes });
 
       if (maxActiveTypes !== -1 && activeCount >= maxActiveTypes && !currentActiveStatus) {
-        toast.error(`${planType} plan allows only ${maxActiveTypes} active document ${maxActiveTypes === 1 ? 'type' : 'types'}`, {
-          description: 'Upgrade to activate more document types',
+        const typeText = maxActiveTypes === 1
+          ? t('documentTypeManager.toasts.activeDocumentType')
+          : t('documentTypeManager.toasts.activeDocumentTypes');
+        toast.error(`${planType} ${t('documentTypeManager.toasts.planLimitReached')} ${maxActiveTypes} ${typeText}`, {
+          description: t('documentTypeManager.toasts.upgradeToActivate'),
           action: {
-            label: 'Upgrade',
+            label: t('documentTypeManager.toasts.upgrade'),
             onClick: () => window.location.href = '/client/billing'
           }
         });
@@ -270,15 +275,18 @@ const DocumentTypeManager = () => {
         isActive: newActiveStatus,
       });
       console.log('Toggle mutation result:', result);
-      toast.success(`${docType.name} ${newActiveStatus ? 'activated' : 'deactivated'}`);
+      const statusText = newActiveStatus
+        ? t('documentTypeManager.toasts.activated')
+        : t('documentTypeManager.toasts.deactivated');
+      toast.success(`${docType.name} ${statusText}`);
     } catch (error) {
       console.error('Toggle mutation error:', error);
       if (error.message?.includes('plan allows only')) {
         toast.error(error.message, {
-          description: 'Upgrade to activate more document types',
+          description: t('documentTypeManager.toasts.upgradeToActivate'),
         });
       } else {
-        toast.error(error.message || 'Failed to toggle document type status');
+        toast.error(error.message || t('documentTypeManager.toasts.toggleFailed'));
       }
     }
   };
@@ -290,10 +298,10 @@ const DocumentTypeManager = () => {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              Document Types
+              {t('documentTypeManager.title')}
             </h2>
             <p className={`text-sm mt-1 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-              Configure document types and AI extraction settings for automated data capture
+              {t('documentTypeManager.subtitle')}
             </p>
           </div>
           <Button
@@ -301,7 +309,7 @@ const DocumentTypeManager = () => {
             className={`rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Custom Type
+            {t('documentTypeManager.addCustomType')}
           </Button>
         </div>
       </div>
@@ -314,7 +322,7 @@ const DocumentTypeManager = () => {
             : 'bg-red-50 border-red-200 text-red-600'
         }`}>
           <p className="text-sm font-medium">
-            Error loading document types: {error.message}
+            {t('documentTypeManager.errorLoading')} {error.message}
           </p>
         </div>
       )}
@@ -361,7 +369,7 @@ const DocumentTypeManager = () => {
           <div className="col-span-full text-center py-12">
             <Settings className={`w-12 h-12 mx-auto mb-3 ${getThemeClasses.text.secondary(isDarkMode)} opacity-30`} />
             <p className={`text-sm font-medium ${getThemeClasses.text.secondary(isDarkMode)}`}>
-              No document types configured
+              {t('documentTypeManager.noDocTypesConfigured')}
             </p>
           </div>
         ) : (
@@ -387,7 +395,7 @@ const DocumentTypeManager = () => {
                           : 'bg-blue-50 text-blue-600 border border-blue-200'
                       }`}>
                         <Lock className="w-3 h-3" />
-                        System
+                        {t('documentTypeManager.system')}
                       </span>
                     )}
                   </div>
@@ -406,7 +414,7 @@ const DocumentTypeManager = () => {
                         ? 'text-green-600 dark:text-green-400'
                         : isDarkMode ? 'text-slate-400' : 'text-gray-500'
                     }`}>
-                      {docType.isActive === true ? 'Active' : 'Inactive'}
+                      {docType.isActive === true ? t('documentTypeManager.active') : t('documentTypeManager.inactive')}
                     </span>
                     {docType.isActive !== true && (currentPlanData?.currentPlan?.name || currentPlanData?.planType) && (
                       <span className={`text-xs ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
@@ -414,7 +422,7 @@ const DocumentTypeManager = () => {
                           (currentPlanData?.currentPlan?.name || currentPlanData?.planType) === 'Free' ? '1' :
                           (currentPlanData?.currentPlan?.name || currentPlanData?.planType) === 'Starter' ? '5' :
                           (currentPlanData?.currentPlan?.name || currentPlanData?.planType) === 'Professional' ? '10' : '∞'
-                        } max)
+                        } {t('documentTypeManager.max')})
                       </span>
                     )}
                   </div>
@@ -433,20 +441,20 @@ const DocumentTypeManager = () => {
                       {docType.aiEnabled ? (
                         <>
                           <Sparkles className="w-3 h-3" />
-                          AI Enabled
+                          {t('documentTypeManager.aiEnabled')}
                         </>
                       ) : (
-                        'Manual Entry'
+                        t('documentTypeManager.manualEntry')
                       )}
                     </span>
                     <span className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                      {docType.fields?.length || 0} fields
+                      {docType.fields?.length || 0} {t('documentTypeManager.fields')}
                     </span>
                   </div>
                   <p className={`text-xs mt-2 ${getThemeClasses.text.secondary(isDarkMode)}`}>
                     {docType.extractionMode === 'fields'
-                      ? 'Extracts structured data fields'
-                      : 'Classification only'}
+                      ? t('documentTypeManager.extractsStructuredData')
+                      : t('documentTypeManager.classificationOnly')}
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -481,7 +489,7 @@ const DocumentTypeManager = () => {
                   isDarkMode ? 'border-slate-700/60' : 'border-gray-200'
                 }`}>
                   <p className={`text-xs font-semibold mb-2.5 uppercase tracking-wider ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    Fields
+                    {t('documentTypeManager.fieldsLabel')}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {docType.fields
@@ -508,7 +516,7 @@ const DocumentTypeManager = () => {
                             : 'bg-gray-50 text-gray-500'
                         }`}
                       >
-                        +{docType.fields.filter(f => f.name !== 'documentType').length - 5} more
+                        +{docType.fields.filter(f => f.name !== 'documentType').length - 5} {t('documentTypeManager.more')}
                       </span>
                     )}
                   </div>
@@ -531,10 +539,10 @@ const DocumentTypeManager = () => {
         <DialogContent className={`max-w-3xl max-h-[85vh] overflow-y-auto ${isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}>
           <DialogHeader className="pb-3">
             <DialogTitle className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              {showCreateDialog ? 'Create Custom Document Type' : `Edit "${formData.name}"`}
+              {showCreateDialog ? t('documentTypeManager.dialog.createTitle') : `${t('documentTypeManager.dialog.editTitle')} "${formData.name}"`}
             </DialogTitle>
             <DialogDescription className={`text-xs mt-1 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-              Configure document type settings, AI extraction mode, and custom fields
+              {t('documentTypeManager.dialog.description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -548,24 +556,28 @@ const DocumentTypeManager = () => {
               <div className="flex items-center gap-2">
                 <Settings className="w-3.5 h-3.5" />
                 <h3 className={`text-xs font-semibold uppercase tracking-wider ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Basic Settings
+                  {t('documentTypeManager.dialog.basicSettings')}
                 </h3>
               </div>
 
               <div className="space-y-1.5">
                 <Label className={`text-xs font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Document Type Name <span className="text-red-500">*</span>
+                  {t('documentTypeManager.dialog.documentTypeName')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="e.g., Medical Certificate"
+                  placeholder={t('documentTypeManager.dialog.namePlaceholder')}
                   disabled={showEditDialog && selectedDocType?.isDefault}
                   className={`rounded-[10px] h-9 text-sm ${getThemeClasses.input.default(isDarkMode)}`}
                 />
-                {showEditDialog && selectedDocType?.isDefault && (
+                {showEditDialog && selectedDocType?.isDefault ? (
                   <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    System types cannot be renamed
+                    {t('documentTypeManager.dialog.systemTypesCannotRename')}
+                  </p>
+                ) : (
+                  <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                    {t('documentTypeManager.dialog.documentTypeNameHelp')}
                   </p>
                 )}
               </div>
@@ -577,10 +589,10 @@ const DocumentTypeManager = () => {
               }`}>
                 <div className="flex-1">
                   <Label className={`text-xs font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    AI Extraction
+                    {t('documentTypeManager.dialog.aiExtraction')}
                   </Label>
                   <p className={`text-xs mt-0.5 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    Auto-extract data from documents
+                    {t('documentTypeManager.dialog.autoExtractData')}
                   </p>
                 </div>
                 <Switch
@@ -593,7 +605,7 @@ const DocumentTypeManager = () => {
 
               <div className="space-y-1.5">
                 <Label className={`text-xs font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Extraction Mode
+                  {t('documentTypeManager.dialog.extractionMode')}
                 </Label>
                 <Select
                   value={formData.extractionMode}
@@ -605,10 +617,13 @@ const DocumentTypeManager = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className={isDarkMode ? 'bg-slate-800 border-slate-700' : ''}>
-                    <SelectItem value="fields">Field Extraction</SelectItem>
-                    <SelectItem value="classification-only">Classification Only</SelectItem>
+                    <SelectItem value="fields">{t('documentTypeManager.dialog.fieldExtraction')}</SelectItem>
+                    <SelectItem value="classification-only">{t('documentTypeManager.dialog.classificationOnly')}</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                  {t('documentTypeManager.dialog.extractionModeHelp')}
+                </p>
               </div>
             </div>
 
@@ -622,7 +637,7 @@ const DocumentTypeManager = () => {
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5" />
                   <h3 className={`text-xs font-semibold uppercase tracking-wider ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    Field Configuration
+                    {t('documentTypeManager.dialog.fieldConfiguration')}
                   </h3>
                 </div>
 
@@ -630,7 +645,7 @@ const DocumentTypeManager = () => {
                 {formData.fields.length > 0 && (
                   <div className="space-y-2">
                     <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                      Configured Fields ({formData.fields.length})
+                      {t('documentTypeManager.dialog.configuredFields')} ({formData.fields.length})
                     </p>
                     {formData.fields.map((field) => (
                       <div
@@ -659,7 +674,7 @@ const DocumentTypeManager = () => {
                                   ? 'bg-red-500/20 text-red-400'
                                   : 'bg-red-50 text-red-600'
                               }`}>
-                                Req
+                                {t('documentTypeManager.dialog.required')}
                               </span>
                             )}
                           </div>
@@ -686,39 +701,45 @@ const DocumentTypeManager = () => {
                   <div className="flex items-center gap-1.5">
                     <Plus className="w-3.5 h-3.5" />
                     <p className={`text-xs font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                      Add New Field
+                      {t('documentTypeManager.dialog.addNewField')}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5">
                     <div className="space-y-1">
                       <Label className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Name (API) <span className="text-red-500">*</span>
+                        {t('documentTypeManager.dialog.nameAPI')} <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         value={newField.name}
                         onChange={(e) =>
                           setNewField(prev => ({ ...prev, name: e.target.value }))
                         }
-                        placeholder="expiryDate"
+                        placeholder={t('documentTypeManager.dialog.namePlaceholderField')}
                         className={`rounded-[8px] h-8 text-xs ${getThemeClasses.input.default(isDarkMode)}`}
                       />
+                      <p className={`text-xs mt-1 ${getThemeClasses.text.secondary(isDarkMode)} opacity-80`}>
+                        {t('documentTypeManager.dialog.nameAPIHelp')}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <Label className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Label <span className="text-red-500">*</span>
+                        {t('documentTypeManager.dialog.label')} <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         value={newField.label}
                         onChange={(e) =>
                           setNewField(prev => ({ ...prev, label: e.target.value }))
                         }
-                        placeholder="Expiry Date"
+                        placeholder={t('documentTypeManager.dialog.labelPlaceholder')}
                         className={`rounded-[8px] h-8 text-xs ${getThemeClasses.input.default(isDarkMode)}`}
                       />
+                      <p className={`text-xs mt-1 ${getThemeClasses.text.secondary(isDarkMode)} opacity-80`}>
+                        {t('documentTypeManager.dialog.labelHelp')}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <Label className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Type
+                        {t('documentTypeManager.dialog.type')}
                       </Label>
                       <Select
                         value={newField.type}
@@ -738,49 +759,64 @@ const DocumentTypeManager = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex items-end gap-2">
-                      <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-[6px] ${
-                        isDarkMode ? 'bg-slate-800/50' : 'bg-white'
-                      }`}>
-                        <Switch
-                          checked={newField.required}
-                          onCheckedChange={(checked) =>
-                            setNewField(prev => ({ ...prev, required: checked }))
-                          }
-                          className="scale-75"
-                        />
-                        <Label className={`text-xs cursor-pointer ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                          Req
-                        </Label>
-                      </div>
-                      <div className={`flex items-center gap-1.5 px-2 py-1.5 rounded-[6px] ${
-                        isDarkMode ? 'bg-slate-800/50' : 'bg-white'
-                      }`}>
-                        <Switch
-                          checked={newField.aiExtractable}
-                          onCheckedChange={(checked) =>
-                            setNewField(prev => ({ ...prev, aiExtractable: checked }))
-                          }
-                          className="scale-75"
-                        />
-                        <Label className={`text-xs cursor-pointer ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                          AI
-                        </Label>
+                    <div className="col-span-2 space-y-2">
+                      <div className="flex items-start gap-2">
+                        <div className={`flex-1 p-2 rounded-[6px] border ${
+                          isDarkMode ? 'bg-slate-800/50 border-slate-700/60' : 'bg-white border-gray-200'
+                        }`}>
+                          <div className="flex items-center gap-1.5">
+                            <Switch
+                              checked={newField.required}
+                              onCheckedChange={(checked) =>
+                                setNewField(prev => ({ ...prev, required: checked }))
+                              }
+                              className="scale-75"
+                            />
+                            <Label className={`text-xs cursor-pointer font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                              {t('documentTypeManager.dialog.req')}
+                            </Label>
+                          </div>
+                          <p className={`text-xs mt-1 ml-6 ${getThemeClasses.text.secondary(isDarkMode)} opacity-80`}>
+                            {t('documentTypeManager.dialog.reqHelp')}
+                          </p>
+                        </div>
+                        <div className={`flex-1 p-2 rounded-[6px] border ${
+                          isDarkMode ? 'bg-slate-800/50 border-slate-700/60' : 'bg-white border-gray-200'
+                        }`}>
+                          <div className="flex items-center gap-1.5">
+                            <Switch
+                              checked={newField.aiExtractable}
+                              onCheckedChange={(checked) =>
+                                setNewField(prev => ({ ...prev, aiExtractable: checked }))
+                              }
+                              className="scale-75"
+                            />
+                            <Label className={`text-xs cursor-pointer font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                              {t('documentTypeManager.dialog.ai')}
+                            </Label>
+                          </div>
+                          <p className={`text-xs mt-1 ml-6 ${getThemeClasses.text.secondary(isDarkMode)} opacity-80`}>
+                            {t('documentTypeManager.dialog.aiHelp')}
+                          </p>
+                        </div>
                       </div>
                     </div>
                     <div className="col-span-2 space-y-1">
-                      <Label className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Description
+                      <Label className={`text-xs font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
+                        {t('documentTypeManager.dialog.description')}
                       </Label>
                       <Textarea
                         value={newField.description}
                         onChange={(e) =>
                           setNewField(prev => ({ ...prev, description: e.target.value }))
                         }
-                        placeholder="Help AI understand what to extract"
+                        placeholder={t('documentTypeManager.dialog.descriptionPlaceholder')}
                         className={`rounded-[8px] text-xs ${getThemeClasses.input.default(isDarkMode)}`}
                         rows={2}
                       />
+                      <p className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)} opacity-80`}>
+                        {t('documentTypeManager.dialog.descriptionHelp')}
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -788,7 +824,7 @@ const DocumentTypeManager = () => {
                     className={`w-full rounded-[8px] h-8 text-xs ${getThemeClasses.button.secondary(isDarkMode)}`}
                   >
                     <Plus className="w-3.5 h-3.5 mr-1.5" />
-                    Add Field
+                    {t('documentTypeManager.dialog.addField')}
                   </Button>
                 </div>
               </div>
@@ -809,7 +845,7 @@ const DocumentTypeManager = () => {
                   : 'border-gray-300 hover:bg-gray-50'
               }`}
             >
-              Cancel
+              {t('documentTypeManager.dialog.cancel')}
             </Button>
             <Button
               onClick={saveDocumentType}
@@ -819,12 +855,12 @@ const DocumentTypeManager = () => {
               {createMutation.isPending || updateMutation.isPending ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                  Saving...
+                  {t('documentTypeManager.dialog.saving')}
                 </>
               ) : (
                 <>
                   <Save className="w-3.5 h-3.5 mr-1.5" />
-                  {showCreateDialog ? 'Create' : 'Save'}
+                  {showCreateDialog ? t('documentTypeManager.dialog.create') : t('documentTypeManager.dialog.save')}
                 </>
               )}
             </Button>
@@ -844,10 +880,10 @@ const DocumentTypeManager = () => {
               <Trash2 className="w-5 h-5" />
             </div>
             <AlertDialogTitle className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-              Delete Document Type
+              {t('documentTypeManager.deleteDialog.title')}
             </AlertDialogTitle>
             <AlertDialogDescription className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-              Are you sure you want to delete <span className="font-semibold text-red-600">"{selectedDocType?.name}"</span>? This action cannot be undone.
+              {t('documentTypeManager.deleteDialog.description')} <span className="font-semibold text-red-600">"{selectedDocType?.name}"</span>? {t('documentTypeManager.deleteDialog.cannotUndo')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 mt-4">
@@ -856,7 +892,7 @@ const DocumentTypeManager = () => {
                 ? 'border-slate-700 hover:bg-slate-800'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}>
-              Cancel
+              {t('documentTypeManager.deleteDialog.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
@@ -866,12 +902,12 @@ const DocumentTypeManager = () => {
               {deleteMutation.isPending ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                  Deleting...
+                  {t('documentTypeManager.deleteDialog.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                  Delete
+                  {t('documentTypeManager.deleteDialog.delete')}
                 </>
               )}
             </AlertDialogAction>

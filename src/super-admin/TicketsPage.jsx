@@ -113,7 +113,7 @@ export const TicketsPage = () => {
 
       {/* Header */}
       <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
+        <div className="flex items-center justify-between w-full px-6 mx-auto">
           <div>
             <h1 className={`text-xl font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
               Tickets Management
@@ -127,7 +127,7 @@ export const TicketsPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 py-8">
-        <div className="container w-full px-6 mx-auto space-y-6">
+        <div className="w-full px-6 space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <Card className={`rounded-[10px] ${getThemeClasses.bg.card(isDarkMode)}`}>

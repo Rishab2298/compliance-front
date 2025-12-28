@@ -4,8 +4,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Calendar, Bell, Trash2, Mail, MessageSquare, AlertCircle, Clock } from 'lucide-react';
 import { getThemeClasses } from '@/utils/themeClasses';
+import { useTranslation } from 'react-i18next';
 
 const CalendarView = ({ reminders = [], customReminders = [], isDarkMode, onDeleteReminder }) => {
+  const { t } = useTranslation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -77,11 +79,29 @@ const CalendarView = ({ reminders = [], customReminders = [], isDarkMode, onDele
   }, [selectedDate, reminders, customReminders]);
 
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    t('calendar.months.january'),
+    t('calendar.months.february'),
+    t('calendar.months.march'),
+    t('calendar.months.april'),
+    t('calendar.months.may'),
+    t('calendar.months.june'),
+    t('calendar.months.july'),
+    t('calendar.months.august'),
+    t('calendar.months.september'),
+    t('calendar.months.october'),
+    t('calendar.months.november'),
+    t('calendar.months.december')
   ];
 
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayNames = [
+    t('calendar.days.sun'),
+    t('calendar.days.mon'),
+    t('calendar.days.tue'),
+    t('calendar.days.wed'),
+    t('calendar.days.thu'),
+    t('calendar.days.fri'),
+    t('calendar.days.sat')
+  ];
 
   const isToday = (day) => {
     const today = new Date();
@@ -149,10 +169,10 @@ const CalendarView = ({ reminders = [], customReminders = [], isDarkMode, onDele
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                Upcoming Reminders
+                {t('calendar.upcomingReminders.title')}
               </h3>
               <Badge className={`rounded-[10px] ${isDarkMode ? 'bg-violet-500/20 text-violet-400' : 'bg-violet-100 text-violet-700'}`}>
-                Next 30 days
+                {t('calendar.upcomingReminders.next30Days')}
               </Badge>
             </div>
             <div className="space-y-2">
@@ -216,7 +236,7 @@ const CalendarView = ({ reminders = [], customReminders = [], isDarkMode, onDele
                 onClick={goToToday}
                 className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
               >
-                Today
+                {t('calendar.buttons.today')}
               </Button>
               <Button
                 variant="outline"
@@ -239,18 +259,18 @@ const CalendarView = ({ reminders = [], customReminders = [], isDarkMode, onDele
 
           {/* Legend */}
           <div className={`flex items-center gap-4 mb-4 p-3 rounded-[10px] text-xs ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-50'}`}>
-            <span className={getThemeClasses.text.secondary(isDarkMode)}>Legend:</span>
+            <span className={getThemeClasses.text.secondary(isDarkMode)}>{t('calendar.legend.title')}:</span>
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-violet-400' : 'bg-violet-600'}`}></div>
-              <span className={getThemeClasses.text.secondary(isDarkMode)}>Upcoming</span>
+              <span className={getThemeClasses.text.secondary(isDarkMode)}>{t('calendar.legend.upcoming')}</span>
             </div>
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-yellow-400' : 'bg-yellow-600'}`}></div>
-              <span className={getThemeClasses.text.secondary(isDarkMode)}>Today</span>
+              <span className={getThemeClasses.text.secondary(isDarkMode)}>{t('calendar.buttons.today')}</span>
             </div>
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-slate-500' : 'bg-gray-400'}`}></div>
-              <span className={getThemeClasses.text.secondary(isDarkMode)}>Past</span>
+              <span className={getThemeClasses.text.secondary(isDarkMode)}>{t('calendar.legend.past')}</span>
             </div>
           </div>
 

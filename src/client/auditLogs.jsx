@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   FileText,
@@ -62,6 +63,7 @@ import {
 const AuditLogs = () => {
   const { getToken } = useAuth();
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
   const { hasCapability, dspRole, isSuperAdmin } = usePermissions();
 
   // Filter states
@@ -82,9 +84,9 @@ const AuditLogs = () => {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center p-8">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('auditLogs.accessDenied.title')}</h2>
         <p className="text-gray-600">
-          You don't have permission to view audit logs.
+          {t('auditLogs.accessDenied.description')}
         </p>
       </div>
     );
@@ -111,19 +113,19 @@ const AuditLogs = () => {
     },
     onSuccess: (data) => {
       if (data.valid) {
-        toast.success('Audit logs verified successfully!', {
-          description: 'No tampering detected. Logs are authentic.',
+        toast.success(t('auditLogs.toasts.verifySuccess'), {
+          description: t('auditLogs.toasts.verifySuccessDesc'),
           icon: <ShieldCheck className="w-5 h-5" />,
         });
       } else {
-        toast.error('Integrity check failed!', {
-          description: data.error || 'Possible tampering detected.',
+        toast.error(t('auditLogs.toasts.verifyError'), {
+          description: data.error || t('auditLogs.toasts.verifyErrorDesc'),
           icon: <ShieldAlert className="w-5 h-5" />,
         });
       }
     },
     onError: (error) => {
-      toast.error('Verification failed', {
+      toast.error(t('auditLogs.toasts.verificationFailed'), {
         description: error.message,
       });
     },
@@ -139,10 +141,10 @@ const AuditLogs = () => {
       const timestamp = new Date().toISOString().split('T')[0];
       const filename = `audit-logs-${timestamp}.${format}`;
       downloadFile(blob, filename);
-      toast.success(`Audit logs exported as ${format.toUpperCase()}`);
+      toast.success(`${t('auditLogs.toasts.exportSuccess')} ${format.toUpperCase()}`);
     },
     onError: (error) => {
-      toast.error('Export failed', {
+      toast.error(t('auditLogs.toasts.exportFailed'), {
         description: error.message,
       });
     },
@@ -226,7 +228,7 @@ const AuditLogs = () => {
         </>
       )}
 
-      <DashboardHeader title="Audit Logs">
+      <DashboardHeader title={t('auditLogs.title')}>
         <div className="flex items-center gap-2">
           {/* Verify - hide on mobile */}
           <Button
@@ -237,7 +239,7 @@ const AuditLogs = () => {
             className="gap-2 hidden md:flex"
           >
             <Shield className="w-4 h-4" />
-            Verify Integrity
+            {t('auditLogs.buttons.verifyIntegrity')}
           </Button>
 
           {/* Export CSV - hide text on mobile */}
@@ -249,7 +251,7 @@ const AuditLogs = () => {
             className="gap-2 hidden sm:flex"
           >
             <Download className="w-4 h-4" />
-            Export CSV
+            {t('auditLogs.buttons.exportCSV')}
           </Button>
 
           {/* Export JSON - hide on small screens */}
@@ -261,7 +263,7 @@ const AuditLogs = () => {
             className="gap-2 hidden lg:flex"
           >
             <Download className="w-4 h-4" />
-            Export JSON
+            {t('auditLogs.buttons.exportJSON')}
           </Button>
 
           {/* Refresh - always visible */}
@@ -273,7 +275,7 @@ const AuditLogs = () => {
             className="gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Refresh</span>
+            <span className="hidden sm:inline">{t('auditLogs.buttons.refresh')}</span>
           </Button>
         </div>
       </DashboardHeader>
@@ -284,17 +286,17 @@ const AuditLogs = () => {
           <CardHeader>
             <CardTitle className={`flex items-center gap-2 ${getThemeClasses.text.primary(isDarkMode)}`}>
               <Filter className="w-5 h-5" />
-              Filters
+              {t('auditLogs.filters.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label className={getThemeClasses.text.primary(isDarkMode)}>Search</Label>
+                <Label className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.filters.search')}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
-                    placeholder="Search logs..."
+                    placeholder={t('auditLogs.filters.searchPlaceholder')}
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
                     className={`pl-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}
@@ -303,7 +305,7 @@ const AuditLogs = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className={getThemeClasses.text.primary(isDarkMode)}>Start Date</Label>
+                <Label className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.filters.startDate')}</Label>
                 <Input
                   type="date"
                   value={filters.startDate}
@@ -313,7 +315,7 @@ const AuditLogs = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className={getThemeClasses.text.primary(isDarkMode)}>End Date</Label>
+                <Label className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.filters.endDate')}</Label>
                 <Input
                   type="date"
                   value={filters.endDate}
@@ -332,7 +334,7 @@ const AuditLogs = () => {
                   className={isDarkMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700' : ''}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
-                  Last 90 Days
+                  {t('auditLogs.filters.last90Days')}
                 </Button>
                 <Button
                   variant="outline"
@@ -341,11 +343,11 @@ const AuditLogs = () => {
                   className={isDarkMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700' : ''}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
-                  Last 180 Days
+                  {t('auditLogs.filters.last180Days')}
                 </Button>
               </div>
               <Button variant="outline" size="sm" onClick={handleClearFilters}>
-                Clear Filters
+                {t('auditLogs.buttons.clearFilters')}
               </Button>
             </div>
           </CardContent>
@@ -355,12 +357,12 @@ const AuditLogs = () => {
         <Card className={isDarkMode ? 'bg-slate-900/50 border-slate-800' : ''}>
           <CardHeader>
             <CardTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Audit Logs ({totalLogs})
+              {t('auditLogs.table.title')} ({totalLogs})
             </CardTitle>
             <CardDescription className={getThemeClasses.text.secondary(isDarkMode)}>
               {isBillingRole
-                ? 'Viewing billing-related audit logs only'
-                : 'Complete audit trail of all system activities'}
+                ? t('auditLogs.table.subtitle.billing')
+                : t('auditLogs.table.subtitle.complete')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -374,10 +376,10 @@ const AuditLogs = () => {
               <div className="text-center py-12">
                 <FileText className={`w-12 h-12 mx-auto mb-4 ${getThemeClasses.text.muted(isDarkMode)}`} />
                 <h3 className={`text-lg font-medium mb-2 ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  No audit logs found
+                  {t('auditLogs.table.emptyState.title')}
                 </h3>
                 <p className={getThemeClasses.text.secondary(isDarkMode)}>
-                  Try adjusting your filters
+                  {t('auditLogs.table.emptyState.description')}
                 </p>
               </div>
             ) : (
@@ -386,13 +388,13 @@ const AuditLogs = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Timestamp</TableHead>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>User</TableHead>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Action</TableHead>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Category</TableHead>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Severity</TableHead>
-                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>IP Address</TableHead>
-                        <TableHead className="text-right">Details</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.timestamp')}</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.user')}</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.action')}</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.category')}</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.severity')}</TableHead>
+                        <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('auditLogs.table.columns.ipAddress')}</TableHead>
+                        <TableHead className="text-right">{t('auditLogs.table.columns.details')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -402,24 +404,24 @@ const AuditLogs = () => {
                             {formatDate(log.timestamp)}
                           </TableCell>
                           <TableCell className={getThemeClasses.text.primary(isDarkMode)}>
-                            {log.userEmail || <span className={getThemeClasses.text.muted(isDarkMode)}>System</span>}
+                            {log.userEmail || <span className={getThemeClasses.text.muted(isDarkMode)}>{t('auditLogs.table.system')}</span>}
                           </TableCell>
                           <TableCell className={getThemeClasses.text.primary(isDarkMode)}>
                             {log.action.replace(/_/g, ' ')}
                           </TableCell>
                           <TableCell>
                             <Badge className={getCategoryBadge(log.category)}>
-                              {log.category}
+                              {t(`auditLogs.categories.${log.category}`, log.category)}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <Badge className={getSeverityBadge(log.severity)}>
-                              {log.severity}
+                              {t(`auditLogs.severity.${log.severity}`, log.severity)}
                             </Badge>
                           </TableCell>
                           <TableCell className={getThemeClasses.text.secondary(isDarkMode)}>
                             {log.ipAddress === '***REDACTED***' ? (
-                              <span className="text-gray-400 italic">Redacted</span>
+                              <span className="text-gray-400 italic">{t('auditLogs.table.redacted')}</span>
                             ) : (
                               log.ipAddress || '—'
                             )}
@@ -444,7 +446,7 @@ const AuditLogs = () => {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between mt-6">
                     <div className={getThemeClasses.text.secondary(isDarkMode)}>
-                      Page {filters.page} of {totalPages}
+                      {t('auditLogs.table.pagination')} {filters.page} of {totalPages}
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -453,7 +455,7 @@ const AuditLogs = () => {
                         onClick={() => handlePageChange(filters.page - 1)}
                         disabled={filters.page === 1}
                       >
-                        Previous
+                        {t('auditLogs.buttons.previous')}
                       </Button>
                       <Button
                         variant="outline"
@@ -461,7 +463,7 @@ const AuditLogs = () => {
                         onClick={() => handlePageChange(filters.page + 1)}
                         disabled={filters.page === totalPages}
                       >
-                        Next
+                        {t('auditLogs.buttons.next')}
                       </Button>
                     </div>
                   </div>
@@ -477,40 +479,40 @@ const AuditLogs = () => {
         <DialogContent className={`max-w-2xl ${isDarkMode ? 'bg-slate-900 border-slate-800' : ''}`}>
           <DialogHeader>
             <DialogTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Audit Log Details
+              {t('auditLogs.details.title')}
             </DialogTitle>
             <DialogDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Complete information for this audit entry
+              {t('auditLogs.details.description')}
             </DialogDescription>
           </DialogHeader>
           {selectedLog && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Timestamp</Label>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.timestamp')}</Label>
                   <p className={getThemeClasses.text.primary(isDarkMode)}>{formatDate(selectedLog.timestamp)}</p>
                 </div>
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>User</Label>
-                  <p className={getThemeClasses.text.primary(isDarkMode)}>{selectedLog.userEmail || 'System'}</p>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.user')}</Label>
+                  <p className={getThemeClasses.text.primary(isDarkMode)}>{selectedLog.userEmail || t('auditLogs.table.system')}</p>
                 </div>
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Action</Label>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.action')}</Label>
                   <p className={getThemeClasses.text.primary(isDarkMode)}>{selectedLog.action}</p>
                 </div>
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Category</Label>
-                  <Badge className={getCategoryBadge(selectedLog.category)}>{selectedLog.category}</Badge>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.category')}</Label>
+                  <Badge className={getCategoryBadge(selectedLog.category)}>{t(`auditLogs.categories.${selectedLog.category}`, selectedLog.category)}</Badge>
                 </div>
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Severity</Label>
-                  <Badge className={getSeverityBadge(selectedLog.severity)}>{selectedLog.severity}</Badge>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.severity')}</Label>
+                  <Badge className={getSeverityBadge(selectedLog.severity)}>{t(`auditLogs.severity.${selectedLog.severity}`, selectedLog.severity)}</Badge>
                 </div>
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>IP Address</Label>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.ipAddress')}</Label>
                   <p className={getThemeClasses.text.primary(isDarkMode)}>
                     {selectedLog.ipAddress === '***REDACTED***' ? (
-                      <span className="text-gray-400 italic">Redacted</span>
+                      <span className="text-gray-400 italic">{t('auditLogs.table.redacted')}</span>
                     ) : (
                       selectedLog.ipAddress || '—'
                     )}
@@ -520,7 +522,7 @@ const AuditLogs = () => {
 
               {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Metadata</Label>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.metadata')}</Label>
                   <pre className={`mt-2 p-4 rounded-lg text-sm overflow-x-auto ${
                     isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-gray-100 text-gray-900'
                   }`}>
@@ -531,7 +533,7 @@ const AuditLogs = () => {
 
               {selectedLog.hash && (
                 <div>
-                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>Hash (Immutability)</Label>
+                  <Label className={getThemeClasses.text.secondary(isDarkMode)}>{t('auditLogs.details.hash')}</Label>
                   <p className={`mt-1 font-mono text-xs break-all ${getThemeClasses.text.muted(isDarkMode)}`}>
                     {selectedLog.hash}
                   </p>

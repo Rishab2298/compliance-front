@@ -76,7 +76,7 @@ const PolicyEditPage = () => {
     }
   };
 
-  const handleSave = async ({ content, isMajorVersion }) => {
+  const handleSave = async ({ content, isMajorVersion, pdfUrl }) => {
     try {
       setSaving(true);
       const token = await getToken();
@@ -89,6 +89,7 @@ const PolicyEditPage = () => {
           content,
           isPublished: false,
           isMajorVersion,
+          pdfUrl,
         });
       } else {
         // Update existing policy (creates new version)
@@ -96,6 +97,7 @@ const PolicyEditPage = () => {
           content,
           isPublished: false,
           isMajorVersion,
+          pdfUrl,
         });
       }
 
@@ -114,7 +116,7 @@ const PolicyEditPage = () => {
     }
   };
 
-  const handlePublish = async ({ content, isMajorVersion }) => {
+  const handlePublish = async ({ content, isMajorVersion, pdfUrl }) => {
     try {
       setSaving(true);
       const token = await getToken();
@@ -127,6 +129,7 @@ const PolicyEditPage = () => {
           content,
           isPublished: true,
           isMajorVersion,
+          pdfUrl,
         });
       } else {
         // Update and publish policy
@@ -134,6 +137,7 @@ const PolicyEditPage = () => {
           content,
           isPublished: true,
           isMajorVersion,
+          pdfUrl,
         });
       }
 
@@ -391,6 +395,7 @@ const PolicyEditPage = () => {
           currentVersion={displayPolicy?.version}
           loading={saving}
           readOnly={!!selectedVersion}
+          initialPdfUrl={displayPolicy?.pdfUrl || null}
         />
       </div>
     </div>

@@ -1,0 +1,1052 @@
+{
+  "addEmployee": {
+    "title": "Añadir un Empleado",
+    "breadcrumbEmployees": "Empleados",
+    "breadcrumbAdd": "Añadir Empleado",
+    "subtitle": "Complete los pasos a continuación para añadir un nuevo empleado a su lista",
+    "steps": {
+      "personalInfo": "Info Personal",
+      "uploadMethod": "Método de Carga",
+      "documents": "Documentos",
+      "processing": "Procesamiento",
+      "verification": "Verificación",
+      "reminders": "Recordatorios",
+      "review": "Revisar",
+      "complete": "Completar"
+    },
+    "step1": {
+      "title": "Información Personal",
+      "subtitle": "Por favor complete sus datos básicos para comenzar",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "phone": "Número de Teléfono",
+      "location": "Ubicación",
+      "employeeId": "ID de Empleado",
+      "tip": "💡 Consejo: Asegúrese de incluir el código de país en el número de teléfono sin espacios ni guiones. Por ejemplo:",
+      "tipUS": "para Estados Unidos o",
+      "tipCA": "para Canadá. Esto asegura que las notificaciones SMS se entreguen correctamente al empleado.",
+      "errors": {
+        "firstNameRequired": "El nombre es obligatorio",
+        "lastNameRequired": "El apellido es obligatorio",
+        "emailRequired": "El correo electrónico es obligatorio",
+        "emailInvalid": "Formato de correo electrónico no válido",
+        "phoneRequired": "El número de teléfono es obligatorio",
+        "locationRequired": "La ubicación es obligatoria",
+        "employeeIdRequired": "El ID de empleado es obligatorio"
+      }
+    },
+    "step2": {
+      "title": "Carga de Documentos",
+      "subtitle": "¿Cómo le gustaría añadir los documentos?",
+      "uploadNow": "Cargar Ahora",
+      "uploadNowDesc": "Cargue sus documentos inmediatamente y complete el proceso de inmediato",
+      "sendLink": "Enviar Enlace al Empleado",
+      "sendLinkDesc": "Enviaremos un enlace seguro al empleado para cargar documentos a su conveniencia",
+      "skipNow": "Omitir por Ahora",
+      "skipNowDesc": "Continúe con el registro y añada documentos más tarde desde su panel",
+      "errors": {
+        "selectMethod": "Por favor seleccione un método de carga"
+      }
+    },
+    "step3": {
+      "title": "Subir Documentos",
+      "subtitle": "Suba e ingrese detalles de todos los documentos requeridos",
+      "noDocTypesTitle": "No hay tipos de documentos configurados",
+      "noDocTypesDesc": "Por favor configure los tipos de documentos en la configuración de su empresa primero.",
+      "requiredDocuments": "Documentos Requeridos",
+      "pleaseUploadAll": "Por favor suba todos los documentos listados arriba",
+      "dragAndDrop": "Arrastre y suelte archivos aquí, o haga clic para explorar",
+      "selectFiles": "Seleccionar Archivos",
+      "supportedFormats": "Soportados: JPG, JPEG, PNG, PDF (Máx. 10MB por archivo)",
+      "uploadedFiles": "Archivos Subidos",
+      "documentsUploaded": "documentos subidos",
+      "of": "de",
+      "mb": "MB",
+      "status": {
+        "pending": "Pendiente...",
+        "uploading": "Subiendo",
+        "uploaded": "Subido",
+        "failed": "Fallido"
+      },
+      "uploadingToStorage": "Subiendo documentos al almacenamiento seguro...",
+      "someFilesFailed": "Algunos archivos no se pudieron subir. Por favor elimínelos e intente nuevamente.",
+      "allUploaded": "¡Todos los documentos subidos exitosamente! Haga clic en \"Siguiente Paso\" para continuar.",
+      "tip": "💡 Consejo: Suba todas las imágenes de documentos requeridos. Ingresará los detalles del documento en los siguientes pasos usando IA o manualmente.",
+      "toasts": {
+        "validationFailed": "validación fallida",
+        "planLimitReached": "Límite del plan alcanzado",
+        "documentTypesNeeded": "Se necesitan tipos de documentos",
+        "uploadedSuccess": "subido exitosamente!",
+        "uploadFailed": "Error al subir"
+      }
+    },
+    "step8": {
+      "skipped": {
+        "title": "Documentos Omitidos",
+        "description": "Ha elegido omitir la carga de documentos por ahora. Puede añadir documentos más tarde desde la página de perfil del empleado.",
+        "whatNext": "¿Qué sigue?",
+        "whatNextDesc": "Después de crear el empleado, puede cargar documentos o enviarles un enlace de invitación para que carguen los documentos ellos mismos."
+      },
+      "creating": "Creando Perfil de Empleado...",
+      "creatingDesc": "Por favor espere mientras guardamos la información de su empleado.",
+      "failed": "Error al Crear Empleado",
+      "invitationSent": "¡Invitación Enviada con Éxito!",
+      "employeeAdded": "¡Empleado Añadido con Éxito!",
+      "invitationDesc": "Un correo electrónico",
+      "invitationDescSMS": "y SMS",
+      "invitationDescTo": "con un enlace de carga seguro ha sido enviado a",
+      "employeeAddedDesc": "ha sido añadido a su lista de empleados.",
+      "viewAll": "Ver Todos los Empleados",
+      "addAnother": "Añadir Otro Empleado",
+      "tryAgain": "Intentar de Nuevo"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "back": "Atrás",
+      "nextStep": "Siguiente Paso",
+      "completeSubmit": "Completar y Enviar",
+      "goToEmployees": "Ir a Empleados",
+      "submitting": "Enviando...",
+      "creatingEmployee": "Creando Empleado..."
+    },
+    "stepIndicator": {
+      "step": "Paso",
+      "of": "de"
+    },
+    "toasts": {
+      "employeeLimitReached": "Límite de empleados alcanzado",
+      "employeeLimitDesc": "Por favor actualice su plan para añadir más empleados. Límite actual:",
+      "employeeLimitDescSuffix": "empleados.",
+      "employeeCreated": "Empleado creado con éxito",
+      "employeeCreatedDesc": "ha sido añadido a su lista de empleados.",
+      "remindersSaved": "Preferencias de recordatorios guardadas",
+      "remindersSavedDesc": "Las notificaciones por correo electrónico y SMS han sido configuradas para",
+      "invitationSent": "Invitación enviada con éxito",
+      "invitationSentDesc": "Se ha enviado un correo electrónico de invitación a"
+    }
+  },
+  "drivers": {
+    "title": "Gestión de Empleados",
+    "importCSV": "Importar CSV",
+    "settings": "Configuración",
+    "errorLoading": "Error al cargar empleados:",
+    "table": {
+      "searchPlaceholder": "Buscar empleados...",
+      "addEmployee": "Agregar Empleado",
+      "noEmployees": "No se encontraron empleados.",
+      "columns": {
+        "employee": "Empleado",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "documents": "Documentos",
+        "compliance": "Cumplimiento"
+      },
+      "status": {
+        "verified": "Verificado",
+        "expiringSoon": "Expira Pronto",
+        "expired": "Expirado",
+        "pending": "Pendiente",
+        "processing": "Procesando"
+      },
+      "actions": {
+        "viewDetails": "Ver Detalles",
+        "delete": "Eliminar",
+        "openMenu": "Abrir menú"
+      },
+      "deleteDialog": {
+        "title": "Eliminar Empleado",
+        "description": "¿Estás seguro de que deseas eliminar a",
+        "descriptionSuffix": "Esta acción no se puede deshacer. Todos los documentos y registros asociados con este empleado serán eliminados permanentemente.",
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      },
+      "pagination": {
+        "showing": "Mostrando",
+        "of": "de",
+        "employees": "empleado(s)",
+        "page": "Página",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      }
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "de",
+      "employees": "empleados",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página"
+    },
+    "toasts": {
+      "permissionDenied": "Permiso denegado",
+      "noPermissionDelete": "No tienes permiso para eliminar empleados.",
+      "noPermissionCreate": "No tienes permiso para crear empleados.",
+      "deletedSuccess": "ha sido eliminado con éxito",
+      "deleteError": "Error al eliminar empleado",
+      "importSuccess": "Importados exitosamente",
+      "importSuccessPlural": "empleado(s)",
+      "limitReached": "¡Límite de empleados alcanzado!",
+      "limitReachedDesc": "Añadidos exitosamente",
+      "limitReachedDescEnd": "empleado(s) no pudieron ser añadidos. Por favor actualice su plan para añadir más empleados.",
+      "importFailed": "Error al importar",
+      "importFailedSuffix": "empleado(s)",
+      "noEmployeesImported": "No se importaron empleados. Por favor revise su archivo CSV."
+    }
+  },
+  "driverDetail": {
+    "title": "Detalles del Empleado",
+    "breadcrumbEmployees": "Empleados",
+    "employeeNotFound": "Empleado no encontrado",
+    "back": "Atrás",
+    "requestDocuments": "Solicitar Documentos",
+    "mailing": "Enviando",
+    "edit": "Editar",
+    "cancel": "Cancelar",
+    "saving": "Guardando",
+    "saveChanges": "Guardar Cambios",
+    "profile": {
+      "employeeName": "Nombre del Empleado",
+      "employeeId": "Sin ID de empleado",
+      "compliant": "Conforme",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "addedOn": "Añadido el"
+    },
+    "pendingAlert": {
+      "needDetails": "Documento",
+      "needDetailsPlural": "Documentos",
+      "needDetailsSuffix": "Necesitan Detalles",
+      "description": "Ingrese información del documento para activar estos documentos",
+      "enterDetails": "Ingresar Detalles"
+    },
+    "uploadSection": {
+      "title": "Subir Documentos",
+      "subtitle": "Añadir nuevos documentos para este empleado"
+    },
+    "documentsOverview": {
+      "title": "Resumen de Documentos",
+      "documentsOnFile": "documento(s) en archivo",
+      "expires": "Vence",
+      "uploaded": "Subido",
+      "requestUpdate": "Solicitar Actualización",
+      "sending": "Enviando",
+      "noDocuments": "Aún no hay documentos",
+      "uploadToStart": "Suba documentos usando la sección de arriba para comenzar"
+    },
+    "reminderHistory": {
+      "title": "Historial de Recordatorios",
+      "reminder": "recordatorio",
+      "reminderPlural": "recordatorios",
+      "noReminders": "Aún no se han enviado recordatorios",
+      "remindersWillAppear": "Los recordatorios aparecerán aquí cuando se envíen",
+      "defaultMessage": "Recordatorio enviado al conductor",
+      "sent": "Enviado",
+      "daysBeforeExpiry": "día",
+      "daysBeforeExpiryPlural": "días",
+      "beforeExpiry": "antes del vencimiento",
+      "loadingHistory": "Cargando historial de recordatorios...",
+      "failedToLoad": "Error al cargar historial de recordatorios",
+      "statusSent": "Enviado",
+      "statusFailed": "Fallido",
+      "statusPending": "Pendiente",
+      "channelEmail": "Correo Electrónico",
+      "channelSMS": "SMS",
+      "viewHistory": "Ver historial de recordatorios"
+    },
+    "documentStatus": {
+      "verified": "Verificado",
+      "expiringSoon": "Vence Pronto",
+      "expired": "Vencido",
+      "processing": "Procesando",
+      "pending": "Pendiente"
+    },
+    "stats": {
+      "complianceScore": "Puntuación de Cumplimiento",
+      "totalDocuments": "Documentos Totales",
+      "verified": "Verificado",
+      "expiringSoon": "Vence Pronto",
+      "expired": "Vencido"
+    },
+    "deleteDialog": {
+      "title": "Eliminar Documento",
+      "description": "¿Está seguro de que desea eliminar este documento? Esta acción no se puede deshacer.",
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "toasts": {
+      "updateSuccess": "Información del conductor actualizada con éxito",
+      "updateError": "Error al actualizar información del conductor",
+      "requestError": "Se requiere el correo electrónico del conductor para enviar la solicitud de documentos",
+      "noDocTypes": "No hay tipos de documentos configurados. Por favor añada tipos de documentos en la configuración.",
+      "requestSent": "Solicitud de documentos enviada con éxito a",
+      "requestFailed": "Error al enviar solicitud de documentos",
+      "uploadSuccess": "¡Documentos subidos! Haga clic en \"Ingresar Detalles\" para añadir información del documento.",
+      "viewError": "Error al ver documento:",
+      "downloadSuccess": "Descarga completada",
+      "downloadError": "Error al descargar documento:",
+      "deleteSuccess": "Documento eliminado con éxito",
+      "deleteError": "Error al eliminar documento:",
+      "updateRequestSent": "Solicitud de actualización de documento enviada a",
+      "updateRequestDesc": "Se le pedirá al conductor que suba una copia nueva de"
+    },
+    "form": {
+      "employeeName": "Nombre del Empleado",
+      "enterEmployeeName": "Ingrese el nombre del empleado",
+      "enterEmail": "Ingrese la dirección de correo electrónico",
+      "enterPhone": "Ingrese el número de teléfono"
+    },
+    "actions": {
+      "viewDocument": "Ver documento",
+      "downloadDocument": "Descargar documento",
+      "deleteDocument": "Eliminar documento",
+      "editDocument": "Editar documento",
+      "requestUpdate": "Solicitar al conductor que suba un documento actualizado"
+    }
+  },
+  "documentUpload": {
+    "title": "Subir Documentos",
+    "dragAndDrop": "Arrastre y suelte archivos aquí, o haga clic para explorar",
+    "selectFiles": "Seleccionar Archivos",
+    "supportedFormats": "Formatos soportados: JPG, JPEG, PNG, PDF (Máx. 10MB por archivo)",
+    "selectedFiles": "Archivos Seleccionados",
+    "uploading": "Subiendo",
+    "uploadAll": "Subir Todos",
+    "mb": "MB",
+    "toasts": {
+      "noFiles": "Por favor seleccione archivos para subir",
+      "preparing": "Preparando subida...",
+      "uploadSuccess": "archivo(s) subido(s) exitosamente!",
+      "uploadFailed": "archivo(s) no se pudieron subir",
+      "uploadError": "Error al subir archivos",
+      "validationFailed": "validación fallida",
+      "planLimitReached": "Límite del plan alcanzado",
+      "documentTypesNeeded": "Se necesitan tipos de documentos"
+    }
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "addEmployee": "Añadir Empleado",
+    "criticalCompliance": {
+      "title": "Problemas Críticos de Cumplimiento",
+      "expiredDocuments": "documento vencido",
+      "expiredDocumentsPlural": "documentos vencidos",
+      "expiringIn7Days": "vencen en <7 días",
+      "viewDetails": "Ver Detalles"
+    },
+    "overview": {
+      "title": "Resumen",
+      "subtitle": "Métricas clave y resumen de cumplimiento",
+      "totalEmployees": "Total de Empleados",
+      "activeInSystem": "Activos en el sistema",
+      "complianceRate": "Tasa de Cumplimiento",
+      "excellent": "Excelente",
+      "good": "Bueno",
+      "needsAttention": "Necesita atención",
+      "expiringSoon": "Vencen Pronto",
+      "critical": "crítico",
+      "warning": "advertencia",
+      "pendingReview": "Revisión Pendiente",
+      "awaitingVerification": "Esperando verificación"
+    },
+    "credits": {
+      "title": "Créditos y Uso",
+      "currentPlan": "Plan actual",
+      "managePlan": "Gestionar Plan",
+      "aiCreditsRemaining": "Créditos de IA Restantes",
+      "usedFor": "Usado para escaneo y procesamiento de documentos",
+      "activeEmployees": "Empleados Activos",
+      "upTo": "Hasta",
+      "employeesOn": "empleados en el plan",
+      "plan": "plan",
+      "unlimited": "Ilimitado en el plan actual",
+      "lowCredits": "Créditos Bajos:",
+      "lowCreditsMessage": "Tienes menos de 5 créditos de IA restantes. Considera actualizar tu plan o comprar créditos adicionales."
+    },
+    "documentStatus": {
+      "title": "Estado de Documentos",
+      "subtitle": "Resumen de todos los documentos por estado",
+      "viewAll": "Ver Todos",
+      "verified": "Verificado",
+      "upToDate": "Al día",
+      "expiringSoon": "Vence Pronto",
+      "actionNeeded": "Acción requerida",
+      "expired": "Vencido",
+      "urgent": "Urgente",
+      "pending": "Pendiente",
+      "underReview": "En revisión"
+    },
+    "employeesAttention": {
+      "title": "Empleados que Requieren Atención",
+      "subtitle": "Empleados no conformes con documentos faltantes, vencidos, por vencer o pendientes",
+      "allClear": "¡Todo Despejado!",
+      "allCompliant": "Todos los empleados están completamente conformes",
+      "missing": "faltante",
+      "expired": "vencido",
+      "expiringSoon": "vence pronto",
+      "pending": "pendiente"
+    },
+    "recentlyAdded": {
+      "title": "Añadidos Recientemente",
+      "subtitle": "Últimos empleados en el sistema",
+      "viewAll": "Ver Todos",
+      "noEmployees": "Aún No Hay Empleados",
+      "addFirstEmployee": "Añade tu primer empleado para comenzar",
+      "added": "Añadido"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "subtitle": "Tareas comunes y atajos",
+      "addNewEmployee": "Añadir Nuevo Empleado",
+      "viewReminders": "Ver Recordatorios",
+      "configureSettings": "Configurar Ajustes",
+      "reportIssue": "Reportar un Problema"
+    }
+  },
+  "documentTypeManager": {
+    "title": "Tipos de Documentos",
+    "subtitle": "Configure tipos de documentos y configuración de extracción de IA para captura automática de datos",
+    "addCustomType": "Añadir Tipo Personalizado",
+    "errorLoading": "Error al cargar tipos de documentos:",
+    "noDocTypesConfigured": "No hay tipos de documentos configurados",
+    "system": "Sistema",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "max": "máx",
+    "aiEnabled": "IA Habilitada",
+    "manualEntry": "Entrada Manual",
+    "fields": "campos",
+    "extractsStructuredData": "Extrae campos de datos estructurados",
+    "classificationOnly": "Solo clasificación",
+    "fieldsLabel": "Campos",
+    "more": "más",
+    "dialog": {
+      "createTitle": "Crear Tipo de Documento Personalizado",
+      "editTitle": "Editar",
+      "description": "Configure los ajustes del tipo de documento, modo de extracción de IA y campos personalizados",
+      "basicSettings": "Configuración Básica",
+      "documentTypeName": "Nombre del Tipo de Documento",
+      "namePlaceholder": "ej., Certificado Médico",
+      "systemTypesCannotRename": "Los tipos del sistema no se pueden renombrar",
+      "aiExtraction": "Extracción por IA",
+      "autoExtractData": "Extraer datos automáticamente de documentos",
+      "extractionMode": "Modo de Extracción",
+      "fieldExtraction": "Extracción de Campos",
+      "classificationOnly": "Solo Clasificación",
+      "fieldConfiguration": "Configuración de Campos",
+      "configuredFields": "Campos Configurados",
+      "required": "Req",
+      "addNewField": "Añadir Nuevo Campo",
+      "nameAPI": "Nombre (API)",
+      "namePlaceholderField": "fechaVencimiento",
+      "label": "Etiqueta",
+      "labelPlaceholder": "Fecha de Vencimiento",
+      "type": "Tipo",
+      "req": "Req",
+      "ai": "IA",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Ayuda a la IA a entender qué extraer",
+      "addField": "Añadir Campo",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "save": "Guardar",
+      "create": "Crear"
+    },
+    "deleteDialog": {
+      "title": "Eliminar Tipo de Documento",
+      "description": "¿Está seguro de que desea eliminar",
+      "cannotUndo": "Esta acción no se puede deshacer.",
+      "cancel": "Cancelar",
+      "deleting": "Eliminando...",
+      "delete": "Eliminar"
+    },
+    "toasts": {
+      "deleted": "eliminado con éxito",
+      "deleteFailed": "Error al eliminar el tipo de documento",
+      "enterFieldName": "Por favor ingrese un nombre de campo",
+      "enterFieldLabel": "Por favor ingrese una etiqueta de campo",
+      "duplicateField": "Ya existe un campo con este nombre",
+      "invalidFieldName": "El nombre del campo debe comenzar con una letra y contener solo letras, números y guiones bajos",
+      "enterDocTypeName": "Por favor ingrese un nombre para el tipo de documento",
+      "atLeastOneField": "Por favor añada al menos un campo para el modo de extracción de campos",
+      "created": "creado con éxito",
+      "updated": "actualizado con éxito",
+      "saveFailed": "Error al guardar el tipo de documento",
+      "activated": "activado",
+      "deactivated": "desactivado",
+      "toggleFailed": "Error al cambiar el estado del tipo de documento",
+      "planLimitReached": "el plan permite solo",
+      "activeDocumentType": "tipo de documento activo",
+      "activeDocumentTypes": "tipos de documentos activos",
+      "upgradeToActivate": "Actualice para activar más tipos de documentos",
+      "upgrade": "Actualizar"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando",
+    "saveAllChanges": "Guardar Todos los Cambios",
+    "savingChanges": "Guardando Cambios",
+    "companyInfo": {
+      "title": "Información de la Empresa",
+      "subtitle": "Ver los detalles de su empresa",
+      "companyName": "Nombre de la Empresa",
+      "companySize": "Tamaño de la Empresa",
+      "operatingRegion": "Región de Operación",
+      "plan": "Plan",
+      "na": "N/D",
+      "free": "Gratis",
+      "tip": "💡 Consejo: ¿Necesita actualizar la información de su empresa? Contacte con soporte para realizar cambios en estos detalles."
+    },
+    "reminderSettings": {
+      "title": "Configuración de Recordatorios",
+      "subtitle": "Elija hasta 3 intervalos de recordatorio antes de la expiración del documento",
+      "maxSelected": "Máximo de 3 intervalos de recordatorio seleccionados",
+      "selected": "Seleccionado",
+      "automaticReminders": "Recordatorios Automáticos:",
+      "automaticRemindersDesc": "Sus notificaciones de recordatorio se envían automáticamente todos los días a las",
+      "automaticRemindersTime": "8:00 AM Hora del Este",
+      "automaticRemindersLocation": "(zona horaria de Nueva York/Toronto). No necesita hacer nada - ¡le notificaremos cuando los documentos se acerquen a sus fechas de vencimiento!",
+      "tip": "💡 Consejo: Recomendamos configurar recordatorios a 30, 15 y 7 días para asegurarse de nunca perder la expiración de un documento."
+    },
+    "notificationPreferences": {
+      "title": "Preferencias de Notificación",
+      "subtitle": "Configure cómo recibe alertas de cumplimiento",
+      "adminEmail": "Correo Electrónico del Administrador",
+      "adminPhone": "Número de Teléfono del Administrador",
+      "notificationMethod": "Método de Notificación",
+      "emailOnly": "Solo Correo Electrónico",
+      "smsOnly": "Solo SMS",
+      "both": "Correo Electrónico y SMS",
+      "notificationRecipients": "Destinatarios de Notificaciones",
+      "admin": "Administrador",
+      "drivers": "Empleados",
+      "tip": "💡 Consejo: Active las notificaciones para empleados para mantener a su equipo informado sobre las fechas de vencimiento de sus documentos automáticamente."
+    },
+    "toasts": {
+      "settingsSaved": "Configuración guardada con éxito",
+      "settingsFailed": "Error al guardar la configuración",
+      "maxReminders": "Máximo de 3 intervalos de recordatorio permitidos"
+    }
+  },
+  "billing": {
+    "title": "Facturación",
+    "currentPlan": {
+      "title": "Plan Actual",
+      "subtitle": "Detalles de su suscripción y uso",
+      "plan": "Plan",
+      "nextBilling": "Próxima facturación",
+      "drivers": "Empleados",
+      "aiCredits": "Créditos IA",
+      "available": "disponibles",
+      "creditsRefill": "créditos se recargan mensualmente",
+      "buyMore": "Comprar Más"
+    },
+    "lowCreditsAlert": {
+      "title": "Créditos Bajos",
+      "description": "Tiene menos de 5 créditos IA restantes. Compre más para continuar escaneando documentos.",
+      "buyCredits": "Comprar Créditos"
+    },
+    "plans": {
+      "title": "Planes Disponibles",
+      "subtitle": "Elija el plan que se adapte a sus necesidades",
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "yearlyDiscount": "-20%",
+      "popular": "Popular",
+      "current": "Actual",
+      "custom": "Personalizado",
+      "mo": "mes",
+      "yr": "año",
+      "save": "Ahorre",
+      "year": "año",
+      "drivers": "empleados",
+      "unlimited": "Ilimitado",
+      "docsPerDriver": "docs por empleado",
+      "aiCreditsPerMonth": "Créditos IA/mes",
+      "emailReminders": "Recordatorios por correo",
+      "emailSmsReminders": "Recordatorios por correo + SMS",
+      "prioritySupport": "Soporte prioritario",
+      "advancedAnalytics": "Analíticas avanzadas",
+      "dedicatedSupport": "Soporte dedicado",
+      "customIntegrations": "Integraciones personalizadas",
+      "currentPlan": "Plan Actual",
+      "contactSales": "Contactar Ventas",
+      "upgrade": "Actualizar",
+      "processing": "Procesando...",
+      "freePlan": {
+        "title": "Gratis",
+        "description": "Perfecto para probar Complyo. Comience con funciones básicas sin costo.",
+        "limitedCapacity": "Capacidad limitada",
+        "basicTracking": "Seguimiento básico",
+        "oneTimeOnly": "Una sola vez",
+        "basicAlerts": "Alertas básicas",
+        "foreverFree": "Gratis para siempre",
+        "contactSupport": "Contactar Soporte"
+      }
+    },
+    "invoices": {
+      "title": "Facturas e Historial de Facturación",
+      "totalTransactions": "transacciones totales",
+      "noTransactions": "Sin transacciones aún",
+      "noInvoices": "Sin facturas aún",
+      "description": "Su historial de facturación aparecerá aquí después de su primera transacción",
+      "viewInvoice": "Ver Factura",
+      "paid": "PAGADO",
+      "plan": "Plan",
+      "creditPurchase": "Compra de Créditos"
+    },
+    "toasts": {
+      "alreadyOnPlan": "Ya está en este plan",
+      "contactSales": "Contacte a ventas para precios Enterprise",
+      "contactSalesDesc": "Envíenos un correo a sales@complyo.io",
+      "downgradeNotAvailable": "Cambio a plan inferior no disponible en UI",
+      "downgradeDesc": "Contacte a soporte para cambiar a plan inferior",
+      "failedToChangePlan": "Error al cambiar el plan",
+      "failedToPurchaseCredits": "Error al comprar créditos"
+    }
+  },
+  "teamManagement": {
+    "title": "Gestión de Equipo",
+    "inviteButton": "Invitar Miembro del Equipo",
+    "limitReached": "Límite Alcanzado",
+    "accessDenied": {
+      "title": "Acceso Denegado",
+      "description": "No tiene permiso para gestionar miembros del equipo.",
+      "subdescription": "Solo los usuarios con la capacidad 'manage_users' pueden acceder a esta página."
+    },
+    "roles": {
+      "COMPLIANCE_MANAGER": {
+        "label": "Gerente de Cumplimiento",
+        "description": "Acceso completo a empleados y documentos"
+      },
+      "HR_LEAD": {
+        "label": "Líder de RRHH",
+        "description": "Gestionar empleados y cargar documentos"
+      },
+      "VIEWER": {
+        "label": "Visualizador",
+        "description": "Acceso de solo lectura"
+      },
+      "BILLING": {
+        "label": "Facturación",
+        "description": "Solo facturación y suscripciones"
+      }
+    },
+    "teamMembers": {
+      "title": "Miembros del Equipo",
+      "subtitle": "Gestione los miembros de su equipo y sus roles",
+      "noMembers": "Aún no hay miembros del equipo",
+      "noMembersDesc": "Comience invitando a su primer miembro del equipo",
+      "tableHeaders": {
+        "name": "Nombre",
+        "email": "Correo Electrónico",
+        "role": "Rol",
+        "mfa": "MFA",
+        "joined": "Se Unió",
+        "actions": "Acciones"
+      },
+      "mfaEnabled": "Habilitado",
+      "mfaDisabled": "Deshabilitado",
+      "cannotEditAdmin": "No se puede editar el rol de administrador",
+      "cannotRemoveAdmin": "No se puede eliminar al administrador del equipo",
+      "editMember": "Editar miembro del equipo",
+      "removeMember": "Eliminar miembro del equipo"
+    },
+    "invitationHistory": {
+      "title": "Historial de Invitaciones",
+      "subtitle": "Realice un seguimiento de todas las invitaciones enviadas a miembros del equipo",
+      "noInvitations": "Aún no se han enviado invitaciones",
+      "tableHeaders": {
+        "name": "Nombre",
+        "email": "Correo Electrónico",
+        "role": "Rol",
+        "status": "Estado",
+        "invitedOn": "Invitado El",
+        "emailSent": "Correo Enviado",
+        "joined": "Se Unió"
+      },
+      "error": "Error"
+    },
+    "inviteDialog": {
+      "title": "Invitar Miembro del Equipo",
+      "description": "Envíe una invitación a un nuevo miembro del equipo. Recibirán un correo electrónico con instrucciones para configurar su cuenta.",
+      "limitWarning": "Límite: Solo puede tener 5 miembros del equipo.",
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Juan",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "García",
+      "email": "Dirección de Correo Electrónico",
+      "emailPlaceholder": "colega@ejemplo.com",
+      "role": "Rol",
+      "selectRole": "Seleccione un rol",
+      "cancel": "Cancelar",
+      "sending": "Enviando...",
+      "sendInvitation": "Enviar Invitación"
+    },
+    "editDialog": {
+      "title": "Actualizar Rol de Miembro del Equipo",
+      "description": "Cambiar el rol para",
+      "newRole": "Nuevo Rol",
+      "cancel": "Cancelar",
+      "updating": "Actualizando...",
+      "updateRole": "Actualizar Rol"
+    },
+    "removeDialog": {
+      "title": "Eliminar Miembro del Equipo",
+      "description": "¿Está seguro de que desea eliminar a",
+      "fromTeam": "de su equipo?",
+      "warning": "Esto revocará su acceso a los datos de su empresa. Esta acción se puede revertir volviéndolos a invitar.",
+      "cancel": "Cancelar",
+      "removing": "Eliminando...",
+      "removeMember": "Eliminar Miembro"
+    },
+    "toasts": {
+      "emailWarning": "Miembro del equipo creado pero el correo falló",
+      "inviteSuccess": "¡Miembro del equipo invitado exitosamente!",
+      "inviteSuccessDesc": "Se ha enviado un correo de invitación.",
+      "inviteFailed": "Error al invitar al miembro del equipo",
+      "updateSuccess": "¡Rol de miembro del equipo actualizado exitosamente!",
+      "updateFailed": "Error al actualizar el rol",
+      "removeSuccess": "¡Miembro del equipo eliminado exitosamente!",
+      "removeFailed": "Error al eliminar al miembro del equipo",
+      "fillAllFields": "Por favor complete todos los campos",
+      "limitReached": "Límite de miembros del equipo alcanzado",
+      "limitReachedDesc": "Solo puede invitar hasta 5 miembros del equipo. Elimine un miembro antes de invitar a uno nuevo.",
+      "selectRole": "Por favor seleccione un rol"
+    }
+  },
+  "tickets": {
+    "title": "Mis Tickets",
+    "reportIssue": "Reportar Problema",
+    "subtitle": "ticket",
+    "subtitlePlural": "tickets",
+    "trackManage": "Rastree y administre sus tickets de soporte",
+    "stats": {
+      "totalTickets": "Tickets Totales",
+      "open": "Abiertos",
+      "inProgress": "En Progreso",
+      "resolved": "Resueltos"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar tickets...",
+      "allStatuses": "Todos los Estados",
+      "allPriorities": "Todas las Prioridades",
+      "clearFilters": "Limpiar Filtros"
+    },
+    "status": {
+      "open": "Abierto",
+      "inProgress": "En Progreso",
+      "resolved": "Resuelto",
+      "closed": "Cerrado"
+    },
+    "priority": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "emptyState": {
+      "noTicketsFound": "No se encontraron tickets",
+      "tryAdjustingFilters": "Intente ajustar sus filtros",
+      "createFirstTicket": "Cree su primer ticket para comenzar",
+      "createTicket": "Crear Ticket"
+    },
+    "error": {
+      "failedToLoad": "Error al cargar tickets",
+      "pleaseTryAgain": "Por favor intente de nuevo",
+      "retry": "Reintentar"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página",
+      "of": "de"
+    }
+  },
+  "createTicket": {
+    "title": "Reportar un Problema",
+    "description": "Describa el problema que está experimentando o la función que le gustaría solicitar.",
+    "form": {
+      "title": "Título",
+      "titlePlaceholder": "Breve descripción del problema",
+      "category": "Categoría",
+      "priority": "Prioridad",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Por favor proporcione tantos detalles como sea posible...",
+      "required": "*",
+      "charactersCount": "caracteres",
+      "minimumCharacters": "Mínimo 10 caracteres"
+    },
+    "categories": {
+      "bug": "Error / Problema",
+      "featureRequest": "Solicitud de Función",
+      "support": "Soporte",
+      "documentation": "Documentación",
+      "performance": "Rendimiento",
+      "other": "Otro"
+    },
+    "priorities": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "errors": {
+      "titleRequired": "El título es obligatorio",
+      "titleTooLong": "El título debe tener menos de 100 caracteres",
+      "descriptionRequired": "La descripción es obligatoria",
+      "descriptionTooShort": "La descripción debe tener al menos 10 caracteres"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "createTicket": "Crear Ticket",
+      "creating": "Creando..."
+    },
+    "toasts": {
+      "success": "¡Ticket creado exitosamente!",
+      "error": "Error al crear el ticket"
+    }
+  },
+  "auditLogs": {
+    "title": "Registros de Auditoría",
+    "accessDenied": {
+      "title": "Acceso Denegado",
+      "description": "No tiene permiso para ver los registros de auditoría."
+    },
+    "buttons": {
+      "verifyIntegrity": "Verificar Integridad",
+      "exportCSV": "Exportar CSV",
+      "exportJSON": "Exportar JSON",
+      "refresh": "Actualizar",
+      "clearFilters": "Limpiar Filtros",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "filters": {
+      "title": "Filtros",
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar registros...",
+      "startDate": "Fecha de Inicio",
+      "endDate": "Fecha de Fin",
+      "last90Days": "Últimos 90 Días",
+      "last180Days": "Últimos 180 Días"
+    },
+    "table": {
+      "title": "Registros de Auditoría",
+      "subtitle": {
+        "billing": "Viendo solo registros de auditoría relacionados con facturación",
+        "complete": "Rastro de auditoría completo de todas las actividades del sistema"
+      },
+      "columns": {
+        "timestamp": "Fecha y Hora",
+        "user": "Usuario",
+        "action": "Acción",
+        "category": "Categoría",
+        "severity": "Gravedad",
+        "ipAddress": "Dirección IP",
+        "details": "Detalles"
+      },
+      "emptyState": {
+        "title": "No se encontraron registros de auditoría",
+        "description": "Intente ajustar sus filtros"
+      },
+      "system": "Sistema",
+      "redacted": "Redactado",
+      "pagination": "Página"
+    },
+    "details": {
+      "title": "Detalles del Registro de Auditoría",
+      "description": "Información completa para esta entrada de auditoría",
+      "timestamp": "Fecha y Hora",
+      "user": "Usuario",
+      "action": "Acción",
+      "category": "Categoría",
+      "severity": "Gravedad",
+      "ipAddress": "Dirección IP",
+      "metadata": "Metadatos",
+      "hash": "Hash (Inmutabilidad)"
+    },
+    "categories": {
+      "AUTHENTICATION": "Autenticación",
+      "AUTHORIZATION": "Autorización",
+      "DOCUMENT_MANAGEMENT": "Gestión de Documentos",
+      "DRIVER_MANAGEMENT": "Gestión de Conductores",
+      "USER_MANAGEMENT": "Gestión de Usuarios",
+      "BILLING": "Facturación",
+      "SYSTEM": "Sistema",
+      "COMPLIANCE": "Cumplimiento",
+      "DATA_ACCESS": "Acceso a Datos",
+      "DATA_MODIFICATION": "Modificación de Datos"
+    },
+    "severity": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
+      "CRITICAL": "Crítica",
+      "INFO": "Info"
+    },
+    "toasts": {
+      "verifySuccess": "¡Registros de auditoría verificados exitosamente!",
+      "verifySuccessDesc": "No se detectó manipulación. Los registros son auténticos.",
+      "verifyError": "¡Verificación de integridad falló!",
+      "verifyErrorDesc": "Posible manipulación detectada.",
+      "verificationFailed": "Verificación fallida",
+      "exportSuccess": "Registros de auditoría exportados como",
+      "exportFailed": "Error en la exportación"
+    }
+  },
+  "documentStatus": {
+    "title": "Estado de Documentos",
+    "subtitle": "documento total",
+    "subtitlePlural": "documentos totales",
+    "buttons": {
+      "viewAllDrivers": "Ver Todos los Conductores",
+      "viewDriver": "Ver Conductor",
+      "retry": "Reintentar",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "statusFilters": {
+      "allDocuments": "Todos los Documentos",
+      "expired": "Vencidos",
+      "expiringSoon": "Por Vencer",
+      "verified": "Verificados"
+    },
+    "statusBadges": {
+      "expired": "Vencido",
+      "expiringSoon": "Por Vencer",
+      "verified": "Verificado",
+      "pending": "Pendiente"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre del conductor, tipo de documento..."
+    },
+    "documentCard": {
+      "document": "Documento",
+      "employeeId": "ID de Empleado",
+      "expires": "Vence",
+      "daysOverdue": "días de retraso",
+      "daysRemaining": "días restantes",
+      "unknownDriver": "Conductor Desconocido"
+    },
+    "emptyState": {
+      "title": "No se encontraron documentos",
+      "searchDescription": "Intente ajustar su consulta de búsqueda",
+      "filterDescription": "Ningún documento coincide con el filtro de estado seleccionado"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "de",
+      "documents": "documentos"
+    },
+    "error": {
+      "failedToLoad": "Error al cargar documentos"
+    }
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "subtitle": {
+      "document": "documento",
+      "documents": "documentos",
+      "requiringAttention": "requieren atención",
+      "customReminder": "recordatorio personalizado",
+      "customReminders": "recordatorios personalizados"
+    },
+    "buttons": {
+      "createReminder": "Crear Recordatorio",
+      "settings": "Configuración",
+      "viewDriver": "Ver Conductor",
+      "sendReminderNow": "Enviar Recordatorio Ahora",
+      "retry": "Reintentar"
+    },
+    "viewMode": {
+      "list": "Vista de Lista",
+      "calendar": "Vista de Calendario"
+    },
+    "activeIntervals": {
+      "title": "Intervalos de Recordatorio Activos",
+      "description": "Recibirá recordatorios {{intervals}} antes del vencimiento del documento"
+    },
+    "filterOptions": {
+      "allReminders": "Todos los Recordatorios",
+      "critical": "Críticos",
+      "warning": "Advertencia",
+      "info": "Información"
+    },
+    "urgencyBadges": {
+      "critical": "Crítico",
+      "warning": "Advertencia",
+      "info": "Info"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre del conductor, tipo de documento..."
+    },
+    "reminderCard": {
+      "daysOverdue": "días de retraso",
+      "daysRemaining": "días restantes",
+      "unknownDriver": "Conductor Desconocido",
+      "id": "ID",
+      "expires": "Vence"
+    },
+    "emptyState": {
+      "title": "No se encontraron recordatorios",
+      "searchDescription": "Intente ajustar su consulta de búsqueda",
+      "filterDescription": "No hay recordatorios de {{filter}} en este momento",
+      "allUpToDate": "¡Todos los documentos están al día!"
+    },
+    "error": {
+      "title": "Error al cargar recordatorios"
+    },
+    "toasts": {
+      "reminderSent": "Recordatorio enviado a {{name}}",
+      "reminderFailed": "Error al enviar recordatorio",
+      "customReminderCreated": "Recordatorio personalizado creado exitosamente",
+      "customReminderFailed": "Error al crear recordatorio",
+      "reminderDeleted": "Recordatorio eliminado exitosamente",
+      "reminderDeleteFailed": "Error al eliminar recordatorio"
+    }
+  },
+  "calendar": {
+    "months": {
+      "january": "Enero",
+      "february": "Febrero",
+      "march": "Marzo",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Junio",
+      "july": "Julio",
+      "august": "Agosto",
+      "september": "Septiembre",
+      "october": "Octubre",
+      "november": "Noviembre",
+      "december": "Diciembre"
+    },
+    "days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "buttons": {
+      "today": "Hoy"
+    },
+    "upcomingReminders": {
+      "title": "Próximos Recordatorios",
+      "next30Days": "Próximos 30 días"
+    },
+    "legend": {
+      "title": "Leyenda",
+      "expired": "Vencido",
+      "critical": "Crítico",
+      "warning": "Advertencia",
+      "info": "Información"
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import React, { useState } from 'react'
 import { useUser, useAuth } from '@clerk/clerk-react'
+import { useTranslation } from 'react-i18next'
 import { useDrivers, useDocumentTypes, useDeleteDriver } from '@/hooks/useDrivers'
 import { toast } from 'sonner'
 import CSVUploadDialog from '@/components/CSVUploadDialog'
@@ -20,6 +21,7 @@ const Drivers = () => {
   const queryClient = useQueryClient()
   const { isDarkMode } = useTheme()
   const { hasCapability } = usePermissions()
+  const { t } = useTranslation()
   const companyId = user?.publicMetadata?.companyId
   const [csvDialogOpen, setCsvDialogOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -45,26 +47,26 @@ const Drivers = () => {
   const handleDeleteDriver = async (driverId, driverName) => {
     // Check permission before deleting
     if (!canDeleteDrivers) {
-      toast.error('Permission denied', {
-        description: 'You do not have permission to delete employees.',
+      toast.error(t('drivers.toasts.permissionDenied'), {
+        description: t('drivers.toasts.noPermissionDelete'),
       })
       return
     }
 
     try {
       await deleteDriverMutation.mutateAsync(driverId)
-      toast.success(`${driverName} has been deleted successfully`)
+      toast.success(`${driverName} ${t('drivers.toasts.deletedSuccess')}`)
     } catch (err) {
       console.error('Error deleting driver:', err)
-      toast.error(err.message || 'Failed to delete employee')
+      toast.error(err.message || t('drivers.toasts.deleteError'))
     }
   }
 
   const handleCSVUpload = async (driversData) => {
     // Check permission before uploading
     if (!canCreateDrivers) {
-      toast.error('Permission denied', {
-        description: 'You do not have permission to create employees.',
+      toast.error(t('drivers.toasts.permissionDenied'), {
+        description: t('drivers.toasts.noPermissionCreate'),
       })
       return
     }
@@ -76,13 +78,13 @@ const Drivers = () => {
       // Refresh driver list if any were successful
       if (results.successful.length > 0) {
         await queryClient.invalidateQueries({ queryKey: ['drivers'] })
-        toast.success(`Successfully imported ${results.successful.length} employee(s)`)
+        toast.success(`${t('drivers.toasts.importSuccess')} ${results.successful.length} ${t('drivers.toasts.importSuccessPlural')}`)
       }
 
       // Show limit warning if limit was reached
       if (results.limitReached) {
-        toast.warning(`Employee limit reached!`, {
-          description: `Successfully added ${results.successful.length} employee(s). ${results.failed.length} employee(s) could not be added. Please upgrade your plan to add more employees.`,
+        toast.warning(t('drivers.toasts.limitReached'), {
+          description: `${t('drivers.toasts.limitReachedDesc')} ${results.successful.length} ${t('drivers.toasts.importSuccessPlural')}. ${results.failed.length} ${t('drivers.toasts.limitReachedDescEnd')}`,
           duration: 8000,
         })
       } else if (results.failed.length > 0) {
@@ -90,7 +92,7 @@ const Drivers = () => {
         const failedDrivers = results.failed.slice(0, 3).map(f => `${f.firstName} ${f.lastName}: ${f.error}`).join('\n')
         const moreText = results.failed.length > 3 ? `\n...and ${results.failed.length - 3} more` : ''
 
-        toast.error(`Failed to import ${results.failed.length} employee(s)`, {
+        toast.error(`${t('drivers.toasts.importFailed')} ${results.failed.length} ${t('drivers.toasts.importFailedSuffix')}`, {
           description: failedDrivers + moreText,
           duration: 6000,
         })
@@ -98,7 +100,7 @@ const Drivers = () => {
 
       // If nothing succeeded and nothing failed, something is wrong
       if (results.successful.length === 0 && results.failed.length === 0) {
-        toast.error('No employees were imported. Please check your CSV file.')
+        toast.error(t('drivers.toasts.noEmployeesImported'))
       }
     } catch (error) {
       console.error('Error bulk uploading drivers:', error)
@@ -116,7 +118,7 @@ const Drivers = () => {
         </>
       )}
 
-      <DashboardHeader title="Employees Management">
+      <DashboardHeader title={t('drivers.title')}>
         <div className="flex items-center gap-2">
           {canCreateDrivers && (
             <>
@@ -126,7 +128,7 @@ const Drivers = () => {
                 className={`rounded-[10px] gap-2 hidden sm:flex ${getThemeClasses.button.secondary(isDarkMode)}`}
               >
                 <Upload className="w-4 h-4" />
-                Import CSV
+                {t('drivers.importCSV')}
               </Button>
               <Button
                 onClick={() => setCsvDialogOpen(true)}
@@ -142,11 +144,11 @@ const Drivers = () => {
             onClick={() => window.location.href = '/client/settings'}
             className={`rounded-[10px] hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
           >
-            Settings
+            {t('drivers.settings')}
           </Button>
         </div>
       </DashboardHeader>
-      <div className='flex-1 py-8'>
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         {loading ? (
           <div className="container w-full px-6 mx-auto space-y-6">
             {/* Toolbar Skeleton */}
@@ -203,7 +205,7 @@ const Drivers = () => {
             <div className={`p-6 rounded-[10px] border ${getThemeClasses.alert.critical(isDarkMode)}`}>
               <div className="flex items-center justify-center gap-3">
                 <AlertTriangle className={`w-5 h-5 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`} />
-                <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>Error loading employees: {error}</p>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>{t('drivers.errorLoading')} {error}</p>
               </div>
             </div>
           </div>
@@ -221,7 +223,7 @@ const Drivers = () => {
               <div className="container w-full px-6 mx-auto mt-6">
                 <div className={`rounded-[10px] border ${getThemeClasses.bg.card(isDarkMode)} p-4 flex items-center justify-between`}>
                   <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} of {pagination.totalCount} employees
+                    {t('drivers.pagination.showing')} {((pagination.currentPage - 1) * pagination.limit) + 1} {t('drivers.pagination.to')} {Math.min(pagination.currentPage * pagination.limit, pagination.totalCount)} {t('drivers.pagination.of')} {pagination.totalCount} {t('drivers.pagination.employees')}
                   </p>
                   <div className="flex items-center gap-2">
                     <Button
@@ -231,10 +233,10 @@ const Drivers = () => {
                       disabled={pagination.currentPage === 1}
                       className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                     >
-                      Previous
+                      {t('drivers.pagination.previous')}
                     </Button>
                     <span className={`text-sm px-3 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                      Page {pagination.currentPage} of {pagination.totalPages}
+                      {t('drivers.pagination.page')} {pagination.currentPage} {t('drivers.pagination.of')} {pagination.totalPages}
                     </span>
                     <Button
                       variant="outline"
@@ -243,7 +245,7 @@ const Drivers = () => {
                       disabled={pagination.currentPage === pagination.totalPages}
                       className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
                     >
-                      Next
+                      {t('drivers.pagination.next')}
                     </Button>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { getThemeClasses } from '@/utils/themeClasses';
 import { usePermissions } from '@/hooks/usePermissions';
 import { DashboardHeader } from '@/components/DashboardHeader';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -66,6 +67,7 @@ const TeamManagement = () => {
   const queryClient = useQueryClient();
   const { isDarkMode } = useTheme();
   const { hasCapability, availableRoles, dspRole: currentUserRole } = usePermissions();
+  const { t } = useTranslation();
 
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -84,11 +86,11 @@ const TeamManagement = () => {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center p-8">
         <Shield className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('teamManagement.accessDenied.title')}</h2>
         <p className="text-gray-600">
-          You don't have permission to manage team members.
+          {t('teamManagement.accessDenied.description')}
           <br />
-          Only users with the 'manage_users' capability can access this page.
+          {t('teamManagement.accessDenied.subdescription')}
         </p>
       </div>
     );
@@ -132,17 +134,17 @@ const TeamManagement = () => {
       setInviteRole('');
 
       if (data.emailError) {
-        toast.warning('Team member created but email failed', {
+        toast.warning(t('teamManagement.toasts.emailWarning'), {
           description: data.emailError,
         });
       } else {
-        toast.success('Team member invited successfully!', {
-          description: data.message || 'An invitation email has been sent.',
+        toast.success(t('teamManagement.toasts.inviteSuccess'), {
+          description: data.message || t('teamManagement.toasts.inviteSuccessDesc'),
         });
       }
     },
     onError: (error) => {
-      toast.error('Failed to invite team member', {
+      toast.error(t('teamManagement.toasts.inviteFailed'), {
         description: error.message,
       });
     },
@@ -159,10 +161,10 @@ const TeamManagement = () => {
       setEditDialogOpen(false);
       setSelectedMember(null);
       setEditRole('');
-      toast.success('Team member role updated successfully!');
+      toast.success(t('teamManagement.toasts.updateSuccess'));
     },
     onError: (error) => {
-      toast.error('Failed to update role', {
+      toast.error(t('teamManagement.toasts.updateFailed'), {
         description: error.message,
       });
     },
@@ -178,10 +180,10 @@ const TeamManagement = () => {
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
       setRemoveDialogOpen(false);
       setSelectedMember(null);
-      toast.success('Team member removed successfully!');
+      toast.success(t('teamManagement.toasts.removeSuccess'));
     },
     onError: (error) => {
-      toast.error('Failed to remove team member', {
+      toast.error(t('teamManagement.toasts.removeFailed'), {
         description: error.message,
       });
     },
@@ -190,14 +192,14 @@ const TeamManagement = () => {
   const handleInvite = () => {
     // Validate all fields
     if (!inviteEmail || !inviteFirstName || !inviteLastName || !inviteRole) {
-      toast.error('Please fill in all fields');
+      toast.error(t('teamManagement.toasts.fillAllFields'));
       return;
     }
 
     // Check 5 member limit
     if (teamMembers.length >= 5) {
-      toast.error('Team member limit reached', {
-        description: 'You can only invite up to 5 team members. Please remove a member before inviting a new one.',
+      toast.error(t('teamManagement.toasts.limitReached'), {
+        description: t('teamManagement.toasts.limitReachedDesc'),
       });
       return;
     }
@@ -212,7 +214,7 @@ const TeamManagement = () => {
 
   const handleUpdateRole = () => {
     if (!editRole) {
-      toast.error('Please select a role');
+      toast.error(t('teamManagement.toasts.selectRole'));
       return;
     }
     updateRoleMutation.mutate({ userId: selectedMember.id, dspRole: editRole });
@@ -266,14 +268,14 @@ const TeamManagement = () => {
         </>
       )}
 
-      <DashboardHeader title="Team Management">
+      <DashboardHeader title={t('teamManagement.title')}>
         <Button
           onClick={() => setInviteDialogOpen(true)}
           disabled={teamMembers.length >= 5}
           className={`rounded-[10px] gap-2 hidden sm:flex ${getThemeClasses.button.primary(isDarkMode)}`}
         >
           <UserPlus className="w-4 h-4" />
-          Invite Team Member {teamMembers.length >= 5 && '(Limit Reached)'}
+          {t('teamManagement.inviteButton')} {teamMembers.length >= 5 && `(${t('teamManagement.limitReached')})`}
         </Button>
         <Button
           onClick={() => setInviteDialogOpen(true)}
@@ -289,10 +291,10 @@ const TeamManagement = () => {
         <Card className={isDarkMode ? 'bg-slate-900/50 border-slate-800' : ''}>
           <CardHeader>
             <CardTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Team Members ({teamMembers.length})
+              {t('teamManagement.teamMembers.title')} ({teamMembers.length})
             </CardTitle>
             <CardDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Manage your team members and their roles
+              {t('teamManagement.teamMembers.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -306,26 +308,26 @@ const TeamManagement = () => {
               <div className="text-center py-12">
                 <Users className={`w-12 h-12 mx-auto mb-4 ${getThemeClasses.text.muted(isDarkMode)}`} />
                 <h3 className={`text-lg font-medium mb-2 ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  No team members yet
+                  {t('teamManagement.teamMembers.noMembers')}
                 </h3>
                 <p className={`mb-4 ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  Get started by inviting your first team member
+                  {t('teamManagement.teamMembers.noMembersDesc')}
                 </p>
                 <Button onClick={() => setInviteDialogOpen(true)}>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Invite Team Member
+                  {t('teamManagement.inviteButton')}
                 </Button>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Name</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Email</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Role</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>MFA</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Joined</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.teamMembers.tableHeaders.name')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.teamMembers.tableHeaders.email')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.teamMembers.tableHeaders.role')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.teamMembers.tableHeaders.mfa')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.teamMembers.tableHeaders.joined')}</TableHead>
+                    <TableHead className="text-right">{t('teamManagement.teamMembers.tableHeaders.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -347,11 +349,11 @@ const TeamManagement = () => {
                       <TableCell>
                         {member.mfaEnabled ? (
                           <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                            Enabled
+                            {t('teamManagement.teamMembers.mfaEnabled')}
                           </Badge>
                         ) : (
                           <Badge variant="outline" className={getThemeClasses.text.muted(isDarkMode)}>
-                            Disabled
+                            {t('teamManagement.teamMembers.mfaDisabled')}
                           </Badge>
                         )}
                       </TableCell>
@@ -366,7 +368,7 @@ const TeamManagement = () => {
                             onClick={() => openEditDialog(member)}
                             className="h-8 px-2"
                             disabled={member.dspRole === 'ADMIN'}
-                            title={member.dspRole === 'ADMIN' ? 'Cannot edit admin role' : 'Edit team member'}
+                            title={member.dspRole === 'ADMIN' ? t('teamManagement.teamMembers.cannotEditAdmin') : t('teamManagement.teamMembers.editMember')}
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
@@ -376,7 +378,7 @@ const TeamManagement = () => {
                             onClick={() => openRemoveDialog(member)}
                             disabled={member.dspRole === 'ADMIN'}
                             className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                            title={member.dspRole === 'ADMIN' ? 'Cannot remove admin from team' : 'Remove team member'}
+                            title={member.dspRole === 'ADMIN' ? t('teamManagement.teamMembers.cannotRemoveAdmin') : t('teamManagement.teamMembers.removeMember')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -394,10 +396,10 @@ const TeamManagement = () => {
         <Card className={`mt-8 ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : ''}`}>
           <CardHeader>
             <CardTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Invitation History ({invitations.length})
+              {t('teamManagement.invitationHistory.title')} ({invitations.length})
             </CardTitle>
             <CardDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Track all team member invitations sent
+              {t('teamManagement.invitationHistory.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -411,20 +413,20 @@ const TeamManagement = () => {
               <div className="text-center py-8">
                 <Mail className={`w-10 h-10 mx-auto mb-3 ${getThemeClasses.text.muted(isDarkMode)}`} />
                 <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  No invitations sent yet
+                  {t('teamManagement.invitationHistory.noInvitations')}
                 </p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Name</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Email</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Role</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Status</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Invited On</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Email Sent</TableHead>
-                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>Joined</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.name')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.email')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.role')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.status')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.invitedOn')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.emailSent')}</TableHead>
+                    <TableHead className={getThemeClasses.text.primary(isDarkMode)}>{t('teamManagement.invitationHistory.tableHeaders.joined')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -440,7 +442,7 @@ const TeamManagement = () => {
                           <span>{invitation.email}</span>
                           {invitation.errorMessage && (
                             <span className="text-xs text-red-500 dark:text-red-400 mt-1">
-                              Error: {invitation.errorMessage}
+                              {t('teamManagement.invitationHistory.error')}: {invitation.errorMessage}
                             </span>
                           )}
                         </div>
@@ -486,13 +488,13 @@ const TeamManagement = () => {
         <DialogContent className={`max-w-lg ${isDarkMode ? 'bg-slate-900 border-slate-800' : ''}`}>
           <DialogHeader>
             <DialogTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Invite Team Member
+              {t('teamManagement.inviteDialog.title')}
             </DialogTitle>
             <DialogDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Send an invitation to a new team member. They will receive an email with instructions to set up their account.
+              {t('teamManagement.inviteDialog.description')}
               {teamMembers.length >= 5 && (
                 <span className="block mt-2 text-red-500 font-medium">
-                  Limit: You can only have 5 team members.
+                  {t('teamManagement.inviteDialog.limitWarning')}
                 </span>
               )}
             </DialogDescription>
@@ -501,12 +503,12 @@ const TeamManagement = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="firstName" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  First Name <span className="text-red-500">*</span>
+                  {t('teamManagement.inviteDialog.firstName')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="firstName"
                   type="text"
-                  placeholder="John"
+                  placeholder={t('teamManagement.inviteDialog.firstNamePlaceholder')}
                   value={inviteFirstName}
                   onChange={(e) => setInviteFirstName(e.target.value)}
                   className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}
@@ -514,12 +516,12 @@ const TeamManagement = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Last Name <span className="text-red-500">*</span>
+                  {t('teamManagement.inviteDialog.lastName')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="lastName"
                   type="text"
-                  placeholder="Doe"
+                  placeholder={t('teamManagement.inviteDialog.lastNamePlaceholder')}
                   value={inviteLastName}
                   onChange={(e) => setInviteLastName(e.target.value)}
                   className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}
@@ -528,12 +530,12 @@ const TeamManagement = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                Email Address <span className="text-red-500">*</span>
+                {t('teamManagement.inviteDialog.email')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="colleague@example.com"
+                placeholder={t('teamManagement.inviteDialog.emailPlaceholder')}
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}
@@ -541,11 +543,11 @@ const TeamManagement = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="role" className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                Role <span className="text-red-500">*</span>
+                {t('teamManagement.inviteDialog.role')} <span className="text-red-500">*</span>
               </Label>
               <Select value={inviteRole} onValueChange={setInviteRole}>
                 <SelectTrigger className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}>
-                  <SelectValue placeholder="Select a role" />
+                  <SelectValue placeholder={t('teamManagement.inviteDialog.selectRole')} />
                 </SelectTrigger>
                 <SelectContent
                   className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}
@@ -557,9 +559,9 @@ const TeamManagement = () => {
                       className="cursor-pointer"
                     >
                       <div className="flex flex-col gap-1 py-1.5 max-w-[280px]">
-                        <span className="font-medium text-sm">{role.label}</span>
+                        <span className="font-medium text-sm">{t(`teamManagement.roles.${role.value}.label`)}</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400 leading-snug">
-                          {role.description}
+                          {t(`teamManagement.roles.${role.value}.description`)}
                         </span>
                       </div>
                     </SelectItem>
@@ -574,14 +576,14 @@ const TeamManagement = () => {
               onClick={() => setInviteDialogOpen(false)}
               disabled={inviteMutation.isPending}
             >
-              Cancel
+              {t('teamManagement.inviteDialog.cancel')}
             </Button>
             <Button
               onClick={handleInvite}
               disabled={inviteMutation.isPending}
               className={getThemeClasses.button.primary(isDarkMode)}
             >
-              {inviteMutation.isPending ? 'Sending...' : 'Send Invitation'}
+              {inviteMutation.isPending ? t('teamManagement.inviteDialog.sending') : t('teamManagement.inviteDialog.sendInvitation')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -592,16 +594,16 @@ const TeamManagement = () => {
         <DialogContent className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}>
           <DialogHeader>
             <DialogTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Update Team Member Role
+              {t('teamManagement.editDialog.title')}
             </DialogTitle>
             <DialogDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Change the role for {selectedMember?.email}
+              {t('teamManagement.editDialog.description')} {selectedMember?.email}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="edit-role" className={getThemeClasses.text.primary(isDarkMode)}>
-                New Role
+                {t('teamManagement.editDialog.newRole')}
               </Label>
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger className={`h-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : ''}`}>
@@ -617,9 +619,9 @@ const TeamManagement = () => {
                       className="cursor-pointer"
                     >
                       <div className="flex flex-col gap-1 py-1.5 max-w-[280px]">
-                        <span className="font-medium text-sm">{role.label}</span>
+                        <span className="font-medium text-sm">{t(`teamManagement.roles.${role.value}.label`)}</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400 leading-snug">
-                          {role.description}
+                          {t(`teamManagement.roles.${role.value}.description`)}
                         </span>
                       </div>
                     </SelectItem>
@@ -634,14 +636,14 @@ const TeamManagement = () => {
               onClick={() => setEditDialogOpen(false)}
               disabled={updateRoleMutation.isPending}
             >
-              Cancel
+              {t('teamManagement.editDialog.cancel')}
             </Button>
             <Button
               onClick={handleUpdateRole}
               disabled={updateRoleMutation.isPending}
               className={getThemeClasses.button.primary(isDarkMode)}
             >
-              {updateRoleMutation.isPending ? 'Updating...' : 'Update Role'}
+              {updateRoleMutation.isPending ? t('teamManagement.editDialog.updating') : t('teamManagement.editDialog.updateRole')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -652,25 +654,25 @@ const TeamManagement = () => {
         <AlertDialogContent className={isDarkMode ? 'bg-slate-900 border-slate-800' : ''}>
           <AlertDialogHeader>
             <AlertDialogTitle className={getThemeClasses.text.primary(isDarkMode)}>
-              Remove Team Member
+              {t('teamManagement.removeDialog.title')}
             </AlertDialogTitle>
             <AlertDialogDescription className={getThemeClasses.text.secondary(isDarkMode)}>
-              Are you sure you want to remove <strong>{selectedMember?.email}</strong> from your team?
+              {t('teamManagement.removeDialog.description')} <strong>{selectedMember?.email}</strong> {t('teamManagement.removeDialog.fromTeam')}
               <br />
               <br />
-              This will revoke their access to your company's data. This action can be reversed by re-inviting them.
+              {t('teamManagement.removeDialog.warning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={removeMutation.isPending}>
-              Cancel
+              {t('teamManagement.removeDialog.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemove}
               disabled={removeMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {removeMutation.isPending ? 'Removing...' : 'Remove Member'}
+              {removeMutation.isPending ? t('teamManagement.removeDialog.removing') : t('teamManagement.removeDialog.removeMember')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

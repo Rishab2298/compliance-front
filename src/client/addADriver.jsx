@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Check, CheckCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth, useUser } from "@clerk/clerk-react";
+import { useTranslation } from 'react-i18next';
 import { toast } from "sonner";
 import { createDriver } from "@/api/drivers";
 import { createDriverInvitation } from "@/api/driverInvitations";
@@ -22,6 +23,7 @@ export default function AddADriver() {
   const { getToken } = useAuth();
   const { user } = useUser();
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
   const { data: currentPlanData, isLoading: planLoading } = useCurrentPlan();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
@@ -95,14 +97,14 @@ export default function AddADriver() {
   }, [companyId]);
 
   const steps = [
-    { number: 1, title: "Personal Info" },
-    { number: 2, title: "Upload Method" },
-    { number: 3, title: "Documents" },
-    { number: 4, title: "Processing" },
-    { number: 5, title: "Verification" },
-    { number: 6, title: "Reminders" },
-    { number: 7, title: "Review" },
-    { number: 8, title: "Complete" },
+    { number: 1, title: t('addEmployee.steps.personalInfo') },
+    { number: 2, title: t('addEmployee.steps.uploadMethod') },
+    { number: 3, title: t('addEmployee.steps.documents') },
+    { number: 4, title: t('addEmployee.steps.processing') },
+    { number: 5, title: t('addEmployee.steps.verification') },
+    { number: 6, title: t('addEmployee.steps.reminders') },
+    { number: 7, title: t('addEmployee.steps.review') },
+    { number: 8, title: t('addEmployee.steps.complete') },
   ];
 
   const handleChange = (e) => {
@@ -125,20 +127,20 @@ export default function AddADriver() {
     const newErrors = {};
 
     if (step === 1) {
-      if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-      if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+      if (!formData.firstName.trim()) newErrors.firstName = t('addEmployee.step1.errors.firstNameRequired');
+      if (!formData.lastName.trim()) newErrors.lastName = t('addEmployee.step1.errors.lastNameRequired');
       if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
+        newErrors.email = t('addEmployee.step1.errors.emailRequired');
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Invalid email format";
+        newErrors.email = t('addEmployee.step1.errors.emailInvalid');
       }
-      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-      if (!formData.location.trim()) newErrors.location = "Location is required";
-      if (!formData.employeeId.trim()) newErrors.employeeId = "Employee ID is required";
+      if (!formData.phone.trim()) newErrors.phone = t('addEmployee.step1.errors.phoneRequired');
+      if (!formData.location.trim()) newErrors.location = t('addEmployee.step1.errors.locationRequired');
+      if (!formData.employeeId.trim()) newErrors.employeeId = t('addEmployee.step1.errors.employeeIdRequired');
     }
 
     if (step === 2) {
-      if (!formData.documentOption) newErrors.documentOption = "Please select an upload method";
+      if (!formData.documentOption) newErrors.documentOption = t('addEmployee.step2.errors.selectMethod');
     }
 
     if (step === 3) {
@@ -184,8 +186,8 @@ export default function AddADriver() {
 
         // -1 means unlimited
         if (maxDrivers !== -1 && currentDrivers >= maxDrivers) {
-          toast.error("Employee limit reached", {
-            description: `Please upgrade your plan to add more employees. Current limit: ${maxDrivers} employees.`,
+          toast.error(t('addEmployee.toasts.employeeLimitReached'), {
+            description: `${t('addEmployee.toasts.employeeLimitDesc')} ${maxDrivers} ${t('addEmployee.toasts.employeeLimitDescSuffix')}`,
           });
           setCreatingDriver(false);
           return null;
@@ -234,8 +236,8 @@ export default function AddADriver() {
     // Special handling for "Skip" flow - jump directly to step 8
     if (formData.documentOption === "skip" && currentStep === 2) {
       setCurrentStep(8);
-      toast.success("Employee created successfully", {
-        description: `${formData.firstName} ${formData.lastName} has been added to your employee roster.`,
+      toast.success(t('addEmployee.toasts.employeeCreated'), {
+        description: `${formData.firstName} ${formData.lastName} ${t('addEmployee.toasts.employeeCreatedDesc')}`,
       });
       return;
     }
@@ -249,8 +251,8 @@ export default function AddADriver() {
 
     // Show toast when completing step 7 (reminders configured)
     if (currentStep === 7) {
-      toast.success("Reminder preferences saved", {
-        description: `Email and SMS notifications have been configured for ${formData.firstName} ${formData.lastName}.`,
+      toast.success(t('addEmployee.toasts.remindersSaved'), {
+        description: `${t('addEmployee.toasts.remindersSavedDesc')} ${formData.firstName} ${formData.lastName}.`,
       });
     }
 
@@ -314,12 +316,12 @@ export default function AddADriver() {
 
         const invitationResult = await createDriverInvitation(invitationPayload, token);
         console.log("Driver invitation sent:", invitationResult);
-        toast.success("Invitation sent successfully", {
-          description: `An invitation email has been sent to ${formData.firstName} ${formData.lastName}.`,
+        toast.success(t('addEmployee.toasts.invitationSent'), {
+          description: `${t('addEmployee.toasts.invitationSentDesc')} ${formData.firstName} ${formData.lastName}.`,
         });
       } else {
-        toast.success("Employee created successfully", {
-          description: `${formData.firstName} ${formData.lastName} has been added to your employee roster.`,
+        toast.success(t('addEmployee.toasts.employeeCreated'), {
+          description: `${formData.firstName} ${formData.lastName} ${t('addEmployee.toasts.employeeCreatedDesc')}`,
         });
       }
 
@@ -360,17 +362,17 @@ export default function AddADriver() {
 
       {/* Header */}
       <DashboardHeader
-        title="Add an Employee"
+        title={t('addEmployee.title')}
         breadcrumbs={[
-          { label: 'Employees', href: '/client/drivers' },
-          { label: 'Add Employee' }
+          { label: t('addEmployee.breadcrumbEmployees'), href: '/client/drivers' },
+          { label: t('addEmployee.breadcrumbAdd') }
         ]}
       />
 
       {/* Subtitle */}
       <div className={`px-4 md:px-6 py-3 border-b ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-gray-200'}`}>
         <p className={`text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
-          Complete the steps below to add a new employee to your roster
+          {t('addEmployee.subtitle')}
         </p>
       </div>
 
@@ -381,7 +383,7 @@ export default function AddADriver() {
           <div className="md:hidden mb-6">
             <div className={`text-center py-3 px-4 rounded-lg ${isDarkMode ? 'bg-slate-800/50 border border-slate-700' : 'bg-gray-100 border border-gray-200'}`}>
               <p className={`text-xs font-medium ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                Step {currentStep} of {steps.length}
+                {t('addEmployee.stepIndicator.step')} {currentStep} {t('addEmployee.stepIndicator.of')} {steps.length}
               </p>
               <p className={`text-sm font-semibold mt-0.5 ${getThemeClasses.text.primary(isDarkMode)}`}>
                 {steps[currentStep - 1].title}
@@ -457,10 +459,10 @@ export default function AddADriver() {
             <>
               <div className="mb-6">
                 <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Personal Information
+                  {t('addEmployee.step1.title')}
                 </h2>
                 <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  Please fill in your basic details to get started
+                  {t('addEmployee.step1.subtitle')}
                 </p>
               </div>
 
@@ -471,7 +473,7 @@ export default function AddADriver() {
                     <label
                       htmlFor="firstName"
                       className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                      First Name
+                      {t('addEmployee.step1.firstName')}
                     </label>
                     <input
                       type="text"
@@ -494,7 +496,7 @@ export default function AddADriver() {
                     <label
                       htmlFor="lastName"
                       className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                      Last Name
+                      {t('addEmployee.step1.lastName')}
                     </label>
                     <input
                       type="text"
@@ -520,7 +522,7 @@ export default function AddADriver() {
                   <label
                     htmlFor="email"
                     className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    Email Address
+                    {t('addEmployee.step1.email')}
                   </label>
                   <input
                     type="email"
@@ -546,7 +548,7 @@ export default function AddADriver() {
                     <label
                       htmlFor="phone"
                       className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                      Phone Number
+                      {t('addEmployee.step1.phone')}
                     </label>
                     <input
                       type="tel"
@@ -569,7 +571,7 @@ export default function AddADriver() {
                     <label
                       htmlFor="location"
                       className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                      Location
+                      {t('addEmployee.step1.location')}
                     </label>
                     <input
                       type="text"
@@ -595,7 +597,7 @@ export default function AddADriver() {
                   <label
                     htmlFor="employeeId"
                     className={`block mb-2 text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    Employee ID
+                    {t('addEmployee.step1.employeeId')}
                   </label>
                   <input
                     type="text"
@@ -618,7 +620,7 @@ export default function AddADriver() {
                 {/* Tip */}
                 <div className={`mt-6 p-4 border rounded-[10px] ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
                   <p className={`text-sm leading-relaxed ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    <span className="font-light">💡<strong>Tip:</strong>  Make sure to include the country code in the phone number without any spaces or hyphens. For example: <span className="font-mono font-medium">+15551234567</span> for United States or <span className="font-mono font-medium">+16131234567</span> for Canada. This ensures SMS notifications are delivered successfully to the employee.
+                    <span className="font-light">{t('addEmployee.step1.tip')} <span className="font-mono font-medium">+15551234567</span> {t('addEmployee.step1.tipUS')} <span className="font-mono font-medium">+16131234567</span> {t('addEmployee.step1.tipCA')}
                  </span> </p>
                 </div>
               </div>
@@ -629,10 +631,10 @@ export default function AddADriver() {
             <>
               <div className="mb-6">
                 <h2 className={`text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                  Document Upload
+                  {t('addEmployee.step2.title')}
                 </h2>
                 <p className={`mt-1 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                  How would you like to add the documents?
+                  {t('addEmployee.step2.subtitle')}
                 </p>
               </div>
 
@@ -667,11 +669,10 @@ export default function AddADriver() {
                     </div>
                     <div>
                       <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Upload Now
+                        {t('addEmployee.step2.uploadNow')}
                       </h3>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Upload your documents immediately and complete the
-                        process right away
+                        {t('addEmployee.step2.uploadNowDesc')}
                       </p>
                     </div>
                   </div>
@@ -707,11 +708,10 @@ export default function AddADriver() {
                     </div>
                     <div>
                       <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Send Link to Employee
+                        {t('addEmployee.step2.sendLink')}
                       </h3>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        We'll send a secure link to the employee to upload
-                        documents at their convenience
+                        {t('addEmployee.step2.sendLinkDesc')}
                       </p>
                     </div>
                   </div>
@@ -747,11 +747,10 @@ export default function AddADriver() {
                     </div>
                     <div>
                       <h3 className={`mb-1 text-sm font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Skip for Now
+                        {t('addEmployee.step2.skipNow')}
                       </h3>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Continue with the registration and add documents later
-                        from your dashboard
+                        {t('addEmployee.step2.skipNowDesc')}
                       </p>
                     </div>
                   </div>
@@ -842,18 +841,18 @@ export default function AddADriver() {
                     <CheckCircle className={`w-8 h-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`} />
                   </div>
                   <h3 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                    Documents Skipped
+                    {t('addEmployee.step8.skipped.title')}
                   </h3>
                   <p className={`mb-4 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                    You've chosen to skip document uploads for now. You can add documents later from the employee's profile page.
+                    {t('addEmployee.step8.skipped.description')}
                   </p>
                   <div className={`p-4 border rounded-[10px] ${isDarkMode ? 'border-slate-700 bg-slate-800/50' : 'border-gray-200 bg-gray-50'}`}>
                     <div className="flex items-start gap-3 text-left">
                       <Check className={`flex-shrink-0 w-5 h-5 mt-0.5 ${isDarkMode ? 'text-violet-400' : 'text-gray-600'}`} />
                       <div>
-                        <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>What happens next?</p>
+                        <p className={`text-sm font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>{t('addEmployee.step8.skipped.whatNext')}</p>
                         <p className={`mt-1 text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                          After creating the employee, you can upload documents or send them an invitation link to upload documents themselves.
+                          {t('addEmployee.step8.skipped.whatNextDesc')}
                         </p>
                       </div>
                     </div>
@@ -866,10 +865,10 @@ export default function AddADriver() {
                     <>
                       <Loader2 className={`w-12 h-12 mx-auto mb-4 animate-spin ${isDarkMode ? 'text-violet-500' : 'text-gray-800'}`} />
                       <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
-                        Creating Employee Profile...
+                        {t('addEmployee.step8.creating')}
                       </h2>
                       <p className={`text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
-                        Please wait while we save your employee information.
+                        {t('addEmployee.step8.creatingDesc')}
                       </p>
                     </>
                   ) : submitError ? (
@@ -889,7 +888,7 @@ export default function AddADriver() {
                         </svg>
                       </div>
                       <h2 className="mb-2 text-lg font-semibold text-red-600">
-                        Failed to Create Employee
+                        {t('addEmployee.step8.failed')}
                       </h2>
                       <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>{submitError}</p>
                       <button
@@ -898,7 +897,7 @@ export default function AddADriver() {
                           setSubmitError(null);
                         }}
                         className={`px-6 py-2.5 text-white transition-all rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
-                        Try Again
+                        {t('addEmployee.step8.tryAgain')}
                       </button>
                     </>
                   ) : (
@@ -906,18 +905,18 @@ export default function AddADriver() {
                       <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-600" />
                       <h2 className={`mb-2 text-lg font-semibold ${getThemeClasses.text.primary(isDarkMode)}`}>
                         {formData.documentOption === "link"
-                          ? "Invitation Sent Successfully!"
-                          : "Employee Added Successfully!"}
+                          ? t('addEmployee.step8.invitationSent')
+                          : t('addEmployee.step8.employeeAdded')}
                       </h2>
                       <p className={`mb-6 text-sm ${getThemeClasses.text.secondary(isDarkMode)}`}>
                         {formData.documentOption === "link" ? (
                           <>
-                            An email{formData.phone && " and SMS"} with a secure upload link has been sent to{" "}
+                            {t('addEmployee.step8.invitationDesc')}{formData.phone && ` ${t('addEmployee.step8.invitationDescSMS')}`} {t('addEmployee.step8.invitationDescTo')}{" "}
                             {formData.firstName} {formData.lastName}.
                           </>
                         ) : (
                           <>
-                            {formData.firstName} {formData.lastName} has been added to your employee roster.
+                            {formData.firstName} {formData.lastName} {t('addEmployee.step8.employeeAddedDesc')}
                           </>
                         )}
                       </p>
@@ -925,12 +924,12 @@ export default function AddADriver() {
                         <button
                           onClick={handleNavigateToDrivers}
                           className={`px-6 py-2.5 text-white transition-all rounded-[10px] ${getThemeClasses.button.primary(isDarkMode)}`}>
-                          View All Employees
+                          {t('addEmployee.step8.viewAll')}
                         </button>
                         <button
                           onClick={() => window.location.reload()}
                           className={`px-6 py-2.5 transition-all border rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}>
-                          Add Another Employee
+                          {t('addEmployee.step8.addAnother')}
                         </button>
                       </div>
                     </>
@@ -954,7 +953,7 @@ export default function AddADriver() {
                       : "text-gray-400 border-gray-200 cursor-not-allowed"
                     : getThemeClasses.button.secondary(isDarkMode)
                 }`}>
-                {currentStep === 1 ? "Cancel" : "Back"}
+                {currentStep === 1 ? t('addEmployee.buttons.cancel') : t('addEmployee.buttons.back')}
               </button>
               <button
                 type="button"
@@ -979,19 +978,19 @@ export default function AddADriver() {
                 {isSubmitting ? (
                   <span className="flex items-center">
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting...
+                    {t('addEmployee.buttons.submitting')}
                   </span>
                 ) : creatingDriver ? (
                   <span className="flex items-center">
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Employee...
+                    {t('addEmployee.buttons.creatingEmployee')}
                   </span>
                 ) : currentStep === 8 && formData.documentOption === "skip" ? (
-                  "Go to Employees"
+                  t('addEmployee.buttons.goToEmployees')
                 ) : currentStep === 7 ? (
-                  "Complete & Submit"
+                  t('addEmployee.buttons.completeSubmit')
                 ) : (
-                  "Next Step"
+                  t('addEmployee.buttons.nextStep')
                 )}
               </button>
             </div>

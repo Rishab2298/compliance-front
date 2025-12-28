@@ -35,7 +35,7 @@ const BillingSuccess = () => {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto">
           <div className="max-w-2xl mx-auto">
             {/* Success Message */}

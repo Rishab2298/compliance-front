@@ -158,7 +158,7 @@ const InvoiceView = () => {
             </div>
           </div>
         </header>
-        <div className="flex-1 py-8">
+        <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
           <div className="container w-full max-w-4xl px-6 mx-auto">
             <section className="bg-white rounded-[10px] p-8 border border-gray-200">
               <Skeleton className="h-12 w-48 mb-8 rounded-[10px]" />
@@ -235,7 +235,7 @@ const InvoiceView = () => {
       </header>
 
       {/* Invoice Content */}
-      <div className="flex-1 py-8 print:py-0">
+      <div className={`flex-1 py-8 print:py-0 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full max-w-4xl px-6 mx-auto print:max-w-none">
           <section className="invoice-content bg-white rounded-[10px] p-8 border border-gray-200 print:border-0 print:rounded-none print:p-12">
             {/* Invoice Header */}

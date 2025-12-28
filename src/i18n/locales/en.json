@@ -1,0 +1,1067 @@
+{
+  "addEmployee": {
+    "title": "Add an Employee",
+    "breadcrumbEmployees": "Employees",
+    "breadcrumbAdd": "Add Employee",
+    "subtitle": "Complete the steps below to add a new employee to your roster",
+    "steps": {
+      "personalInfo": "Personal Info",
+      "uploadMethod": "Upload Method",
+      "documents": "Documents",
+      "processing": "Processing",
+      "verification": "Verification",
+      "reminders": "Reminders",
+      "review": "Review",
+      "complete": "Complete"
+    },
+    "step1": {
+      "title": "Personal Information",
+      "subtitle": "Please fill in your basic details to get started",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "location": "Location",
+      "employeeId": "Employee ID",
+      "tip": "💡 Tip: Make sure to include the country code in the phone number without any spaces or hyphens. For example:",
+      "tipUS": "for United States or",
+      "tipCA": "for Canada. This ensures SMS notifications are delivered successfully to the employee.",
+      "errors": {
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email format",
+        "phoneRequired": "Phone number is required",
+        "locationRequired": "Location is required",
+        "employeeIdRequired": "Employee ID is required"
+      }
+    },
+    "step2": {
+      "title": "Document Upload",
+      "subtitle": "How would you like to add the documents?",
+      "uploadNow": "Upload Now",
+      "uploadNowDesc": "Upload your documents immediately and complete the process right away",
+      "sendLink": "Send Link to Employee",
+      "sendLinkDesc": "We'll send a secure link to the employee to upload documents at their convenience",
+      "skipNow": "Skip for Now",
+      "skipNowDesc": "Continue with the registration and add documents later from your dashboard",
+      "errors": {
+        "selectMethod": "Please select an upload method"
+      }
+    },
+    "step3": {
+      "title": "Upload Documents",
+      "subtitle": "Upload and enter details for all required documents",
+      "noDocTypesTitle": "No document types configured",
+      "noDocTypesDesc": "Please configure document types in your company settings first.",
+      "requiredDocuments": "Required Documents",
+      "pleaseUploadAll": "Please upload all documents listed above",
+      "dragAndDrop": "Drag and drop files here, or click to browse",
+      "selectFiles": "Select Files",
+      "supportedFormats": "Supported: JPG, JPEG, PNG, PDF (Max 10MB per file)",
+      "uploadedFiles": "Uploaded Files",
+      "documentsUploaded": "documents uploaded",
+      "of": "of",
+      "mb": "MB",
+      "status": {
+        "pending": "Pending...",
+        "uploading": "Uploading",
+        "uploaded": "Uploaded",
+        "failed": "Failed"
+      },
+      "uploadingToStorage": "Uploading documents to secure storage...",
+      "someFilesFailed": "Some files failed to upload. Please remove and try again.",
+      "allUploaded": "All documents uploaded successfully! Click \"Next Step\" to continue.",
+      "tip": "💡 Tip: Upload all required document images. You'll enter document details in the next steps using AI or manually.",
+      "toasts": {
+        "validationFailed": "validation failed",
+        "planLimitReached": "Plan limit reached",
+        "documentTypesNeeded": "Document types needed",
+        "uploadedSuccess": "uploaded successfully!",
+        "uploadFailed": "Failed to upload"
+      }
+    },
+    "step8": {
+      "skipped": {
+        "title": "Documents Skipped",
+        "description": "You've chosen to skip document uploads for now. You can add documents later from the employee's profile page.",
+        "whatNext": "What happens next?",
+        "whatNextDesc": "After creating the employee, you can upload documents or send them an invitation link to upload documents themselves."
+      },
+      "creating": "Creating Employee Profile...",
+      "creatingDesc": "Please wait while we save your employee information.",
+      "failed": "Failed to Create Employee",
+      "invitationSent": "Invitation Sent Successfully!",
+      "employeeAdded": "Employee Added Successfully!",
+      "invitationDesc": "An email",
+      "invitationDescSMS": "and SMS",
+      "invitationDescTo": "with a secure upload link has been sent to",
+      "employeeAddedDesc": "has been added to your employee roster.",
+      "viewAll": "View All Employees",
+      "addAnother": "Add Another Employee",
+      "tryAgain": "Try Again"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "back": "Back",
+      "nextStep": "Next Step",
+      "completeSubmit": "Complete & Submit",
+      "goToEmployees": "Go to Employees",
+      "submitting": "Submitting...",
+      "creatingEmployee": "Creating Employee..."
+    },
+    "stepIndicator": {
+      "step": "Step",
+      "of": "of"
+    },
+    "toasts": {
+      "employeeLimitReached": "Employee limit reached",
+      "employeeLimitDesc": "Please upgrade your plan to add more employees. Current limit:",
+      "employeeLimitDescSuffix": "employees.",
+      "employeeCreated": "Employee created successfully",
+      "employeeCreatedDesc": "has been added to your employee roster.",
+      "remindersSaved": "Reminder preferences saved",
+      "remindersSavedDesc": "Email and SMS notifications have been configured for",
+      "invitationSent": "Invitation sent successfully",
+      "invitationSentDesc": "An invitation email has been sent to"
+    }
+  },
+  "drivers": {
+    "title": "Employees Management",
+    "importCSV": "Import CSV",
+    "settings": "Settings",
+    "errorLoading": "Error loading employees:",
+    "table": {
+      "searchPlaceholder": "Search employees...",
+      "addEmployee": "Add Employee",
+      "noEmployees": "No employees found.",
+      "columns": {
+        "employee": "Employee",
+        "email": "Email",
+        "phone": "Phone",
+        "documents": "Documents",
+        "compliance": "Compliance"
+      },
+      "status": {
+        "verified": "Verified",
+        "expiringSoon": "Expiring Soon",
+        "expired": "Expired",
+        "pending": "Pending",
+        "processing": "Processing"
+      },
+      "actions": {
+        "viewDetails": "View Details",
+        "delete": "Delete",
+        "openMenu": "Open menu"
+      },
+      "deleteDialog": {
+        "title": "Delete Employee",
+        "description": "Are you sure you want to delete",
+        "descriptionSuffix": "This action cannot be undone. All documents and records associated with this employee will be permanently removed.",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "employees": "employee(s)",
+        "page": "Page",
+        "previous": "Previous",
+        "next": "Next"
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "employees": "employees",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page"
+    },
+    "toasts": {
+      "permissionDenied": "Permission denied",
+      "noPermissionDelete": "You do not have permission to delete employees.",
+      "noPermissionCreate": "You do not have permission to create employees.",
+      "deletedSuccess": "has been deleted successfully",
+      "deleteError": "Failed to delete employee",
+      "importSuccess": "Successfully imported",
+      "importSuccessPlural": "employee(s)",
+      "limitReached": "Employee limit reached!",
+      "limitReachedDesc": "Successfully added",
+      "limitReachedDescEnd": "employee(s) could not be added. Please upgrade your plan to add more employees.",
+      "importFailed": "Failed to import",
+      "importFailedSuffix": "employee(s)",
+      "noEmployeesImported": "No employees were imported. Please check your CSV file."
+    }
+  },
+  "driverDetail": {
+    "title": "Employee Details",
+    "breadcrumbEmployees": "Employees",
+    "employeeNotFound": "Employee not found",
+    "back": "Back",
+    "requestDocuments": "Request Documents",
+    "mailing": "Mailing",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "saving": "Saving",
+    "saveChanges": "Save Changes",
+    "profile": {
+      "employeeName": "Employee Name",
+      "employeeId": "No employee ID",
+      "compliant": "Compliant",
+      "email": "Email",
+      "phone": "Phone",
+      "addedOn": "Added On"
+    },
+    "pendingAlert": {
+      "needDetails": "Document",
+      "needDetailsPlural": "Documents",
+      "needDetailsSuffix": "Need Details",
+      "description": "Enter document information to activate these documents",
+      "enterDetails": "Enter Details"
+    },
+    "uploadSection": {
+      "title": "Upload Documents",
+      "subtitle": "Add new documents for this employee"
+    },
+    "documentsOverview": {
+      "title": "Documents Overview",
+      "documentsOnFile": "document(s) on file",
+      "expires": "Expires",
+      "uploaded": "Uploaded",
+      "requestUpdate": "Request Update",
+      "sending": "Sending",
+      "noDocuments": "No documents yet",
+      "uploadToStart": "Upload documents using the section above to get started"
+    },
+    "reminderHistory": {
+      "title": "Reminder History",
+      "reminder": "reminder",
+      "reminderPlural": "reminders",
+      "noReminders": "No reminders sent yet",
+      "remindersWillAppear": "Reminders will appear here when sent",
+      "defaultMessage": "Reminder sent to driver",
+      "sent": "Sent",
+      "daysBeforeExpiry": "day",
+      "daysBeforeExpiryPlural": "days",
+      "beforeExpiry": "before expiry",
+      "loadingHistory": "Loading reminder history...",
+      "failedToLoad": "Failed to load reminder history",
+      "statusSent": "Sent",
+      "statusFailed": "Failed",
+      "statusPending": "Pending",
+      "channelEmail": "Email",
+      "channelSMS": "SMS",
+      "viewHistory": "View reminder history"
+    },
+    "documentStatus": {
+      "verified": "Verified",
+      "expiringSoon": "Expiring Soon",
+      "expired": "Expired",
+      "processing": "Processing",
+      "pending": "Pending"
+    },
+    "stats": {
+      "complianceScore": "Compliance Score",
+      "totalDocuments": "Total Documents",
+      "verified": "Verified",
+      "expiringSoon": "Expiring Soon",
+      "expired": "Expired"
+    },
+    "deleteDialog": {
+      "title": "Delete Document",
+      "description": "Are you sure you want to delete this document? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "toasts": {
+      "updateSuccess": "Driver information updated successfully",
+      "updateError": "Failed to update driver information",
+      "requestError": "Driver email is required to send document request",
+      "noDocTypes": "No document types configured. Please add document types in settings.",
+      "requestSent": "Document request sent successfully to",
+      "requestFailed": "Failed to send document request",
+      "uploadSuccess": "Documents uploaded! Click \"Enter Details\" to add document information.",
+      "viewError": "Failed to view document:",
+      "downloadSuccess": "Download completed",
+      "downloadError": "Failed to download document:",
+      "deleteSuccess": "Document deleted successfully",
+      "deleteError": "Failed to delete document:",
+      "updateRequestSent": "Document update request sent to",
+      "updateRequestDesc": "Driver will be asked to upload a fresh copy of"
+    },
+    "form": {
+      "employeeName": "Employee Name",
+      "enterEmployeeName": "Enter employee name",
+      "enterEmail": "Enter email address",
+      "enterPhone": "Enter phone number"
+    },
+    "actions": {
+      "viewDocument": "View document",
+      "downloadDocument": "Download document",
+      "deleteDocument": "Delete document",
+      "editDocument": "Edit document",
+      "requestUpdate": "Request driver to upload fresh document"
+    }
+  },
+  "documentUpload": {
+    "title": "Upload Documents",
+    "dragAndDrop": "Drag and drop files here, or click to browse",
+    "selectFiles": "Select Files",
+    "supportedFormats": "Supported: JPG, JPEG, PNG only (Max 10MB per file)",
+    "selectedFiles": "Selected Files",
+    "uploading": "Uploading",
+    "uploadAll": "Upload All",
+    "mb": "MB",
+    "toasts": {
+      "noFiles": "Please select files to upload",
+      "preparing": "Preparing upload...",
+      "uploadSuccess": "file(s) uploaded successfully!",
+      "uploadFailed": "file(s) failed to upload",
+      "uploadError": "Failed to upload files",
+      "validationFailed": "validation failed",
+      "planLimitReached": "Plan limit reached",
+      "documentTypesNeeded": "Document types needed"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "addEmployee": "Add Employee",
+    "criticalCompliance": {
+      "title": "Critical Compliance Issues",
+      "expiredDocuments": "expired document",
+      "expiredDocumentsPlural": "expired documents",
+      "expiringIn7Days": "expiring in <7 days",
+      "viewDetails": "View Details"
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Key metrics and compliance overview",
+      "totalEmployees": "Total Employees",
+      "activeInSystem": "Active in system",
+      "complianceRate": "Compliance Rate",
+      "excellent": "Excellent",
+      "good": "Good",
+      "needsAttention": "Needs attention",
+      "expiringSoon": "Expiring Soon",
+      "critical": "critical",
+      "warning": "warning",
+      "pendingReview": "Pending Review",
+      "awaitingVerification": "Awaiting verification"
+    },
+    "credits": {
+      "title": "Credits & Usage",
+      "currentPlan": "Current plan",
+      "managePlan": "Manage Plan",
+      "aiCreditsRemaining": "AI Credits Remaining",
+      "usedFor": "Used for document scanning and processing",
+      "activeEmployees": "Active Employees",
+      "upTo": "Up to",
+      "employeesOn": "employees on",
+      "plan": "plan",
+      "unlimited": "Unlimited on current plan",
+      "lowCredits": "Low Credits:",
+      "lowCreditsMessage": "You have less than 5 AI credits remaining. Consider upgrading your plan or purchasing additional credits."
+    },
+    "documentStatus": {
+      "title": "Document Status",
+      "subtitle": "Overview of all documents by status",
+      "viewAll": "View All",
+      "verified": "Verified",
+      "upToDate": "Up to date",
+      "expiringSoon": "Expiring Soon",
+      "actionNeeded": "Action needed",
+      "expired": "Expired",
+      "urgent": "Urgent",
+      "pending": "Pending",
+      "underReview": "Under review"
+    },
+    "employeesAttention": {
+      "title": "Employees Requiring Attention",
+      "subtitle": "Non-compliant employees with missing, expired, expiring, or pending documents",
+      "allClear": "All Clear!",
+      "allCompliant": "All employees are fully compliant",
+      "missing": "missing",
+      "expired": "expired",
+      "expiringSoon": "expiring soon",
+      "pending": "pending"
+    },
+    "recentlyAdded": {
+      "title": "Recently Added",
+      "subtitle": "Latest employees in the system",
+      "viewAll": "View All",
+      "noEmployees": "No Employees Yet",
+      "addFirstEmployee": "Add your first employee to get started",
+      "added": "Added"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "subtitle": "Common tasks and shortcuts",
+      "addNewEmployee": "Add New Employee",
+      "viewReminders": "View Reminders",
+      "configureSettings": "Configure Settings",
+      "reportIssue": "Report an Issue"
+    }
+  },
+  "documentTypeManager": {
+    "title": "Document Types",
+    "subtitle": "Configure document types and AI extraction settings for automated data capture",
+    "addCustomType": "Add Custom Type",
+    "errorLoading": "Error loading document types:",
+    "noDocTypesConfigured": "No document types configured",
+    "system": "System",
+    "active": "Active",
+    "inactive": "Inactive",
+    "max": "max",
+    "aiEnabled": "AI Enabled",
+    "manualEntry": "Manual Entry",
+    "fields": "fields",
+    "extractsStructuredData": "Extracts structured data fields",
+    "classificationOnly": "Classification only",
+    "fieldsLabel": "Fields",
+    "more": "more",
+    "dialog": {
+      "createTitle": "Create Custom Document Type",
+      "editTitle": "Edit",
+      "description": "Configure document type settings, AI extraction mode, and custom fields",
+      "basicSettings": "Basic Settings",
+      "documentTypeName": "Document Type Name",
+      "namePlaceholder": "e.g., Medical Certificate",
+      "systemTypesCannotRename": "System types cannot be renamed",
+      "aiExtraction": "AI Extraction",
+      "autoExtractData": "Auto-extract data from documents",
+      "extractionMode": "Extraction Mode",
+      "extractionModeHelp": "Field Extraction extracts specific data fields, Classification Only just identifies the document type",
+      "fieldExtraction": "Field Extraction",
+      "classificationOnly": "Classification Only",
+      "fieldConfiguration": "Field Configuration",
+      "configuredFields": "Configured Fields",
+      "required": "Req",
+      "addNewField": "Add New Field",
+      "nameAPI": "Name (API)",
+      "nameAPIHelp": "Used internally for API and database. Must start with a letter, use camelCase, no spaces.",
+      "namePlaceholderField": "expiryDate",
+      "label": "Label",
+      "labelHelp": "Display name shown to users in the interface",
+      "labelPlaceholder": "Expiry Date",
+      "type": "Type",
+      "req": "Req",
+      "reqHelp": "Mark as required if this field must be filled",
+      "ai": "AI",
+      "aiHelp": "Enable AI to automatically extract this field from documents",
+      "description": "Description (for AI)",
+      "descriptionHelp": "Provide instructions to help AI understand which field to extract from the document",
+      "descriptionPlaceholder": "e.g., 'The expiration date of the document'",
+      "addField": "Add Field",
+      "documentTypeNameHelp": "Give your document type a clear, descriptive name (e.g., 'Driver License', 'Insurance Policy')",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "create": "Create"
+    },
+    "deleteDialog": {
+      "title": "Delete Document Type",
+      "description": "Are you sure you want to delete",
+      "cannotUndo": "This action cannot be undone.",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "delete": "Delete"
+    },
+    "toasts": {
+      "deleted": "deleted successfully",
+      "deleteFailed": "Failed to delete document type",
+      "enterFieldName": "Please enter a field name",
+      "enterFieldLabel": "Please enter a field label",
+      "duplicateField": "A field with this name already exists",
+      "invalidFieldName": "Field name must start with a letter and contain only letters, numbers, and underscores",
+      "enterDocTypeName": "Please enter a document type name",
+      "atLeastOneField": "Please add at least one field for field extraction mode",
+      "created": "created successfully",
+      "updated": "updated successfully",
+      "saveFailed": "Failed to save document type",
+      "activated": "activated",
+      "deactivated": "deactivated",
+      "toggleFailed": "Failed to toggle document type status",
+      "planLimitReached": "plan allows only",
+      "activeDocumentType": "active document type",
+      "activeDocumentTypes": "active document types",
+      "upgradeToActivate": "Upgrade to activate more document types",
+      "upgrade": "Upgrade"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "saveChanges": "Save Changes",
+    "saving": "Saving",
+    "saveAllChanges": "Save All Changes",
+    "savingChanges": "Saving Changes",
+    "companyInfo": {
+      "title": "Company Information",
+      "subtitle": "View your company details",
+      "companyName": "Company Name",
+      "companySize": "Company Size",
+      "operatingRegion": "Operating Region",
+      "plan": "Plan",
+      "na": "N/A",
+      "free": "Free",
+      "tip": "💡 Tip: Need to update your company information? Contact support to make changes to these details."
+    },
+    "reminderSettings": {
+      "title": "Reminder Settings",
+      "subtitle": "Choose up to 3 reminder intervals before document expiration",
+      "maxSelected": "Maximum of 3 reminder intervals selected",
+      "selected": "Selected",
+      "automaticReminders": "Automatic Reminders:",
+      "automaticRemindersDesc": "Your reminder notifications are sent automatically every day at",
+      "automaticRemindersTime": "8:00 AM Eastern Time",
+      "automaticRemindersLocation": "(New York/Toronto timezone). You don't need to do anything - we'll notify you when documents are approaching their expiration dates!",
+      "tip": "💡 Tip: We recommend setting reminders at 30, 15, and 7 days to ensure you never miss a document expiration."
+    },
+    "notificationPreferences": {
+      "title": "Notification Preferences",
+      "subtitle": "Configure how you receive compliance alerts",
+      "adminEmail": "Admin Email",
+      "adminPhone": "Admin Phone Number",
+      "notificationMethod": "Notification Method",
+      "emailOnly": "Email Only",
+      "smsOnly": "SMS Only",
+      "both": "Email & SMS",
+      "notificationRecipients": "Notification Recipients",
+      "admin": "Admin",
+      "drivers": "Drivers",
+      "tip": "💡 Tip: Enable driver notifications to keep your team informed about their document expiration dates automatically."
+    },
+    "toasts": {
+      "settingsSaved": "Settings saved successfully",
+      "settingsFailed": "Failed to save settings",
+      "maxReminders": "Maximum of 3 reminder intervals allowed"
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "currentPlan": {
+      "title": "Current Plan",
+      "subtitle": "Your subscription and usage details",
+      "plan": "Plan",
+      "nextBilling": "Next billing",
+      "drivers": "Drivers",
+      "aiCredits": "AI Credits",
+      "available": "available",
+      "creditsRefill": "credits refill monthly",
+      "buyMore": "Buy More"
+    },
+    "lowCreditsAlert": {
+      "title": "Running Low on Credits",
+      "description": "You have less than 5 AI credits remaining. Purchase more to continue scanning documents.",
+      "buyCredits": "Buy Credits"
+    },
+    "plans": {
+      "title": "Available Plans",
+      "subtitle": "Choose the plan that fits your needs",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "-20%",
+      "popular": "Popular",
+      "current": "Current",
+      "custom": "Custom",
+      "mo": "mo",
+      "yr": "yr",
+      "save": "Save",
+      "year": "year",
+      "drivers": "drivers",
+      "unlimited": "Unlimited",
+      "docsPerDriver": "docs per driver",
+      "aiCreditsPerMonth": "AI credits/mo",
+      "emailReminders": "Email reminders",
+      "emailSmsReminders": "Email + SMS reminders",
+      "prioritySupport": "Priority support",
+      "advancedAnalytics": "Advanced analytics",
+      "dedicatedSupport": "Dedicated support",
+      "customIntegrations": "Custom integrations",
+      "currentPlan": "Current Plan",
+      "contactSales": "Contact Sales",
+      "upgrade": "Upgrade",
+      "processing": "Processing...",
+      "freePlan": {
+        "title": "Free",
+        "description": "Perfect for trying out Complyo. Get started with basic features at no cost.",
+        "limitedCapacity": "Limited capacity",
+        "basicTracking": "Basic tracking",
+        "oneTimeOnly": "One-time only",
+        "basicAlerts": "Basic alerts",
+        "foreverFree": "Forever free",
+        "contactSupport": "Contact Support"
+      }
+    },
+    "invoices": {
+      "title": "Invoices & Billing History",
+      "totalTransactions": "total transactions",
+      "noTransactions": "No transactions yet",
+      "noInvoices": "No invoices yet",
+      "description": "Your billing history will appear here after your first transaction",
+      "viewInvoice": "View Invoice",
+      "paid": "PAID",
+      "plan": "Plan",
+      "creditPurchase": "Credit Purchase"
+    },
+    "toasts": {
+      "alreadyOnPlan": "You are already on this plan",
+      "contactSales": "Contact sales for Enterprise pricing",
+      "contactSalesDesc": "Email us at sales@complyo.io",
+      "downgradeNotAvailable": "Downgrades not available in UI",
+      "downgradeDesc": "Contact support to downgrade",
+      "failedToChangePlan": "Failed to change plan",
+      "failedToPurchaseCredits": "Failed to purchase credits"
+    }
+  },
+  "teamManagement": {
+    "title": "Team Management",
+    "inviteButton": "Invite Team Member",
+    "limitReached": "Limit Reached",
+    "accessDenied": {
+      "title": "Access Denied",
+      "description": "You don't have permission to manage team members.",
+      "subdescription": "Only users with the 'manage_users' capability can access this page."
+    },
+    "roles": {
+      "COMPLIANCE_MANAGER": {
+        "label": "Compliance Manager",
+        "description": "Full access to employees & documents"
+      },
+      "HR_LEAD": {
+        "label": "HR Lead",
+        "description": "Manage employees & upload documents"
+      },
+      "VIEWER": {
+        "label": "Viewer",
+        "description": "Read-only access"
+      },
+      "BILLING": {
+        "label": "Billing",
+        "description": "Billing & subscriptions only"
+      }
+    },
+    "teamMembers": {
+      "title": "Team Members",
+      "subtitle": "Manage your team members and their roles",
+      "noMembers": "No team members yet",
+      "noMembersDesc": "Get started by inviting your first team member",
+      "tableHeaders": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "mfa": "MFA",
+        "joined": "Joined",
+        "actions": "Actions"
+      },
+      "mfaEnabled": "Enabled",
+      "mfaDisabled": "Disabled",
+      "cannotEditAdmin": "Cannot edit admin role",
+      "cannotRemoveAdmin": "Cannot remove admin from team",
+      "editMember": "Edit team member",
+      "removeMember": "Remove team member"
+    },
+    "invitationHistory": {
+      "title": "Invitation History",
+      "subtitle": "Track all team member invitations sent",
+      "noInvitations": "No invitations sent yet",
+      "tableHeaders": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "invitedOn": "Invited On",
+        "emailSent": "Email Sent",
+        "joined": "Joined"
+      },
+      "error": "Error"
+    },
+    "inviteDialog": {
+      "title": "Invite Team Member",
+      "description": "Send an invitation to a new team member. They will receive an email with instructions to set up their account.",
+      "limitWarning": "Limit: You can only have 5 team members.",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "colleague@example.com",
+      "role": "Role",
+      "selectRole": "Select a role",
+      "cancel": "Cancel",
+      "sending": "Sending...",
+      "sendInvitation": "Send Invitation"
+    },
+    "editDialog": {
+      "title": "Update Team Member Role",
+      "description": "Change the role for",
+      "newRole": "New Role",
+      "cancel": "Cancel",
+      "updating": "Updating...",
+      "updateRole": "Update Role"
+    },
+    "removeDialog": {
+      "title": "Remove Team Member",
+      "description": "Are you sure you want to remove",
+      "fromTeam": "from your team?",
+      "warning": "This will revoke their access to your company's data. This action can be reversed by re-inviting them.",
+      "cancel": "Cancel",
+      "removing": "Removing...",
+      "removeMember": "Remove Member"
+    },
+    "toasts": {
+      "emailWarning": "Team member created but email failed",
+      "inviteSuccess": "Team member invited successfully!",
+      "inviteSuccessDesc": "An invitation email has been sent.",
+      "inviteFailed": "Failed to invite team member",
+      "updateSuccess": "Team member role updated successfully!",
+      "updateFailed": "Failed to update role",
+      "removeSuccess": "Team member removed successfully!",
+      "removeFailed": "Failed to remove team member",
+      "fillAllFields": "Please fill in all fields",
+      "limitReached": "Team member limit reached",
+      "limitReachedDesc": "You can only invite up to 5 team members. Please remove a member before inviting a new one.",
+      "selectRole": "Please select a role"
+    }
+  },
+  "tickets": {
+    "title": "My Tickets",
+    "reportIssue": "Report Issue",
+    "subtitle": "ticket",
+    "subtitlePlural": "tickets",
+    "trackManage": "Track and manage your support tickets",
+    "stats": {
+      "totalTickets": "Total Tickets",
+      "open": "Open",
+      "inProgress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "filters": {
+      "searchPlaceholder": "Search tickets...",
+      "allStatuses": "All Statuses",
+      "allPriorities": "All Priorities",
+      "clearFilters": "Clear Filters"
+    },
+    "status": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "emptyState": {
+      "noTicketsFound": "No tickets found",
+      "tryAdjustingFilters": "Try adjusting your filters",
+      "createFirstTicket": "Create your first ticket to get started",
+      "createTicket": "Create Ticket"
+    },
+    "error": {
+      "failedToLoad": "Failed to load tickets",
+      "pleaseTryAgain": "Please try again",
+      "retry": "Retry"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
+  },
+  "createTicket": {
+    "title": "Report an Issue",
+    "description": "Describe the issue you're experiencing or the feature you'd like to request.",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Brief description of the issue",
+      "category": "Category",
+      "priority": "Priority",
+      "description": "Description",
+      "descriptionPlaceholder": "Please provide as much detail as possible...",
+      "required": "*",
+      "charactersCount": "characters",
+      "minimumCharacters": "Minimum 10 characters"
+    },
+    "categories": {
+      "bug": "Bug / Issue",
+      "featureRequest": "Feature Request",
+      "support": "Support",
+      "documentation": "Documentation",
+      "performance": "Performance",
+      "other": "Other"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "errors": {
+      "titleRequired": "Title is required",
+      "titleTooLong": "Title must be less than 100 characters",
+      "descriptionRequired": "Description is required",
+      "descriptionTooShort": "Description must be at least 10 characters"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "createTicket": "Create Ticket",
+      "creating": "Creating..."
+    },
+    "toasts": {
+      "success": "Ticket created successfully!",
+      "error": "Failed to create ticket"
+    }
+  },
+  "auditLogs": {
+    "title": "Audit Logs",
+    "accessDenied": {
+      "title": "Access Denied",
+      "description": "You don't have permission to view audit logs."
+    },
+    "buttons": {
+      "verifyIntegrity": "Verify Integrity",
+      "exportCSV": "Export CSV",
+      "exportJSON": "Export JSON",
+      "refresh": "Refresh",
+      "clearFilters": "Clear Filters",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Search logs...",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "last90Days": "Last 90 Days",
+      "last180Days": "Last 180 Days"
+    },
+    "table": {
+      "title": "Audit Logs",
+      "subtitle": {
+        "billing": "Viewing billing-related audit logs only",
+        "complete": "Complete audit trail of all system activities"
+      },
+      "columns": {
+        "timestamp": "Timestamp",
+        "user": "User",
+        "action": "Action",
+        "category": "Category",
+        "severity": "Severity",
+        "ipAddress": "IP Address",
+        "details": "Details"
+      },
+      "emptyState": {
+        "title": "No audit logs found",
+        "description": "Try adjusting your filters"
+      },
+      "system": "System",
+      "redacted": "Redacted",
+      "pagination": "Page"
+    },
+    "details": {
+      "title": "Audit Log Details",
+      "description": "Complete information for this audit entry",
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "category": "Category",
+      "severity": "Severity",
+      "ipAddress": "IP Address",
+      "metadata": "Metadata",
+      "hash": "Hash (Immutability)"
+    },
+    "categories": {
+      "AUTHENTICATION": "Authentication",
+      "AUTHORIZATION": "Authorization",
+      "DOCUMENT_MANAGEMENT": "Document Management",
+      "DRIVER_MANAGEMENT": "Driver Management",
+      "USER_MANAGEMENT": "User Management",
+      "BILLING": "Billing",
+      "SYSTEM": "System",
+      "COMPLIANCE": "Compliance",
+      "DATA_ACCESS": "Data Access",
+      "DATA_MODIFICATION": "Data Modification"
+    },
+    "severity": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical",
+      "INFO": "Info"
+    },
+    "toasts": {
+      "verifySuccess": "Audit logs verified successfully!",
+      "verifySuccessDesc": "No tampering detected. Logs are authentic.",
+      "verifyError": "Integrity check failed!",
+      "verifyErrorDesc": "Possible tampering detected.",
+      "verificationFailed": "Verification failed",
+      "exportSuccess": "Audit logs exported as",
+      "exportFailed": "Export failed"
+    }
+  },
+  "documentStatus": {
+    "title": "Document Status",
+    "subtitle": "total document",
+    "subtitlePlural": "total documents",
+    "buttons": {
+      "viewAllDrivers": "View All Drivers",
+      "viewDriver": "View Driver",
+      "retry": "Retry",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "statusFilters": {
+      "allDocuments": "All Documents",
+      "expired": "Expired",
+      "expiringSoon": "Expiring Soon",
+      "verified": "Verified"
+    },
+    "statusBadges": {
+      "expired": "Expired",
+      "expiringSoon": "Expiring Soon",
+      "verified": "Verified",
+      "pending": "Pending"
+    },
+    "search": {
+      "placeholder": "Search by driver name, document type..."
+    },
+    "documentCard": {
+      "document": "Document",
+      "employeeId": "Employee ID",
+      "expires": "Expires",
+      "daysOverdue": "days overdue",
+      "daysRemaining": "days remaining",
+      "unknownDriver": "Unknown Driver"
+    },
+    "emptyState": {
+      "title": "No documents found",
+      "searchDescription": "Try adjusting your search query",
+      "filterDescription": "No documents match the selected status filter"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "documents": "documents"
+    },
+    "error": {
+      "failedToLoad": "Failed to load documents"
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "subtitle": {
+      "document": "document",
+      "documents": "documents",
+      "requiringAttention": "requiring attention",
+      "customReminder": "custom reminder",
+      "customReminders": "custom reminders"
+    },
+    "buttons": {
+      "createReminder": "Create Reminder",
+      "settings": "Settings",
+      "viewDriver": "View Driver",
+      "sendReminderNow": "Send Reminder Now",
+      "retry": "Retry"
+    },
+    "viewMode": {
+      "list": "List View",
+      "calendar": "Calendar View"
+    },
+    "activeIntervals": {
+      "title": "Active Reminder Intervals",
+      "description": "You'll receive reminders {{intervals}} before document expiry"
+    },
+    "filterOptions": {
+      "allReminders": "All Reminders",
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "urgencyBadges": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "search": {
+      "placeholder": "Search by driver name, document type..."
+    },
+    "reminderCard": {
+      "daysOverdue": "days overdue",
+      "daysRemaining": "days remaining",
+      "unknownDriver": "Unknown Driver",
+      "id": "ID",
+      "expires": "Expires"
+    },
+    "emptyState": {
+      "title": "No reminders found",
+      "searchDescription": "Try adjusting your search query",
+      "filterDescription": "No {{filter}} reminders at this time",
+      "allUpToDate": "All documents are up to date!"
+    },
+    "error": {
+      "title": "Failed to load reminders"
+    },
+    "toasts": {
+      "reminderSent": "Reminder sent to {{name}}",
+      "reminderFailed": "Failed to send reminder",
+      "customReminderCreated": "Custom reminder created successfully",
+      "customReminderFailed": "Failed to create reminder",
+      "reminderDeleted": "Reminder deleted successfully",
+      "reminderDeleteFailed": "Failed to delete reminder"
+    }
+  },
+  "calendar": {
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "buttons": {
+      "today": "Today"
+    },
+    "upcomingReminders": {
+      "title": "Upcoming Reminders",
+      "next30Days": "Next 30 days"
+    },
+    "legend": {
+      "title": "Legend:",
+      "upcoming": "Upcoming",
+      "today": "Today",
+      "past": "Past"
+    },
+    "selectedDate": {
+      "reminders": "reminder(s)",
+      "noReminders": "No reminders scheduled for this date",
+      "documentExpiry": "Document Expiry",
+      "driver": "Driver",
+      "unknown": "Unknown",
+      "expired": "Expired",
+      "days": "days"
+    }
+  }
+}

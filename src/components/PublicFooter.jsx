@@ -6,26 +6,17 @@ const PublicFooter = () => {
   });
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setTheme(localStorage.getItem('theme') || 'dark');
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
     };
 
-    // Listen for theme changes
-    window.addEventListener('storage', handleStorageChange);
-
-    // Poll for theme changes in the same tab
-    const interval = setInterval(() => {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      if (currentTheme !== theme) {
-        setTheme(currentTheme);
-      }
-    }, 100);
+    // Listen for custom theme change events
+    window.addEventListener('themeChange', handleThemeChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
+      window.removeEventListener('themeChange', handleThemeChange);
     };
-  }, [theme]);
+  }, []);
 
   return (
     <footer className={`px-6 py-12 border-t ${theme === 'dark' ? 'border-slate-800' : 'border-slate-300'}`}>
@@ -219,17 +210,23 @@ const PublicFooter = () => {
             </a>
             <span className={theme === 'dark' ? 'text-slate-600' : 'text-slate-400'}>•</span>
             <a href="/policies/complaints-policy" className={`transition-colors ${theme === 'dark' ? 'hover:text-blue-400' : 'hover:text-blue-600'}`}>
-              Complaints
+              Complaints Policy
             </a>
             <span className={theme === 'dark' ? 'text-slate-600' : 'text-slate-400'}>•</span>
-            <a href="#contact" className={`transition-colors ${theme === 'dark' ? 'hover:text-blue-400' : 'hover:text-blue-600'}`}>
+            <a href="/complaints" className={`transition-colors ${theme === 'dark' ? 'hover:text-blue-400' : 'hover:text-blue-600'}`}>
+              Register A Complaint
+            </a>
+            <span className={theme === 'dark' ? 'text-slate-600' : 'text-slate-400'}>•</span>
+            <a href="/contact" className={`transition-colors ${theme === 'dark' ? 'hover:text-blue-400' : 'hover:text-blue-600'}`}>
               Contact
             </a>
           </div>
 
           {/* Copyright */}
           <p className={`text-sm text-center ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-            © 2025 Complyo. All rights reserved.
+
+            A Product of Kilimanjaro Innovation Labs Inc. © 2026 Complyo | All Rights Reserved 
+
           </p>
         </div>
       </div>

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useTheme } from "@/contexts/ThemeContext"
 import { getThemeClasses } from "@/utils/themeClasses"
+import { useTranslation } from "react-i18next"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,17 +43,17 @@ import {
 import { useNavigate } from "react-router-dom"
 
 // Map database document status to UI status
-const mapDocumentStatus = (dbStatus) => {
+const mapDocumentStatus = (dbStatus, t) => {
   const statusMap = {
-    'ACTIVE': 'Verified',
-    'EXPIRING_SOON': 'Expiring Soon',
-    'EXPIRED': 'Expired',
-    'PENDING': 'Pending',
-    'PROCESSING': 'Processing',
-    'REJECTED': 'Expired',
-    'FAILED': 'Expired',
+    'ACTIVE': t('drivers.table.status.verified'),
+    'EXPIRING_SOON': t('drivers.table.status.expiringSoon'),
+    'EXPIRED': t('drivers.table.status.expired'),
+    'PENDING': t('drivers.table.status.pending'),
+    'PROCESSING': t('drivers.table.status.processing'),
+    'REJECTED': t('drivers.table.status.expired'),
+    'FAILED': t('drivers.table.status.expired'),
   }
-  return statusMap[dbStatus] || 'Pending'
+  return statusMap[dbStatus] || t('drivers.table.status.pending')
 }
 
 // Calculate compliance score as percentage
@@ -86,7 +87,7 @@ const calculateComplianceScore = (documents = [], documentTypes = []) => {
 }
 
 // Transform database driver data for table
-const transformDriverData = (drivers = [], documentTypes = []) => {
+const transformDriverData = (drivers = [], documentTypes = [], t) => {
   return drivers.map(driver => {
     const transformed = {
       id: driver.id,
@@ -102,7 +103,7 @@ const transformDriverData = (drivers = [], documentTypes = []) => {
     // Add document columns dynamically
     documentTypes.forEach(docType => {
       const doc = driver.documents?.find(d => d.type === docType)
-      transformed[`${docType}_status`] = doc ? mapDocumentStatus(doc.status) : 'Pending'
+      transformed[`${docType}_status`] = doc ? mapDocumentStatus(doc.status, t) : t('drivers.table.status.pending')
     })
 
     return transformed
@@ -170,11 +171,11 @@ const getComplianceScoreBadge = (score, isDarkMode = false) => {
 }
 
 // Generate simplified columns with dark mode support
-const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkMode = false) => {
+const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkMode = false, t) => {
   const baseColumns = [
     {
       accessorKey: "name",
-      header: "Employee",
+      header: t('drivers.table.columns.employee'),
       cell: ({ row }) => {
         const initials = row.original.name.split(' ').map(n => n[0]).join('').substring(0, 2)
         return (
@@ -192,28 +193,28 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
     },
     {
       accessorKey: "email",
-      header: "Email",
+      header: t('drivers.table.columns.email'),
       cell: ({ row }) => (
         <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{row.original.email}</div>
       ),
     },
     {
       accessorKey: "phone",
-      header: "Phone",
+      header: t('drivers.table.columns.phone'),
       cell: ({ row }) => (
         <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>{row.original.phone}</div>
       ),
     },
     {
       accessorKey: "documentsCount",
-      header: "Documents",
+      header: t('drivers.table.columns.documents'),
       cell: ({ row }) => (
         <div className={`text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{row.original.documentsCount}</div>
       ),
     },
     {
       accessorKey: "complianceScore",
-      header: "Compliance",
+      header: t('drivers.table.columns.compliance'),
       cell: ({ row }) => getComplianceScoreBadge(row.original.complianceScore, isDarkMode),
     },
     {
@@ -228,7 +229,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
               className={`h-8 w-8 p-0 rounded-[10px] ${isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-100'}`}
             >
               <MoreVertical className="w-4 h-4" />
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t('drivers.table.actions.openMenu')}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className={`w-40 rounded-[10px] ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
@@ -237,7 +238,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
               className={isDarkMode ? 'text-white hover:bg-slate-700' : 'text-gray-900 hover:bg-gray-100'}
             >
               <Eye className="w-4 h-4 mr-2" />
-              View Details
+              {t('drivers.table.actions.viewDetails')}
             </DropdownMenuItem>
             <DropdownMenuSeparator className={isDarkMode ? 'bg-slate-700' : 'bg-gray-200'} />
             <DropdownMenuItem
@@ -245,7 +246,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
               onClick={() => onDeleteClick && onDeleteClick(row.original)}
             >
               <Trash2 className="w-4 h-4 mr-2" />
-              Delete
+              {t('drivers.table.actions.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -259,6 +260,7 @@ const generateColumns = (documentTypes = [], onDeleteClick, onViewClick, isDarkM
 export function DataTable({ data: initialData, documentTypes = [], onDeleteDriver }) {
   const navigate = useNavigate()
   const { isDarkMode } = useTheme()
+  const { t } = useTranslation()
 
   // Transform database data for table
   const transformedData = React.useMemo(() => {
@@ -266,13 +268,13 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       driversCount: initialData?.length || 0,
       documentTypesCount: documentTypes?.length || 0,
     })
-    const result = transformDriverData(initialData, documentTypes)
+    const result = transformDriverData(initialData, documentTypes, t)
     console.log('✅ Table: transformation complete', {
       transformedCount: result?.length || 0,
       complianceScores: result?.map(d => ({ name: d.name, score: d.complianceScore }))
     })
     return result
-  }, [initialData, documentTypes])
+  }, [initialData, documentTypes, t])
 
   const [data, setData] = React.useState(transformedData)
   const [columnFilters, setColumnFilters] = React.useState([])
@@ -314,8 +316,8 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
 
   // Generate columns
   const columns = React.useMemo(() =>
-    generateColumns(documentTypes, handleDeleteClick, handleViewClick, isDarkMode),
-    [documentTypes, isDarkMode]
+    generateColumns(documentTypes, handleDeleteClick, handleViewClick, isDarkMode, t),
+    [documentTypes, isDarkMode, t]
   )
 
   const table = useReactTable({
@@ -343,7 +345,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
           <div className="relative flex-1 max-w-md">
             <Search className={`absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`} />
             <Input
-              placeholder="Search employees..."
+              placeholder={t('drivers.table.searchPlaceholder')}
               value={(table.getColumn("name")?.getFilterValue()) ?? ""}
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -357,7 +359,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
               onClick={() => navigate("/client/add-a-driver")}
               className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
             >
-              Add Employee
+              {t('drivers.table.addEmployee')}
             </Button>
           </div>
         </div>
@@ -407,7 +409,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
                   colSpan={columns.length}
                   className={`h-24 text-sm text-center ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}
                 >
-                  No employees found.
+                  {t('drivers.table.noEmployees')}
                 </TableCell>
               </TableRow>
             )}
@@ -418,7 +420,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-          Showing {table.getRowModel().rows.length} of {data.length} employee(s)
+          {t('drivers.table.pagination.showing')} {table.getRowModel().rows.length} {t('drivers.table.pagination.of')} {data.length} {t('drivers.table.pagination.employees')}
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -428,10 +430,10 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
             disabled={!table.getCanPreviousPage()}
             className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
           >
-            Previous
+            {t('drivers.table.pagination.previous')}
           </Button>
           <div className={`px-2 text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {t('drivers.table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('drivers.table.pagination.of')}{" "}
             {table.getPageCount()}
           </div>
           <Button
@@ -441,7 +443,7 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
             disabled={!table.getCanNextPage()}
             className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
           >
-            Next
+            {t('drivers.table.pagination.next')}
           </Button>
         </div>
       </div>
@@ -450,10 +452,10 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className={`rounded-[10px] ${isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-gray-200'}`}>
           <AlertDialogHeader>
-            <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>Delete Employee</AlertDialogTitle>
+            <AlertDialogTitle className={isDarkMode ? 'text-white' : 'text-gray-900'}>{t('drivers.table.deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription className={isDarkMode ? 'text-slate-400' : 'text-gray-600'}>
-              Are you sure you want to delete <strong className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{driverToDelete?.name}</strong>?
-              This action cannot be undone. All documents and records associated with this employee will be permanently removed.
+              {t('drivers.table.deleteDialog.description')} <strong className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{driverToDelete?.name}</strong>?{' '}
+              {t('drivers.table.deleteDialog.descriptionSuffix')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -461,13 +463,13 @@ export function DataTable({ data: initialData, documentTypes = [], onDeleteDrive
               onClick={() => setDriverToDelete(null)}
               className={`rounded-[10px] ${getThemeClasses.button.secondary(isDarkMode)}`}
             >
-              Cancel
+              {t('drivers.table.deleteDialog.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className={`rounded-[10px] ${isDarkMode ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-red-600 hover:bg-red-700 text-white'} focus:ring-red-600`}
             >
-              Delete
+              {t('drivers.table.deleteDialog.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

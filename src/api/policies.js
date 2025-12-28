@@ -255,6 +255,53 @@ export const deletePolicy = async (token, policyId) => {
   return response.json();
 };
 
+/**
+ * Generate presigned upload URL for policy PDF
+ * @param {string} token - Auth token
+ * @param {Object} data - Upload data
+ * @param {string} data.policyType - Policy type
+ * @param {string} data.version - Policy version
+ * @param {string} data.filename - PDF filename
+ */
+export const generatePdfUploadUrl = async (token, data) => {
+  const response = await fetch(`${API_URL}/api/policies/upload-url`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to generate upload URL");
+  }
+
+  return response.json();
+};
+
+/**
+ * Upload PDF file to S3 using presigned URL
+ * @param {string} uploadUrl - Presigned upload URL
+ * @param {File} file - PDF file to upload
+ */
+export const uploadPdfToS3 = async (uploadUrl, file) => {
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/pdf",
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload PDF to S3");
+  }
+
+  return true;
+};
+
 export default {
   getAllLatestPublishedPolicies,
   getLatestPublishedPolicy,
@@ -268,4 +315,6 @@ export default {
   getPolicyHistory,
   getPolicyById,
   deletePolicy,
+  generatePdfUploadUrl,
+  uploadPdfToS3,
 };

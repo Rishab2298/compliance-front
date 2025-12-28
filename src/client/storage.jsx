@@ -102,7 +102,7 @@ const Storage = () => {
           </div>
         </header>
 
-        <div className="flex-1 py-8">
+        <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
           <div className="container w-full px-6 mx-auto space-y-6">
             {/* Search Section Skeleton */}
             <section className="bg-white rounded-[10px] p-6 border border-gray-200">
@@ -181,7 +181,7 @@ const Storage = () => {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 py-8">
+      <div className={`flex-1 py-8 ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <div className="container w-full px-6 mx-auto space-y-6">
 
           {/* Search Section */}

@@ -24,6 +24,8 @@ const PublicHeader = () => {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: theme }));
   }, [theme]);
 
   const toggleTheme = () => {

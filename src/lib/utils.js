@@ -10,8 +10,8 @@ export function cn(...inputs) {
  */
 
 // Allowed file types for document uploads
-export const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-export const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
+export const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+export const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.pdf'];
 
 // Maximum file size in bytes (10MB)
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -33,7 +33,7 @@ export function validateFileType(file) {
   if (!ALLOWED_FILE_TYPES.includes(fileType) && !ALLOWED_FILE_EXTENSIONS.includes(fileExtension)) {
     return {
       valid: false,
-      error: 'Invalid file type. Only JPG, JPEG, and PNG images are allowed.'
+      error: 'Invalid file type. Only JPG, JPEG, PNG, and PDF files are allowed.'
     };
   }
 

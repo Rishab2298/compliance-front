@@ -4,6 +4,7 @@ import { Upload, X, Check, AlertCircle, FileText, Image as ImageIcon, Loader2 } 
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
   getPresignedUrls,
   uploadToS3,
@@ -13,6 +14,7 @@ import { validateFile, canUploadMoreDocuments } from '@/lib/utils';
 
 const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount = 0, documentTypes = [] }) => {
   const { getToken } = useAuth();
+  const { t } = useTranslation();
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -60,7 +62,7 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
     // Show errors for invalid files
     if (invalidFiles.length > 0) {
       invalidFiles.forEach(({ file, errors }) => {
-        toast.error(`${file.name} validation failed`, {
+        toast.error(`${file.name} ${t('documentUpload.toasts.validationFailed')}`, {
           description: errors.join('. '),
         });
       });
@@ -81,8 +83,8 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
 
     if (!uploadCheck.canUpload) {
       const errorTitle = uploadCheck.reason === 'plan-limit'
-        ? "Plan limit reached"
-        : "Document types needed";
+        ? t('documentUpload.toasts.planLimitReached')
+        : t('documentUpload.toasts.documentTypesNeeded');
 
       toast.error(errorTitle, {
         description: uploadCheck.message,
@@ -130,7 +132,7 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
   // Upload all files
   const handleUpload = async () => {
     if (files.length === 0) {
-      toast.error('Please select files to upload');
+      toast.error(t('documentUpload.toasts.noFiles'));
       return;
     }
 
@@ -145,7 +147,7 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
         contentType: f.file.type,
       }));
 
-      toast.info('Preparing upload...');
+      toast.info(t('documentUpload.toasts.preparing'));
       const presignedData = await getPresignedUrls(driverId, fileData, token);
 
       // Step 2: Upload each file to S3
@@ -198,21 +200,21 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
       const failed = results.length - successful;
 
       if (successful > 0) {
-        toast.success(`${successful} file(s) uploaded successfully!`);
+        toast.success(`${successful} ${t('documentUpload.toasts.uploadSuccess')}`);
         if (onUploadComplete) {
           onUploadComplete();
         }
       }
 
       if (failed > 0) {
-        toast.error(`${failed} file(s) failed to upload`);
+        toast.error(`${failed} ${t('documentUpload.toasts.uploadFailed')}`);
       }
 
       // Remove successful uploads from list
       setFiles((prev) => prev.filter((f) => f.status !== 'success'));
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error.message || 'Failed to upload files');
+      toast.error(error.message || t('documentUpload.toasts.uploadError'));
     } finally {
       setIsUploading(false);
     }
@@ -233,15 +235,15 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
       >
         <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
         <h3 className="mb-2 text-lg font-semibold text-gray-900">
-          Upload Documents
+          {t('documentUpload.title')}
         </h3>
         <p className="mb-4 text-sm text-gray-500">
-          Drag and drop files here, or click to browse
+          {t('documentUpload.dragAndDrop')}
         </p>
         <input
           type="file"
           multiple
-          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+          accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
           onChange={handleFileSelect}
           className="hidden"
           id="file-upload"
@@ -255,11 +257,11 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
             disabled={isUploading}
             onClick={() => document.getElementById('file-upload').click()}
           >
-            Select Files
+            {t('documentUpload.selectFiles')}
           </Button>
         </label>
         <p className="mt-2 text-xs text-gray-400">
-          Supported: JPG, JPEG, PNG only (Max 10MB per file)
+          {t('documentUpload.supportedFormats')}
         </p>
       </div>
 
@@ -268,7 +270,7 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-gray-900">
-              Selected Files ({files.length})
+              {t('documentUpload.selectedFiles')} ({files.length})
             </h4>
             <Button
               onClick={handleUpload}
@@ -278,12 +280,12 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
               {isUploading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Uploading
+                  {t('documentUpload.uploading')}
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload All
+                  {t('documentUpload.uploadAll')}
                 </>
               )}
             </Button>
@@ -314,7 +316,7 @@ const DocumentUpload = ({ driverId, onUploadComplete, planData, existingDocCount
                     {fileItem.file.name}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {(fileItem.file.size / 1024 / 1024).toFixed(2)} MB
+                    {(fileItem.file.size / 1024 / 1024).toFixed(2)} {t('documentUpload.mb')}
                   </p>
 
                   {/* Progress Bar */}

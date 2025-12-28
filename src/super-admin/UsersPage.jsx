@@ -109,7 +109,7 @@ const UsersPage = () => {
           isDarkMode
         )}`}
       >
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
+        <div className="flex items-center justify-between w-full px-6 mx-auto">
           <div className="flex items-center gap-3">
             <div
               className={`p-2 rounded-[10px] ${
@@ -144,7 +144,7 @@ const UsersPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 py-8">
-        <div className="container w-full px-6 mx-auto space-y-6">
+        <div className="w-full px-6 space-y-6">
           {/* Search Bar */}
           <div
             className={`rounded-[10px] p-4 border ${getThemeClasses.bg.card(

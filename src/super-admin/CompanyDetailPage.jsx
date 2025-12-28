@@ -118,13 +118,13 @@ const CompanyDetailPage = () => {
     return (
       <div className={`flex flex-col w-screen min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-          <div className="container flex items-center gap-4 w-full px-6 mx-auto">
+          <div className="flex items-center gap-4 w-full px-6 mx-auto">
             <Skeleton className="h-9 w-24 rounded-[10px]" />
             <Skeleton className="h-7 w-48 rounded-[10px]" />
           </div>
         </header>
         <div className="flex-1 py-8">
-          <div className="container w-full px-6 mx-auto space-y-6">
+          <div className="w-full px-6 space-y-6">
             <Skeleton className="h-40 w-full rounded-[10px]" />
             <Skeleton className="h-60 w-full rounded-[10px]" />
             <Skeleton className="h-60 w-full rounded-[10px]" />
@@ -138,7 +138,7 @@ const CompanyDetailPage = () => {
     return (
       <div className={`flex flex-col w-screen min-h-screen relative ${getThemeClasses.bg.primary(isDarkMode)}`}>
         <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-          <div className="container flex items-center gap-4 w-full px-6 mx-auto">
+          <div className="flex items-center gap-4 w-full px-6 mx-auto">
             <Button
               variant="ghost"
               size="sm"
@@ -176,7 +176,7 @@ const CompanyDetailPage = () => {
 
       {/* Header */}
       <header className={`sticky top-0 z-10 flex items-center h-16 border-b shrink-0 ${getThemeClasses.bg.header(isDarkMode)}`}>
-        <div className="container flex items-center justify-between w-full px-6 mx-auto">
+        <div className="flex items-center justify-between w-full px-6 mx-auto">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -204,7 +204,7 @@ const CompanyDetailPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 py-8">
-        <div className="container w-full px-6 mx-auto space-y-6">
+        <div className="w-full px-6 space-y-6">
 
           {/* Overview Section */}
           <div className={`rounded-[10px] border p-6 ${getThemeClasses.bg.card(isDarkMode)}`}>

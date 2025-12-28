@@ -24,9 +24,14 @@ import {
   Redo,
   Link2,
   Image as ImageIcon,
+  FileText,
+  X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getThemeClasses } from "@/utils/themeClasses";
+import { useAuth } from "@clerk/clerk-react";
+import { generatePdfUploadUrl, uploadPdfToS3 } from "@/api/policies";
+import { toast } from "sonner";
 
 /**
  * PolicyEditor Component
@@ -41,10 +46,15 @@ const PolicyEditor = ({
   currentVersion = null,
   loading = false,
   readOnly = false,
+  initialPdfUrl = null,
 }) => {
   const { isDarkMode } = useTheme();
+  const { getToken } = useAuth();
   const [showPreview, setShowPreview] = useState(false);
   const [isMajorVersion, setIsMajorVersion] = useState(false);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(initialPdfUrl);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -62,6 +72,64 @@ const PolicyEditor = ({
     editable: !readOnly && !showPreview,
   });
 
+  const handlePdfFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.includes('pdf')) {
+        toast.error('Please select a PDF file');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        toast.error('PDF file size must be less than 10MB');
+        return;
+      }
+      setPdfFile(file);
+    }
+  };
+
+  const uploadPdf = async () => {
+    if (!pdfFile || !policyType) return null;
+
+    try {
+      setUploadingPdf(true);
+      const token = await getToken();
+
+      // Generate the next version number for the filename
+      const version = currentVersion || '1.0.0';
+
+      // Get presigned upload URL from backend
+      const { uploadUrl, pdfUrl: newPdfUrl } = await generatePdfUploadUrl(token, {
+        policyType,
+        version,
+        filename: pdfFile.name,
+      });
+
+      // Upload the PDF directly to S3
+      await uploadPdfToS3(uploadUrl, pdfFile);
+
+      setPdfUrl(newPdfUrl);
+      toast.success('PDF uploaded successfully');
+      return newPdfUrl;
+    } catch (error) {
+      console.error('PDF upload error:', error);
+      toast.error(error.message || 'Failed to upload PDF');
+      return null;
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
+
+  const removePdf = () => {
+    setPdfFile(null);
+    setPdfUrl(null);
+  };
+
+  const viewPdf = () => {
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+    }
+  };
+
   const handleSave = async (publish = false) => {
     if (!editor) return;
 
@@ -71,10 +139,20 @@ const PolicyEditor = ({
       return;
     }
 
+    // Upload PDF if a new file was selected
+    let finalPdfUrl = pdfUrl;
+    if (pdfFile && !uploadingPdf) {
+      finalPdfUrl = await uploadPdf();
+      if (!finalPdfUrl && pdfFile) {
+        // Upload failed
+        return;
+      }
+    }
+
     if (publish) {
-      await onPublish?.({ content, isMajorVersion });
+      await onPublish?.({ content, isMajorVersion, pdfUrl: finalPdfUrl });
     } else {
-      await onSave?.({ content, isMajorVersion });
+      await onSave?.({ content, isMajorVersion, pdfUrl: finalPdfUrl });
     }
   };
 
@@ -167,6 +245,60 @@ const PolicyEditor = ({
                   Major version
                 </span>
               </label>
+
+              <div className={`w-px h-8 ${isDarkMode ? "bg-slate-700" : "bg-gray-300"}`}></div>
+
+              {/* PDF Upload */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handlePdfFileChange}
+                  className="hidden"
+                  id="pdf-upload"
+                  disabled={uploadingPdf}
+                />
+                <label
+                  htmlFor="pdf-upload"
+                  className={`flex items-center gap-2 px-3 py-2 rounded-[10px] text-sm cursor-pointer ${
+                    isDarkMode
+                      ? "bg-slate-700 hover:bg-slate-600 text-white"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-900"
+                  } ${uploadingPdf ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <FileText className="w-4 h-4" />
+                  {pdfFile || pdfUrl ? 'Change PDF' : 'Upload PDF'}
+                </label>
+                {(pdfFile || pdfUrl) && (
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs ${getThemeClasses.text.secondary(isDarkMode)}`}>
+                      {pdfFile ? pdfFile.name : 'PDF attached'}
+                    </span>
+                    {pdfUrl && !pdfFile && (
+                      <button
+                        onClick={viewPdf}
+                        className={`p-1 rounded hover:bg-blue-500/20 ${
+                          isDarkMode ? "text-blue-400" : "text-blue-600"
+                        }`}
+                        title="View PDF"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={removePdf}
+                      className={`p-1 rounded hover:bg-red-500/20 ${
+                        isDarkMode ? "text-red-400" : "text-red-600"
+                      }`}
+                      title="Remove PDF"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className={`w-px h-8 ${isDarkMode ? "bg-slate-700" : "bg-gray-300"}`}></div>
 
               <button
                 onClick={() => setShowPreview(!showPreview)}

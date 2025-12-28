@@ -1,0 +1,1032 @@
+{
+  "addEmployee": {
+    "title": "Aggiungi un Dipendente",
+    "breadcrumbEmployees": "Dipendenti",
+    "breadcrumbAdd": "Aggiungi Dipendente",
+    "subtitle": "Completa i passaggi seguenti per aggiungere un nuovo dipendente alla tua lista",
+    "steps": {
+      "personalInfo": "Info Personali",
+      "uploadMethod": "Metodo di Caricamento",
+      "documents": "Documenti",
+      "processing": "Elaborazione",
+      "verification": "Verifica",
+      "reminders": "Promemoria",
+      "review": "Revisione",
+      "complete": "Completato"
+    },
+    "step1": {
+      "title": "Informazioni Personali",
+      "subtitle": "Si prega di compilare i dettagli di base per iniziare",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Indirizzo Email",
+      "phone": "Numero di Telefono",
+      "location": "Località",
+      "employeeId": "ID Dipendente",
+      "tip": "💡 Suggerimento: Assicurati di includere il prefisso internazionale nel numero di telefono senza spazi o trattini. Ad esempio:",
+      "tipUS": "per gli Stati Uniti o",
+      "tipCA": "per il Canada. Questo garantisce che le notifiche SMS vengano consegnate con successo al dipendente.",
+      "errors": {
+        "firstNameRequired": "Il nome è obbligatorio",
+        "lastNameRequired": "Il cognome è obbligatorio",
+        "emailRequired": "L'email è obbligatoria",
+        "emailInvalid": "Formato email non valido",
+        "phoneRequired": "Il numero di telefono è obbligatorio",
+        "locationRequired": "La località è obbligatoria",
+        "employeeIdRequired": "L'ID dipendente è obbligatorio"
+      }
+    },
+    "step2": {
+      "title": "Caricamento Documenti",
+      "subtitle": "Come desideri aggiungere i documenti?",
+      "uploadNow": "Carica Ora",
+      "uploadNowDesc": "Carica i tuoi documenti immediatamente e completa il processo subito",
+      "sendLink": "Invia Link al Dipendente",
+      "sendLinkDesc": "Invieremo un link sicuro al dipendente per caricare i documenti a sua comodità",
+      "skipNow": "Salta per Ora",
+      "skipNowDesc": "Continua con la registrazione e aggiungi i documenti più tardi dal tuo pannello",
+      "errors": {
+        "selectMethod": "Si prega di selezionare un metodo di caricamento"
+      }
+    },
+    "step3": {
+      "title": "Carica Documenti",
+      "subtitle": "Carica e inserisci i dettagli di tutti i documenti richiesti",
+      "noDocTypesTitle": "Nessun tipo di documento configurato",
+      "noDocTypesDesc": "Si prega di configurare i tipi di documenti nelle impostazioni aziendali prima.",
+      "requiredDocuments": "Documenti Richiesti",
+      "pleaseUploadAll": "Si prega di caricare tutti i documenti elencati sopra",
+      "dragAndDrop": "Trascina e rilascia i file qui, o clicca per sfogliare",
+      "selectFiles": "Seleziona File",
+      "supportedFormats": "Supportati: JPG, JPEG, PNG, PDF (Massimo 10MB per file)",
+      "uploadedFiles": "File Caricati",
+      "documentsUploaded": "documenti caricati",
+      "of": "di",
+      "mb": "MB",
+      "status": {
+        "pending": "In attesa...",
+        "uploading": "Caricamento",
+        "uploaded": "Caricato",
+        "failed": "Fallito"
+      },
+      "uploadingToStorage": "Caricamento documenti nell'archivio sicuro...",
+      "someFilesFailed": "Alcuni file non sono stati caricati. Si prega di rimuoverli e riprovare.",
+      "allUploaded": "Tutti i documenti caricati con successo! Clicca \"Prossimo Passo\" per continuare.",
+      "tip": "💡 Suggerimento: Carica tutte le immagini dei documenti richiesti. Inserirai i dettagli del documento nei prossimi passaggi usando l'IA o manualmente.",
+      "toasts": {
+        "validationFailed": "validazione fallita",
+        "planLimitReached": "Limite del piano raggiunto",
+        "documentTypesNeeded": "Tipi di documenti necessari",
+        "uploadedSuccess": "caricato con successo!",
+        "uploadFailed": "Errore nel caricamento"
+      }
+    },
+    "step8": {
+      "skipped": {
+        "title": "Documenti Saltati",
+        "description": "Hai scelto di saltare il caricamento dei documenti per ora. Puoi aggiungere documenti più tardi dalla pagina del profilo del dipendente.",
+        "whatNext": "Cosa succede dopo?",
+        "whatNextDesc": "Dopo aver creato il dipendente, puoi caricare documenti o inviare loro un link di invito per caricare i documenti da soli."
+      },
+      "creating": "Creazione Profilo Dipendente...",
+      "creatingDesc": "Attendere prego mentre salviamo le informazioni del dipendente.",
+      "failed": "Creazione Dipendente Fallita",
+      "invitationSent": "Invito Inviato con Successo!",
+      "employeeAdded": "Dipendente Aggiunto con Successo!",
+      "invitationDesc": "Un'email",
+      "invitationDescSMS": "e SMS",
+      "invitationDescTo": "con un link di caricamento sicuro è stato inviato a",
+      "employeeAddedDesc": "è stato aggiunto alla tua lista di dipendenti.",
+      "viewAll": "Vedi Tutti i Dipendenti",
+      "addAnother": "Aggiungi un Altro Dipendente",
+      "tryAgain": "Riprova"
+    },
+    "buttons": {
+      "cancel": "Annulla",
+      "back": "Indietro",
+      "nextStep": "Prossimo Passo",
+      "completeSubmit": "Completa e Invia",
+      "goToEmployees": "Vai ai Dipendenti",
+      "submitting": "Invio in corso...",
+      "creatingEmployee": "Creazione Dipendente..."
+    },
+    "stepIndicator": {
+      "step": "Passo",
+      "of": "di"
+    },
+    "toasts": {
+      "employeeLimitReached": "Limite dipendenti raggiunto",
+      "employeeLimitDesc": "Si prega di aggiornare il piano per aggiungere più dipendenti. Limite attuale:",
+      "employeeLimitDescSuffix": "dipendenti.",
+      "employeeCreated": "Dipendente creato con successo",
+      "employeeCreatedDesc": "è stato aggiunto alla tua lista di dipendenti.",
+      "remindersSaved": "Preferenze promemoria salvate",
+      "remindersSavedDesc": "Le notifiche via email e SMS sono state configurate per",
+      "invitationSent": "Invito inviato con successo",
+      "invitationSentDesc": "Un'email di invito è stata inviata a"
+    }
+  },
+  "drivers": {
+    "title": "Gestione Dipendenti",
+    "importCSV": "Importa CSV",
+    "settings": "Impostazioni",
+    "errorLoading": "Errore nel caricamento dei dipendenti:",
+    "table": {
+      "searchPlaceholder": "Cerca dipendenti...",
+      "addEmployee": "Aggiungi Dipendente",
+      "noEmployees": "Nessun dipendente trovato.",
+      "columns": {
+        "employee": "Dipendente",
+        "email": "Email",
+        "phone": "Telefono",
+        "documents": "Documenti",
+        "compliance": "Conformità"
+      },
+      "status": {
+        "verified": "Verificato",
+        "expiringSoon": "Scade Presto",
+        "expired": "Scaduto",
+        "pending": "In Attesa",
+        "processing": "In Elaborazione"
+      },
+      "actions": {
+        "viewDetails": "Vedi Dettagli",
+        "delete": "Elimina",
+        "openMenu": "Apri menu"
+      },
+      "deleteDialog": {
+        "title": "Elimina Dipendente",
+        "description": "Sei sicuro di voler eliminare",
+        "descriptionSuffix": "Questa azione non può essere annullata. Tutti i documenti e i registri associati a questo dipendente saranno rimossi permanentemente.",
+        "cancel": "Annulla",
+        "delete": "Elimina"
+      },
+      "pagination": {
+        "showing": "Mostrando",
+        "of": "di",
+        "employees": "dipendente/i",
+        "page": "Pagina",
+        "previous": "Precedente",
+        "next": "Successivo"
+      }
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "di",
+      "employees": "dipendenti",
+      "previous": "Precedente",
+      "next": "Successivo",
+      "page": "Pagina"
+    },
+    "toasts": {
+      "permissionDenied": "Permesso negato",
+      "noPermissionDelete": "Non hai il permesso di eliminare dipendenti.",
+      "noPermissionCreate": "Non hai il permesso di creare dipendenti.",
+      "deletedSuccess": "è stato eliminato con successo",
+      "deleteError": "Errore nell'eliminazione del dipendente",
+      "importSuccess": "Importati con successo",
+      "importSuccessPlural": "dipendente/i",
+      "limitReached": "Limite dipendenti raggiunto!",
+      "limitReachedDesc": "Aggiunti con successo",
+      "limitReachedDescEnd": "dipendente/i non possono essere aggiunti. Si prega di aggiornare il piano per aggiungere più dipendenti.",
+      "importFailed": "Errore nell'importazione di",
+      "importFailedSuffix": "dipendente/i",
+      "noEmployeesImported": "Nessun dipendente è stato importato. Si prega di controllare il file CSV."
+    }
+  },
+  "driverDetail": {
+    "title": "Dettagli Dipendente",
+    "breadcrumbEmployees": "Dipendenti",
+    "employeeNotFound": "Dipendente non trovato",
+    "back": "Indietro",
+    "requestDocuments": "Richiedi Documenti",
+    "mailing": "Invio in corso",
+    "edit": "Modifica",
+    "cancel": "Annulla",
+    "saving": "Salvataggio",
+    "saveChanges": "Salva Modifiche",
+    "profile": {
+      "employeeName": "Nome Dipendente",
+      "employeeId": "Nessun ID dipendente",
+      "compliant": "Conforme",
+      "email": "Email",
+      "phone": "Telefono",
+      "addedOn": "Aggiunto il"
+    },
+    "pendingAlert": {
+      "needDetails": "Documento",
+      "needDetailsPlural": "Documenti",
+      "needDetailsSuffix": "Richiedono Dettagli",
+      "description": "Inserire le informazioni del documento per attivare questi documenti",
+      "enterDetails": "Inserisci Dettagli"
+    },
+    "uploadSection": {
+      "title": "Carica Documenti",
+      "subtitle": "Aggiungi nuovi documenti per questo dipendente"
+    },
+    "documentsOverview": {
+      "title": "Panoramica Documenti",
+      "documentsOnFile": "documento/i in archivio",
+      "expires": "Scade",
+      "uploaded": "Caricato",
+      "requestUpdate": "Richiedi Aggiornamento",
+      "sending": "Invio in corso",
+      "noDocuments": "Nessun documento ancora",
+      "uploadToStart": "Carica documenti usando la sezione sopra per iniziare"
+    },
+    "reminderHistory": {
+      "title": "Cronologia Promemoria",
+      "reminder": "promemoria",
+      "reminderPlural": "promemoria",
+      "noReminders": "Nessun promemoria inviato ancora",
+      "remindersWillAppear": "I promemoria appariranno qui quando inviati",
+      "defaultMessage": "Promemoria inviato al conducente",
+      "sent": "Inviato",
+      "daysBeforeExpiry": "giorno",
+      "daysBeforeExpiryPlural": "giorni",
+      "beforeExpiry": "prima della scadenza",
+      "loadingHistory": "Caricamento cronologia promemoria...",
+      "failedToLoad": "Errore nel caricamento della cronologia promemoria",
+      "statusSent": "Inviato",
+      "statusFailed": "Fallito",
+      "statusPending": "In Attesa",
+      "channelEmail": "Email",
+      "channelSMS": "SMS",
+      "viewHistory": "Visualizza cronologia promemoria"
+    },
+    "documentStatus": {
+      "verified": "Verificato",
+      "expiringSoon": "Scade Presto",
+      "expired": "Scaduto",
+      "processing": "In Elaborazione",
+      "pending": "In Attesa"
+    },
+    "stats": {
+      "complianceScore": "Punteggio di Conformità",
+      "totalDocuments": "Documenti Totali",
+      "verified": "Verificato",
+      "expiringSoon": "Scade Presto",
+      "expired": "Scaduto"
+    },
+    "deleteDialog": {
+      "title": "Elimina Documento",
+      "description": "Sei sicuro di voler eliminare questo documento? Questa azione non può essere annullata.",
+      "cancel": "Annulla",
+      "delete": "Elimina"
+    },
+    "toasts": {
+      "updateSuccess": "Informazioni del conducente aggiornate con successo",
+      "updateError": "Errore nell'aggiornamento delle informazioni del conducente",
+      "requestError": "L'email del conducente è richiesta per inviare la richiesta di documenti",
+      "noDocTypes": "Nessun tipo di documento configurato. Si prega di aggiungere tipi di documenti nelle impostazioni.",
+      "requestSent": "Richiesta documenti inviata con successo a",
+      "requestFailed": "Errore nell'invio della richiesta documenti",
+      "uploadSuccess": "Documenti caricati! Clicca \"Inserisci Dettagli\" per aggiungere informazioni sul documento.",
+      "viewError": "Errore nella visualizzazione del documento:",
+      "downloadSuccess": "Download completato",
+      "downloadError": "Errore nel download del documento:",
+      "deleteSuccess": "Documento eliminato con successo",
+      "deleteError": "Errore nell'eliminazione del documento:",
+      "updateRequestSent": "Richiesta di aggiornamento documento inviata a",
+      "updateRequestDesc": "Al conducente verrà chiesto di caricare una copia nuova di"
+    },
+    "form": {
+      "employeeName": "Nome Dipendente",
+      "enterEmployeeName": "Inserisci il nome del dipendente",
+      "enterEmail": "Inserisci l'indirizzo email",
+      "enterPhone": "Inserisci il numero di telefono"
+    },
+    "actions": {
+      "viewDocument": "Visualizza documento",
+      "downloadDocument": "Scarica documento",
+      "deleteDocument": "Elimina documento",
+      "editDocument": "Modifica documento",
+      "requestUpdate": "Richiedi al conducente di caricare un documento aggiornato"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "addEmployee": "Aggiungi Dipendente",
+    "criticalCompliance": {
+      "title": "Problemi Critici di Conformità",
+      "expiredDocuments": "documento scaduto",
+      "expiredDocumentsPlural": "documenti scaduti",
+      "expiringIn7Days": "scadono in <7 giorni",
+      "viewDetails": "Vedi Dettagli"
+    },
+    "overview": {
+      "title": "Panoramica",
+      "subtitle": "Metriche chiave e panoramica della conformità",
+      "totalEmployees": "Totale Dipendenti",
+      "activeInSystem": "Attivi nel sistema",
+      "complianceRate": "Tasso di Conformità",
+      "excellent": "Eccellente",
+      "good": "Buono",
+      "needsAttention": "Richiede attenzione",
+      "expiringSoon": "Scade Presto",
+      "critical": "critico",
+      "warning": "avviso",
+      "pendingReview": "In Attesa di Revisione",
+      "awaitingVerification": "In attesa di verifica"
+    },
+    "credits": {
+      "title": "Crediti e Utilizzo",
+      "currentPlan": "Piano attuale",
+      "managePlan": "Gestisci Piano",
+      "aiCreditsRemaining": "Crediti AI Rimanenti",
+      "usedFor": "Utilizzato per scansione e elaborazione documenti",
+      "activeEmployees": "Dipendenti Attivi",
+      "upTo": "Fino a",
+      "employeesOn": "dipendenti sul piano",
+      "plan": "piano",
+      "unlimited": "Illimitato sul piano attuale",
+      "lowCredits": "Crediti Bassi:",
+      "lowCreditsMessage": "Hai meno di 5 crediti AI rimanenti. Considera l'upgrade del tuo piano o l'acquisto di crediti aggiuntivi."
+    },
+    "documentStatus": {
+      "title": "Stato Documenti",
+      "subtitle": "Panoramica di tutti i documenti per stato",
+      "viewAll": "Vedi Tutti",
+      "verified": "Verificato",
+      "upToDate": "Aggiornato",
+      "expiringSoon": "Scade Presto",
+      "actionNeeded": "Azione necessaria",
+      "expired": "Scaduto",
+      "urgent": "Urgente",
+      "pending": "In Attesa",
+      "underReview": "In revisione"
+    },
+    "employeesAttention": {
+      "title": "Dipendenti che Richiedono Attenzione",
+      "subtitle": "Dipendenti non conformi con documenti mancanti, scaduti, in scadenza o in attesa",
+      "allClear": "Tutto a Posto!",
+      "allCompliant": "Tutti i dipendenti sono completamente conformi",
+      "missing": "mancante",
+      "expired": "scaduto",
+      "expiringSoon": "scade presto",
+      "pending": "in attesa"
+    },
+    "recentlyAdded": {
+      "title": "Aggiunti di Recente",
+      "subtitle": "Ultimi dipendenti nel sistema",
+      "viewAll": "Vedi Tutti",
+      "noEmployees": "Nessun Dipendente Ancora",
+      "addFirstEmployee": "Aggiungi il tuo primo dipendente per iniziare",
+      "added": "Aggiunto"
+    },
+    "quickActions": {
+      "title": "Azioni Rapide",
+      "subtitle": "Compiti comuni e scorciatoie",
+      "addNewEmployee": "Aggiungi Nuovo Dipendente",
+      "viewReminders": "Vedi Promemoria",
+      "configureSettings": "Configura Impostazioni",
+      "reportIssue": "Segnala un Problema"
+    }
+  },
+  "documentTypeManager": {
+    "title": "Tipi di Documenti",
+    "subtitle": "Configura i tipi di documenti e le impostazioni di estrazione IA per la cattura automatica dei dati",
+    "addCustomType": "Aggiungi Tipo Personalizzato",
+    "errorLoading": "Errore nel caricamento dei tipi di documenti:",
+    "noDocTypesConfigured": "Nessun tipo di documento configurato",
+    "system": "Sistema",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "max": "max",
+    "aiEnabled": "IA Abilitata",
+    "manualEntry": "Inserimento Manuale",
+    "fields": "campi",
+    "extractsStructuredData": "Estrae campi di dati strutturati",
+    "classificationOnly": "Solo classificazione",
+    "fieldsLabel": "Campi",
+    "more": "altri",
+    "dialog": {
+      "createTitle": "Crea Tipo di Documento Personalizzato",
+      "editTitle": "Modifica",
+      "description": "Configura le impostazioni del tipo di documento, modalità di estrazione IA e campi personalizzati",
+      "basicSettings": "Impostazioni di Base",
+      "documentTypeName": "Nome del Tipo di Documento",
+      "namePlaceholder": "es., Certificato Medico",
+      "systemTypesCannotRename": "I tipi di sistema non possono essere rinominati",
+      "aiExtraction": "Estrazione IA",
+      "autoExtractData": "Estrai automaticamente i dati dai documenti",
+      "extractionMode": "Modalità di Estrazione",
+      "fieldExtraction": "Estrazione di Campi",
+      "classificationOnly": "Solo Classificazione",
+      "fieldConfiguration": "Configurazione Campi",
+      "configuredFields": "Campi Configurati",
+      "required": "Obb",
+      "addNewField": "Aggiungi Nuovo Campo",
+      "nameAPI": "Nome (API)",
+      "namePlaceholderField": "dataScadenza",
+      "label": "Etichetta",
+      "labelPlaceholder": "Data di Scadenza",
+      "type": "Tipo",
+      "req": "Obb",
+      "ai": "IA",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Aiuta l'IA a capire cosa estrarre",
+      "addField": "Aggiungi Campo",
+      "cancel": "Annulla",
+      "saving": "Salvataggio...",
+      "save": "Salva",
+      "create": "Crea"
+    },
+    "deleteDialog": {
+      "title": "Elimina Tipo di Documento",
+      "description": "Sei sicuro di voler eliminare",
+      "cannotUndo": "Questa azione non può essere annullata.",
+      "cancel": "Annulla",
+      "deleting": "Eliminazione...",
+      "delete": "Elimina"
+    },
+    "toasts": {
+      "deleted": "eliminato con successo",
+      "deleteFailed": "Errore nell'eliminazione del tipo di documento",
+      "enterFieldName": "Si prega di inserire un nome di campo",
+      "enterFieldLabel": "Si prega di inserire un'etichetta di campo",
+      "duplicateField": "Esiste già un campo con questo nome",
+      "invalidFieldName": "Il nome del campo deve iniziare con una lettera e contenere solo lettere, numeri e underscore",
+      "enterDocTypeName": "Si prega di inserire un nome per il tipo di documento",
+      "atLeastOneField": "Si prega di aggiungere almeno un campo per la modalità di estrazione dei campi",
+      "created": "creato con successo",
+      "updated": "aggiornato con successo",
+      "saveFailed": "Errore nel salvataggio del tipo di documento",
+      "activated": "attivato",
+      "deactivated": "disattivato",
+      "toggleFailed": "Errore nel cambio dello stato del tipo di documento",
+      "planLimitReached": "il piano consente solo",
+      "activeDocumentType": "tipo di documento attivo",
+      "activeDocumentTypes": "tipi di documenti attivi",
+      "upgradeToActivate": "Aggiorna per attivare più tipi di documenti",
+      "upgrade": "Aggiorna"
+    }
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "saveChanges": "Salva Modifiche",
+    "saving": "Salvataggio",
+    "saveAllChanges": "Salva Tutte le Modifiche",
+    "savingChanges": "Salvataggio Modifiche",
+    "companyInfo": {
+      "title": "Informazioni sull'Azienda",
+      "subtitle": "Visualizza i dettagli della tua azienda",
+      "companyName": "Nome dell'Azienda",
+      "companySize": "Dimensione dell'Azienda",
+      "operatingRegion": "Regione Operativa",
+      "plan": "Piano",
+      "na": "N/D",
+      "free": "Gratuito",
+      "tip": "💡 Suggerimento: Hai bisogno di aggiornare le informazioni della tua azienda? Contatta il supporto per apportare modifiche a questi dettagli."
+    },
+    "reminderSettings": {
+      "title": "Impostazioni Promemoria",
+      "subtitle": "Scegli fino a 3 intervalli di promemoria prima della scadenza del documento",
+      "maxSelected": "Massimo di 3 intervalli di promemoria selezionati",
+      "selected": "Selezionato",
+      "automaticReminders": "Promemoria Automatici:",
+      "automaticRemindersDesc": "Le tue notifiche di promemoria vengono inviate automaticamente ogni giorno alle",
+      "automaticRemindersTime": "8:00 Ora della Costa Orientale",
+      "automaticRemindersLocation": "(fuso orario di New York/Toronto). Non devi fare nulla - ti informeremo quando i documenti si avvicineranno alle loro date di scadenza!",
+      "tip": "💡 Suggerimento: Consigliamo di impostare promemoria a 30, 15 e 7 giorni per assicurarti di non perdere mai la scadenza di un documento."
+    },
+    "notificationPreferences": {
+      "title": "Preferenze di Notifica",
+      "subtitle": "Configura come ricevi gli avvisi di conformità",
+      "adminEmail": "Email dell'Amministratore",
+      "adminPhone": "Numero di Telefono dell'Amministratore",
+      "notificationMethod": "Metodo di Notifica",
+      "emailOnly": "Solo Email",
+      "smsOnly": "Solo SMS",
+      "both": "Email e SMS",
+      "notificationRecipients": "Destinatari delle Notifiche",
+      "admin": "Amministratore",
+      "drivers": "Dipendenti",
+      "tip": "💡 Suggerimento: Abilita le notifiche per i dipendenti per tenere il tuo team informato automaticamente sulle date di scadenza dei loro documenti."
+    },
+    "toasts": {
+      "settingsSaved": "Impostazioni salvate con successo",
+      "settingsFailed": "Errore nel salvataggio delle impostazioni",
+      "maxReminders": "Massimo di 3 intervalli di promemoria consentiti"
+    }
+  },
+  "billing": {
+    "title": "Fatturazione",
+    "currentPlan": {
+      "title": "Piano Attuale",
+      "subtitle": "Dettagli del tuo abbonamento e utilizzo",
+      "plan": "Piano",
+      "nextBilling": "Prossima fatturazione",
+      "drivers": "Dipendenti",
+      "aiCredits": "Crediti IA",
+      "available": "disponibili",
+      "creditsRefill": "crediti ricaricati mensilmente",
+      "buyMore": "Acquista Altri"
+    },
+    "lowCreditsAlert": {
+      "title": "Crediti Bassi",
+      "description": "Hai meno di 5 crediti IA rimanenti. Acquistane altri per continuare a scansionare documenti.",
+      "buyCredits": "Acquista Crediti"
+    },
+    "plans": {
+      "title": "Piani Disponibili",
+      "subtitle": "Scegli il piano che si adatta alle tue esigenze",
+      "monthly": "Mensile",
+      "yearly": "Annuale",
+      "yearlyDiscount": "-20%",
+      "popular": "Popolare",
+      "current": "Attuale",
+      "custom": "Personalizzato",
+      "mo": "mese",
+      "yr": "anno",
+      "save": "Risparmia",
+      "year": "anno",
+      "drivers": "dipendenti",
+      "unlimited": "Illimitato",
+      "docsPerDriver": "doc per dipendente",
+      "aiCreditsPerMonth": "Crediti IA/mese",
+      "emailReminders": "Promemoria via email",
+      "emailSmsReminders": "Promemoria via email + SMS",
+      "prioritySupport": "Supporto prioritario",
+      "advancedAnalytics": "Analitiche avanzate",
+      "dedicatedSupport": "Supporto dedicato",
+      "customIntegrations": "Integrazioni personalizzate",
+      "currentPlan": "Piano Attuale",
+      "contactSales": "Contatta Vendite",
+      "upgrade": "Aggiorna",
+      "processing": "Elaborazione...",
+      "freePlan": {
+        "title": "Gratuito",
+        "description": "Perfetto per provare Complyo. Inizia con funzionalità di base senza costi.",
+        "limitedCapacity": "Capacità limitata",
+        "basicTracking": "Tracciamento di base",
+        "oneTimeOnly": "Solo una volta",
+        "basicAlerts": "Avvisi di base",
+        "foreverFree": "Gratuito per sempre",
+        "contactSupport": "Contatta Supporto"
+      }
+    },
+    "invoices": {
+      "title": "Fatture e Storico Fatturazione",
+      "totalTransactions": "transazioni totali",
+      "noTransactions": "Nessuna transazione ancora",
+      "noInvoices": "Nessuna fattura ancora",
+      "description": "Lo storico della tua fatturazione apparirà qui dopo la tua prima transazione",
+      "viewInvoice": "Visualizza Fattura",
+      "paid": "PAGATO",
+      "plan": "Piano",
+      "creditPurchase": "Acquisto Crediti"
+    },
+    "toasts": {
+      "alreadyOnPlan": "Sei già su questo piano",
+      "contactSales": "Contatta le vendite per i prezzi Enterprise",
+      "contactSalesDesc": "Inviaci un'email a sales@complyo.io",
+      "downgradeNotAvailable": "Downgrade non disponibile nell'interfaccia",
+      "downgradeDesc": "Contatta il supporto per il downgrade",
+      "failedToChangePlan": "Errore nel cambio del piano",
+      "failedToPurchaseCredits": "Errore nell'acquisto dei crediti"
+    }
+  },
+  "teamManagement": {
+    "title": "Gestione del Team",
+    "inviteButton": "Invita Membro del Team",
+    "limitReached": "Limite Raggiunto",
+    "accessDenied": {
+      "title": "Accesso Negato",
+      "description": "Non hai il permesso di gestire i membri del team.",
+      "subdescription": "Solo gli utenti con la capacità 'manage_users' possono accedere a questa pagina."
+    },
+    "roles": {
+      "COMPLIANCE_MANAGER": {
+        "label": "Responsabile della Conformità",
+        "description": "Accesso completo a dipendenti e documenti"
+      },
+      "HR_LEAD": {
+        "label": "Responsabile HR",
+        "description": "Gestisci dipendenti e carica documenti"
+      },
+      "VIEWER": {
+        "label": "Visualizzatore",
+        "description": "Accesso in sola lettura"
+      },
+      "BILLING": {
+        "label": "Fatturazione",
+        "description": "Solo fatturazione e abbonamenti"
+      }
+    },
+    "teamMembers": {
+      "title": "Membri del Team",
+      "subtitle": "Gestisci i membri del tuo team e i loro ruoli",
+      "noMembers": "Nessun membro del team ancora",
+      "noMembersDesc": "Inizia invitando il tuo primo membro del team",
+      "tableHeaders": {
+        "name": "Nome",
+        "email": "Email",
+        "role": "Ruolo",
+        "mfa": "MFA",
+        "joined": "Iscritto",
+        "actions": "Azioni"
+      },
+      "mfaEnabled": "Abilitato",
+      "mfaDisabled": "Disabilitato",
+      "cannotEditAdmin": "Impossibile modificare il ruolo di amministratore",
+      "cannotRemoveAdmin": "Impossibile rimuovere l'amministratore dal team",
+      "editMember": "Modifica membro del team",
+      "removeMember": "Rimuovi membro del team"
+    },
+    "invitationHistory": {
+      "title": "Storico Inviti",
+      "subtitle": "Traccia tutti gli inviti ai membri del team inviati",
+      "noInvitations": "Nessun invito inviato ancora",
+      "tableHeaders": {
+        "name": "Nome",
+        "email": "Email",
+        "role": "Ruolo",
+        "status": "Stato",
+        "invitedOn": "Invitato Il",
+        "emailSent": "Email Inviata",
+        "joined": "Iscritto"
+      },
+      "error": "Errore"
+    },
+    "inviteDialog": {
+      "title": "Invita Membro del Team",
+      "description": "Invia un invito a un nuovo membro del team. Riceverà un'email con le istruzioni per configurare il proprio account.",
+      "limitWarning": "Limite: Puoi avere solo 5 membri del team.",
+      "firstName": "Nome",
+      "firstNamePlaceholder": "Mario",
+      "lastName": "Cognome",
+      "lastNamePlaceholder": "Rossi",
+      "email": "Indirizzo Email",
+      "emailPlaceholder": "collega@esempio.com",
+      "role": "Ruolo",
+      "selectRole": "Seleziona un ruolo",
+      "cancel": "Annulla",
+      "sending": "Invio in corso...",
+      "sendInvitation": "Invia Invito"
+    },
+    "editDialog": {
+      "title": "Aggiorna Ruolo Membro del Team",
+      "description": "Modifica il ruolo per",
+      "newRole": "Nuovo Ruolo",
+      "cancel": "Annulla",
+      "updating": "Aggiornamento...",
+      "updateRole": "Aggiorna Ruolo"
+    },
+    "removeDialog": {
+      "title": "Rimuovi Membro del Team",
+      "description": "Sei sicuro di voler rimuovere",
+      "fromTeam": "dal tuo team?",
+      "warning": "Questo revocherà il loro accesso ai dati della tua azienda. Questa azione può essere annullata reinvitandoli.",
+      "cancel": "Annulla",
+      "removing": "Rimozione...",
+      "removeMember": "Rimuovi Membro"
+    },
+    "toasts": {
+      "emailWarning": "Membro del team creato ma l'email è fallita",
+      "inviteSuccess": "Membro del team invitato con successo!",
+      "inviteSuccessDesc": "È stata inviata un'email di invito.",
+      "inviteFailed": "Errore nell'invito del membro del team",
+      "updateSuccess": "Ruolo del membro del team aggiornato con successo!",
+      "updateFailed": "Errore nell'aggiornamento del ruolo",
+      "removeSuccess": "Membro del team rimosso con successo!",
+      "removeFailed": "Errore nella rimozione del membro del team",
+      "fillAllFields": "Si prega di compilare tutti i campi",
+      "limitReached": "Limite membri del team raggiunto",
+      "limitReachedDesc": "Puoi invitare solo fino a 5 membri del team. Rimuovi un membro prima di invitarne uno nuovo.",
+      "selectRole": "Si prega di selezionare un ruolo"
+    }
+  },
+  "tickets": {
+    "title": "I Miei Ticket",
+    "reportIssue": "Segnala Problema",
+    "subtitle": "ticket",
+    "subtitlePlural": "ticket",
+    "trackManage": "Traccia e gestisci i tuoi ticket di supporto",
+    "stats": {
+      "totalTickets": "Ticket Totali",
+      "open": "Aperti",
+      "inProgress": "In Corso",
+      "resolved": "Risolti"
+    },
+    "filters": {
+      "searchPlaceholder": "Cerca ticket...",
+      "allStatuses": "Tutti gli Stati",
+      "allPriorities": "Tutte le Priorità",
+      "clearFilters": "Cancella Filtri"
+    },
+    "status": {
+      "open": "Aperto",
+      "inProgress": "In Corso",
+      "resolved": "Risolto",
+      "closed": "Chiuso"
+    },
+    "priority": {
+      "low": "Bassa",
+      "medium": "Media",
+      "high": "Alta",
+      "critical": "Critica"
+    },
+    "emptyState": {
+      "noTicketsFound": "Nessun ticket trovato",
+      "tryAdjustingFilters": "Prova ad aggiustare i tuoi filtri",
+      "createFirstTicket": "Crea il tuo primo ticket per iniziare",
+      "createTicket": "Crea Ticket"
+    },
+    "error": {
+      "failedToLoad": "Errore nel caricamento dei ticket",
+      "pleaseTryAgain": "Si prega di riprovare",
+      "retry": "Riprova"
+    },
+    "pagination": {
+      "previous": "Precedente",
+      "next": "Successivo",
+      "page": "Pagina",
+      "of": "di"
+    }
+  },
+  "createTicket": {
+    "title": "Segnala un Problema",
+    "description": "Descrivi il problema che stai riscontrando o la funzionalità che vorresti richiedere.",
+    "form": {
+      "title": "Titolo",
+      "titlePlaceholder": "Breve descrizione del problema",
+      "category": "Categoria",
+      "priority": "Priorità",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Si prega di fornire quanti più dettagli possibile...",
+      "required": "*",
+      "charactersCount": "caratteri",
+      "minimumCharacters": "Minimo 10 caratteri"
+    },
+    "categories": {
+      "bug": "Bug / Problema",
+      "featureRequest": "Richiesta Funzionalità",
+      "support": "Supporto",
+      "documentation": "Documentazione",
+      "performance": "Prestazioni",
+      "other": "Altro"
+    },
+    "priorities": {
+      "low": "Bassa",
+      "medium": "Media",
+      "high": "Alta",
+      "critical": "Critica"
+    },
+    "errors": {
+      "titleRequired": "Il titolo è obbligatorio",
+      "titleTooLong": "Il titolo deve essere inferiore a 100 caratteri",
+      "descriptionRequired": "La descrizione è obbligatoria",
+      "descriptionTooShort": "La descrizione deve contenere almeno 10 caratteri"
+    },
+    "buttons": {
+      "cancel": "Annulla",
+      "createTicket": "Crea Ticket",
+      "creating": "Creazione..."
+    },
+    "toasts": {
+      "success": "Ticket creato con successo!",
+      "error": "Errore nella creazione del ticket"
+    }
+  },
+  "auditLogs": {
+    "title": "Registri di Audit",
+    "accessDenied": {
+      "title": "Accesso Negato",
+      "description": "Non hai il permesso di visualizzare i registri di audit."
+    },
+    "buttons": {
+      "verifyIntegrity": "Verifica Integrità",
+      "exportCSV": "Esporta CSV",
+      "exportJSON": "Esporta JSON",
+      "refresh": "Aggiorna",
+      "clearFilters": "Cancella Filtri",
+      "previous": "Precedente",
+      "next": "Successivo"
+    },
+    "filters": {
+      "title": "Filtri",
+      "search": "Cerca",
+      "searchPlaceholder": "Cerca registri...",
+      "startDate": "Data di Inizio",
+      "endDate": "Data di Fine",
+      "last90Days": "Ultimi 90 Giorni",
+      "last180Days": "Ultimi 180 Giorni"
+    },
+    "table": {
+      "title": "Registri di Audit",
+      "subtitle": {
+        "billing": "Visualizzazione solo dei registri di audit relativi alla fatturazione",
+        "complete": "Traccia di audit completa di tutte le attività del sistema"
+      },
+      "columns": {
+        "timestamp": "Data e Ora",
+        "user": "Utente",
+        "action": "Azione",
+        "category": "Categoria",
+        "severity": "Gravità",
+        "ipAddress": "Indirizzo IP",
+        "details": "Dettagli"
+      },
+      "emptyState": {
+        "title": "Nessun registro di audit trovato",
+        "description": "Prova ad aggiustare i tuoi filtri"
+      },
+      "system": "Sistema",
+      "redacted": "Oscurato",
+      "pagination": "Pagina"
+    },
+    "details": {
+      "title": "Dettagli del Registro di Audit",
+      "description": "Informazioni complete per questa voce di audit",
+      "timestamp": "Data e Ora",
+      "user": "Utente",
+      "action": "Azione",
+      "category": "Categoria",
+      "severity": "Gravità",
+      "ipAddress": "Indirizzo IP",
+      "metadata": "Metadati",
+      "hash": "Hash (Immutabilità)"
+    },
+    "categories": {
+      "AUTHENTICATION": "Autenticazione",
+      "AUTHORIZATION": "Autorizzazione",
+      "DOCUMENT_MANAGEMENT": "Gestione Documenti",
+      "DRIVER_MANAGEMENT": "Gestione Autisti",
+      "USER_MANAGEMENT": "Gestione Utenti",
+      "BILLING": "Fatturazione",
+      "SYSTEM": "Sistema",
+      "COMPLIANCE": "Conformità",
+      "DATA_ACCESS": "Accesso ai Dati",
+      "DATA_MODIFICATION": "Modifica dei Dati"
+    },
+    "severity": {
+      "LOW": "Bassa",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
+      "CRITICAL": "Critica",
+      "INFO": "Info"
+    },
+    "toasts": {
+      "verifySuccess": "Registri di audit verificati con successo!",
+      "verifySuccessDesc": "Nessuna manomissione rilevata. I registri sono autentici.",
+      "verifyError": "Controllo di integrità fallito!",
+      "verifyErrorDesc": "Possibile manomissione rilevata.",
+      "verificationFailed": "Verifica fallita",
+      "exportSuccess": "Registri di audit esportati come",
+      "exportFailed": "Esportazione fallita"
+    }
+  },
+  "documentStatus": {
+    "title": "Stato dei Documenti",
+    "subtitle": "documento totale",
+    "subtitlePlural": "documenti totali",
+    "buttons": {
+      "viewAllDrivers": "Vedi Tutti gli Autisti",
+      "viewDriver": "Vedi Autista",
+      "retry": "Riprova",
+      "previous": "Precedente",
+      "next": "Successivo"
+    },
+    "statusFilters": {
+      "allDocuments": "Tutti i Documenti",
+      "expired": "Scaduti",
+      "expiringSoon": "In Scadenza",
+      "verified": "Verificati"
+    },
+    "statusBadges": {
+      "expired": "Scaduto",
+      "expiringSoon": "In Scadenza",
+      "verified": "Verificato",
+      "pending": "In Sospeso"
+    },
+    "search": {
+      "placeholder": "Cerca per nome autista, tipo di documento..."
+    },
+    "documentCard": {
+      "document": "Documento",
+      "employeeId": "ID Dipendente",
+      "expires": "Scade",
+      "daysOverdue": "giorni di ritardo",
+      "daysRemaining": "giorni rimanenti",
+      "unknownDriver": "Autista Sconosciuto"
+    },
+    "emptyState": {
+      "title": "Nessun documento trovato",
+      "searchDescription": "Prova ad aggiustare la tua query di ricerca",
+      "filterDescription": "Nessun documento corrisponde al filtro di stato selezionato"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "di",
+      "documents": "documenti"
+    },
+    "error": {
+      "failedToLoad": "Errore nel caricamento dei documenti"
+    }
+  },
+  "reminders": {
+    "title": "Promemoria",
+    "subtitle": {
+      "document": "documento",
+      "documents": "documenti",
+      "requiringAttention": "richiedono attenzione",
+      "customReminder": "promemoria personalizzato",
+      "customReminders": "promemoria personalizzati"
+    },
+    "buttons": {
+      "createReminder": "Crea Promemoria",
+      "settings": "Impostazioni",
+      "viewDriver": "Vedi Autista",
+      "sendReminderNow": "Invia Promemoria Ora",
+      "retry": "Riprova"
+    },
+    "viewMode": {
+      "list": "Vista Elenco",
+      "calendar": "Vista Calendario"
+    },
+    "activeIntervals": {
+      "title": "Intervalli di Promemoria Attivi",
+      "description": "Riceverai promemoria {{intervals}} prima della scadenza del documento"
+    },
+    "filterOptions": {
+      "allReminders": "Tutti i Promemoria",
+      "critical": "Critici",
+      "warning": "Avviso",
+      "info": "Informazioni"
+    },
+    "urgencyBadges": {
+      "critical": "Critico",
+      "warning": "Avviso",
+      "info": "Info"
+    },
+    "search": {
+      "placeholder": "Cerca per nome autista, tipo di documento..."
+    },
+    "reminderCard": {
+      "daysOverdue": "giorni di ritardo",
+      "daysRemaining": "giorni rimanenti",
+      "unknownDriver": "Autista Sconosciuto",
+      "id": "ID",
+      "expires": "Scade"
+    },
+    "emptyState": {
+      "title": "Nessun promemoria trovato",
+      "searchDescription": "Prova ad aggiustare la tua query di ricerca",
+      "filterDescription": "Nessun promemoria {{filter}} al momento",
+      "allUpToDate": "Tutti i documenti sono aggiornati!"
+    },
+    "error": {
+      "title": "Errore nel caricamento dei promemoria"
+    },
+    "toasts": {
+      "reminderSent": "Promemoria inviato a {{name}}",
+      "reminderFailed": "Errore nell'invio del promemoria",
+      "customReminderCreated": "Promemoria personalizzato creato con successo",
+      "customReminderFailed": "Errore nella creazione del promemoria",
+      "reminderDeleted": "Promemoria eliminato con successo",
+      "reminderDeleteFailed": "Errore nell'eliminazione del promemoria"
+    }
+  },
+  "calendar": {
+    "months": {
+      "january": "Gennaio",
+      "february": "Febbraio",
+      "march": "Marzo",
+      "april": "Aprile",
+      "may": "Maggio",
+      "june": "Giugno",
+      "july": "Luglio",
+      "august": "Agosto",
+      "september": "Settembre",
+      "october": "Ottobre",
+      "november": "Novembre",
+      "december": "Dicembre"
+    },
+    "days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Gio",
+      "fri": "Ven",
+      "sat": "Sab"
+    },
+    "buttons": {
+      "today": "Oggi"
+    },
+    "upcomingReminders": {
+      "title": "Promemoria Imminenti",
+      "next30Days": "Prossimi 30 giorni"
+    },
+    "legend": {
+      "title": "Legenda",
+      "expired": "Scaduto",
+      "critical": "Critico",
+      "warning": "Avviso",
+      "info": "Informazioni"
+    }
+  }
+}
