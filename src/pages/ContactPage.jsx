@@ -181,56 +181,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contact Info Cards */}
-      <section className="px-6 pb-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {contactInfo.map((info, index) => (
-              <div
-                key={index}
-                className={`p-6 transition-all border rounded-xl hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 group ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-                    : 'bg-gradient-to-br from-white to-slate-50 border-slate-300'
-                }`}
-              >
-                <div className="inline-block p-3 mb-4 transition-transform rounded-lg bg-gradient-to-br from-blue-500/20 via-blue-600/20 to-cyan-500/20 group-hover:scale-110">
-                  {React.cloneElement(info.icon, { className: "text-blue-400" })}
-                </div>
-                <h3 className="mb-3 text-lg font-bold">{info.title}</h3>
-                <div className={`space-y-1 text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                  {info.content.map((line, idx) => (
-                    info.type === 'email' ? (
-                      <a
-                        key={idx}
-                        href={`mailto:${line}`}
-                        className="block transition-colors hover:text-blue-400"
-                      >
-                        {line}
-                      </a>
-                    ) : info.type === 'phone' && info.link ? (
-                      <a
-                        key={idx}
-                        href={info.link}
-                        className="block transition-colors hover:text-blue-400"
-                      >
-                        {line}
-                      </a>
-                    ) : (
-                      <p key={idx}>{line}</p>
-                    )
-                  ))}
-                  {info.subContent && (
-                    <p className={`text-xs pt-2 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
-                      {info.subContent}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+     
 
       {/* Main Form Section */}
       <section className="px-6 pb-20">
@@ -469,9 +420,58 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
+ {/* Contact Info Cards */}
+      <section className="px-6 pb-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {contactInfo.map((info, index) => (
+              <div
+                key={index}
+                className={`p-6 transition-all border rounded-xl hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 group ${
+                  theme === 'dark'
+                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+                    : 'bg-gradient-to-br from-white to-slate-50 border-slate-300'
+                }`}
+              >
+                <div className="inline-block p-3 mb-4 transition-transform rounded-lg bg-gradient-to-br from-blue-500/20 via-blue-600/20 to-cyan-500/20 group-hover:scale-110">
+                  {React.cloneElement(info.icon, { className: "text-blue-400" })}
+                </div>
+                <h3 className="mb-3 text-lg font-bold">{info.title}</h3>
+                <div className={`space-y-1 text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {info.content.map((line, idx) => (
+                    info.type === 'email' ? (
+                      <a
+                        key={idx}
+                        href={`mailto:${line}`}
+                        className="block transition-colors hover:text-blue-400"
+                      >
+                        {line}
+                      </a>
+                    ) : info.type === 'phone' && info.link ? (
+                      <a
+                        key={idx}
+                        href={info.link}
+                        className="block transition-colors hover:text-blue-400"
+                      >
+                        {line}
+                      </a>
+                    ) : (
+                      <p key={idx}>{line}</p>
+                    )
+                  ))}
+                  {info.subContent && (
+                    <p className={`text-xs pt-2 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
+                      {info.subContent}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       {/* Quick Links Section */}
-      <section className={`px-6 py-12 bg-gradient-to-b from-transparent ${
+      <section className={`px-6 pb-12 bg-gradient-to-b from-transparent ${
         theme === 'dark' ? 'to-slate-900/50' : 'to-slate-100/50'
       }`}>
         <div className="max-w-6xl mx-auto">

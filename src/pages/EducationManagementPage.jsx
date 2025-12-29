@@ -527,7 +527,7 @@ const EducationManagementPage = () => {
             <h2 className="mb-4 text-4xl font-bold text-center md:text-5xl w-fit">
               Track Every
               <br />
-              <span className="text-gradient-blue-cyan">Compliance Document</span>
+              <span className="text-gradient-blue-cyan">Document</span>
             </h2>
           </div>
 
