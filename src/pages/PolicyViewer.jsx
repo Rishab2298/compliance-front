@@ -10,6 +10,10 @@ const PolicyViewer = () => {
   const [loading, setLoading] = useState(true);
   const [policy, setPolicy] = useState(null);
   const [error, setError] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    // Load theme from localStorage or default to 'dark'
+    return localStorage.getItem("theme") || "dark";
+  });
 
   const handleGoBack = () => {
     // Check if there's a previous page in history
@@ -49,6 +53,16 @@ const PolicyViewer = () => {
     fetchPolicy();
   }, [type]);
 
+  // Listen for theme changes from other components
+  useEffect(() => {
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
+    };
+
+    window.addEventListener("themeChange", handleThemeChange);
+    return () => window.removeEventListener("themeChange", handleThemeChange);
+  }, []);
+
   const fetchPolicy = async () => {
     try {
       setLoading(true);
@@ -72,10 +86,14 @@ const PolicyViewer = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-screen min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className={`flex items-center justify-center w-screen min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
+      }`}>
         <div className="text-center">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-violet-400 animate-spin" />
-          <p className="text-slate-400">Loading policy...</p>
+          <p className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Loading policy...</p>
         </div>
       </div>
     );
@@ -83,13 +101,17 @@ const PolicyViewer = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className={`flex items-center justify-center min-h-screen p-6 transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
+      }`}>
         <div className="max-w-md text-center">
           <div className="inline-block p-4 mb-4 rounded-full bg-red-500/10">
             <FileText className="w-12 h-12 text-red-400" />
           </div>
-          <h2 className="mb-2 text-2xl font-bold text-white">Policy Not Found</h2>
-          <p className="mb-6 text-slate-400">{error}</p>
+          <h2 className={`mb-2 text-2xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>Policy Not Found</h2>
+          <p className={`mb-6 ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{error}</p>
           <button
             onClick={handleGoBack}
             className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors rounded-lg bg-violet-600 hover:bg-violet-700"
@@ -103,23 +125,35 @@ const PolicyViewer = () => {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className={`w-screen min-h-screen transition-colors duration-300 ${
+      theme === "dark"
+        ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
+    }`}>
       <div className="fixed top-0 rounded-full pointer-events-none left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
       <div className="fixed bottom-0 rounded-full pointer-events-none right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
 
-      <header className="relative z-10 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+      <header className={`relative z-10 border-b backdrop-blur-sm ${
+        theme === "dark"
+          ? "border-slate-800 bg-slate-900/50"
+          : "border-slate-200 bg-white/50"
+      }`}>
         <div className="max-w-6xl px-6 py-4 mx-auto">
           <div className="flex items-center justify-between">
             <button
               onClick={handleGoBack}
-              className="inline-flex items-center gap-2 transition-colors text-slate-400 hover:text-white"
+              className={`inline-flex items-center gap-2 transition-colors ${
+                theme === "dark"
+                  ? "text-slate-400 hover:text-white"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back</span>
             </button>
             <Link
               to="/"
-              className="text-2xl font-bold text-white"
+              className={`text-2xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}
             >
               Complyo
             </Link>
@@ -133,10 +167,12 @@ const PolicyViewer = () => {
           <div className="inline-block p-3 mb-4 rounded-lg bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
             <FileText className="w-8 h-8 text-violet-400" />
           </div>
-          <h1 className="mb-2 text-4xl font-bold text-white">
+          <h1 className={`mb-2 text-4xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
             {policyTitles[type]}
           </h1>
-          <div className="flex items-center justify-center gap-4 text-sm text-slate-400">
+          <div className={`flex items-center justify-center gap-4 text-sm ${
+            theme === "dark" ? "text-slate-400" : "text-slate-600"
+          }`}>
             <span>Version {policy?.version}</span>
             <span>•</span>
             <span>
@@ -149,10 +185,16 @@ const PolicyViewer = () => {
           </div>
         </div>
 
-        <article className="prose prose-invert prose-slate max-w-none">
-          <div className="p-8 border bg-slate-900/50 border-slate-800 rounded-xl backdrop-blur-sm">
+        <article className={`prose max-w-none ${
+          theme === "dark" ? "prose-invert prose-slate" : "prose-slate"
+        }`}>
+          <div className={`p-8 border rounded-xl backdrop-blur-sm ${
+            theme === "dark"
+              ? "bg-slate-900/50 border-slate-800"
+              : "bg-white/50 border-slate-200"
+          }`}>
             <div
-              className="text-slate-300 policy-content"
+              className={`policy-content ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
               dangerouslySetInnerHTML={createSafeMarkup(policy?.content || '')}
             />
           </div>
@@ -161,7 +203,11 @@ const PolicyViewer = () => {
         <div className="flex justify-center mt-12">
           <button
             onClick={handleGoBack}
-            className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors border rounded-lg bg-slate-800 hover:bg-slate-700 border-slate-700"
+            className={`inline-flex items-center gap-2 px-6 py-3 transition-colors border rounded-lg ${
+              theme === "dark"
+                ? "bg-slate-800 hover:bg-slate-700 border-slate-700 text-white"
+                : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-900"
+            }`}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Previous Page
@@ -169,9 +215,13 @@ const PolicyViewer = () => {
         </div>
       </main>
 
-      <footer className="relative z-10 mt-16 border-t border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+      <footer className={`relative z-10 mt-16 border-t backdrop-blur-sm ${
+        theme === "dark"
+          ? "border-slate-800 bg-slate-900/50"
+          : "border-slate-200 bg-white/50"
+      }`}>
         <div className="max-w-6xl px-6 py-8 mx-auto">
-          <div className="text-sm text-center text-slate-500">
+          <div className={`text-sm text-center ${theme === "dark" ? "text-slate-500" : "text-slate-600"}`}>
             <p>© {new Date().getFullYear()} Complyo. All rights reserved.</p>
             <p className="mt-2">
               For questions about this policy, contact{' '}

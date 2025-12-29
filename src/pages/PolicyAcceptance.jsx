@@ -12,6 +12,10 @@ const PolicyAcceptance = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [policies, setPolicies] = useState([]);
+  const [theme, setTheme] = useState(() => {
+    // Load theme from localStorage or default to 'dark'
+    return localStorage.getItem("theme") || "dark";
+  });
   const [acceptances, setAcceptances] = useState({
     TERMS_OF_SERVICE: false,
     PRIVACY_POLICY: false,
@@ -50,6 +54,16 @@ const PolicyAcceptance = () => {
 
   useEffect(() => {
     fetchPolicies();
+  }, []);
+
+  // Listen for theme changes from other components
+  useEffect(() => {
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
+    };
+
+    window.addEventListener("themeChange", handleThemeChange);
+    return () => window.removeEventListener("themeChange", handleThemeChange);
   }, []);
 
   const fetchPolicies = async () => {
@@ -108,17 +122,25 @@ const PolicyAcceptance = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className={`flex items-center justify-center min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
+      }`}>
         <div className="text-center">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-violet-400 animate-spin" />
-          <p className="text-slate-400">Loading policies...</p>
+          <p className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>Loading policies...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center w-screen min-h-screen p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className={`flex items-center justify-center w-screen min-h-screen p-6 transition-colors duration-300 ${
+      theme === "dark"
+        ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
+    }`}>
       {/* Decorative elements */}
       <div className="fixed top-0 rounded-full pointer-events-none left-1/4 w-96 h-96 bg-violet-500/5 blur-3xl"></div>
       <div className="fixed bottom-0 rounded-full pointer-events-none right-1/4 w-96 h-96 bg-purple-500/5 blur-3xl"></div>
@@ -129,14 +151,18 @@ const PolicyAcceptance = () => {
           <div className="inline-block p-3 mb-4 rounded-[10px] bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
             <FileCheck className="w-8 h-8 text-violet-400" />
           </div>
-          <h1 className="text-3xl font-bold text-white">Legal Consents</h1>
-          <p className="text-slate-400">
+          <h1 className={`text-3xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>Legal Consents</h1>
+          <p className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>
             Please review and accept our terms and policies to access your dashboard
           </p>
         </div>
 
         {/* Policies */}
-        <div className="p-8 space-y-6 bg-slate-900/50 border border-slate-800 rounded-[10px] backdrop-blur-sm">
+        <div className={`p-8 space-y-6 border rounded-[10px] backdrop-blur-sm ${
+          theme === "dark"
+            ? "bg-slate-900/50 border-slate-800"
+            : "bg-white/50 border-slate-200"
+        }`}>
           <div className="space-y-4">
             {Object.entries(policyLabels).map(([type, label]) => {
               const policy = policies.find((p) => p.type === type);
@@ -148,7 +174,9 @@ const PolicyAcceptance = () => {
                   className={`p-4 border rounded-[10px] transition-all ${
                     isAccepted
                       ? 'border-violet-500 bg-violet-500/10'
-                      : 'border-slate-700 bg-slate-800/50'
+                      : theme === "dark"
+                        ? 'border-slate-700 bg-slate-800/50'
+                        : 'border-slate-300 bg-slate-100/50'
                   }`}
                 >
                   <label className="flex items-start gap-3 cursor-pointer">
@@ -156,10 +184,14 @@ const PolicyAcceptance = () => {
                       type="checkbox"
                       checked={isAccepted}
                       onChange={() => handleToggle(type)}
-                      className="w-5 h-5 mt-0.5 text-violet-600 bg-slate-700 border-slate-600 rounded focus:ring-violet-500 focus:ring-2"
+                      className={`w-5 h-5 mt-0.5 text-violet-600 rounded focus:ring-violet-500 focus:ring-2 ${
+                        theme === "dark"
+                          ? "bg-slate-700 border-slate-600"
+                          : "bg-white border-slate-400"
+                      }`}
                     />
                     <div className="flex-1">
-                      <p className="text-sm text-slate-300">
+                      <p className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}>
                         {policyDescriptions[type]}{' '}
                         {policy && (
                           <a
@@ -175,20 +207,20 @@ const PolicyAcceptance = () => {
                         . <span className="text-red-400">*</span>
                       </p>
                       {policy && (
-                        <p className="mt-1 text-xs text-slate-500">
-                          Version {policy.version} � Published{' '}
+                        <p className={`mt-1 text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-600"}`}>
+                          Version {policy.version} • Published{' '}
                           {new Date(policy.publishedAt).toLocaleDateString()}
                         </p>
                       )}
                       {type === 'SMS_CONSENT' && (
-                        <p className="mt-2 text-xs text-slate-500">
+                        <p className={`mt-2 text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-600"}`}>
                           By checking this box, you authorize Complyo to send
                           automated text messages to the mobile number provided.
                           Standard messaging rates apply.
                         </p>
                       )}
                       {type === 'SUPPORT_ACCESS' && (
-                        <p className="mt-2 text-xs text-slate-500">
+                        <p className={`mt-2 text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-600"}`}>
                           Access expires after 72 hours from when granted. You can
                           revoke this permission at any time in your account
                           settings.
@@ -204,7 +236,7 @@ const PolicyAcceptance = () => {
           {/* Retention Notice */}
           <div className="p-4 bg-violet-500/10 border border-violet-500/30 rounded-[10px]">
             <p className="text-xs text-violet-300">
-              =� Your acceptance records will be retained for 24-36 months for
+              ℹ️ Your acceptance records will be retained for 24-36 months for
               compliance purposes.
             </p>
           </div>
@@ -217,7 +249,9 @@ const PolicyAcceptance = () => {
               className={`px-8 py-3 text-white border-0 rounded-[10px] transition-all ${
                 allAccepted && !submitting
                   ? 'bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50'
-                  : 'bg-slate-700 cursor-not-allowed opacity-50'
+                  : theme === "dark"
+                    ? 'bg-slate-700 cursor-not-allowed opacity-50'
+                    : 'bg-slate-300 cursor-not-allowed opacity-50'
               }`}
             >
               {submitting ? (

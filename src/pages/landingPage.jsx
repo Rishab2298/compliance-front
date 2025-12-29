@@ -565,12 +565,12 @@ export default function LandingPage() {
 
           <div className="grid gap-8 md:grid-cols-4">
             {howItWorks.map((step, i) => (
-              <div key={i} className="relative">
+              <div key={i} className="relative h-full">
                 {i < howItWorks.length - 1 && (
                   <div className="hidden md:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-blue-500 to-transparent -translate-x-8"></div>
                 )}
                 <div
-                  className={`p-6 transition-all border rounded-xl hover:border-blue-500/50 ${
+                  className={`p-6 h-full transition-all border rounded-xl hover:border-blue-500/50 ${
                     theme === "dark"
                       ? "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700"
                       : "bg-gradient-to-br from-white to-slate-50 border-slate-300"
@@ -799,6 +799,7 @@ export default function LandingPage() {
           <p className={`mt-12 text-center text-sm ${
             theme === "dark" ? "text-slate-400" : "text-slate-600"
           }`}>
+            Your data stays yours — export anytime<br/>
             Start free with 5 employees • Upgrade anytime • Cancel anytime • All paid plans include Stripe billing
           </p>
         </div>

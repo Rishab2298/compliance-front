@@ -105,30 +105,17 @@ export default function ContactPage() {
   ];
 
   const contactInfo = [
-    {
-      icon: <MapPin className="w-5 h-5" />,
-      title: "Office Address",
-      content: ["123 Business Street", "Suite 500", "San Francisco, CA 94105", "United States"],
-      type: "address"
-    },
-    {
-      icon: <Phone className="w-5 h-5" />,
-      title: "Phone",
-      content: ["+1 (415) 555-1234"],
-      subContent: "Sales: ext. 1 | Support: ext. 2",
-      link: "tel:+14155551234",
-      type: "phone"
-    },
+    
     {
       icon: <Mail className="w-5 h-5" />,
       title: "Email",
-      content: ["sales@complyo.co", "enterprise@complyo.co", "support@complyo.co"],
+      content: ["sales@complyo.co"],
       type: "email"
     },
     {
       icon: <Clock className="w-5 h-5" />,
       title: "Business Hours",
-      content: ["Monday - Friday", "9:00 AM - 6:00 PM PST"],
+      content: ["Monday - Friday", "9:00 AM - 6:00 PM EST"],
       type: "hours"
     }
   ];
