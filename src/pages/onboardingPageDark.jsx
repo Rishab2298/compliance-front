@@ -26,6 +26,7 @@ import { getAllLatestPublishedPolicies } from "@/api/policies";
 export default function OnboardingDark() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [syncingSession, setSyncingSession] = useState(false);
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [bulkUploadedDrivers, setBulkUploadedDrivers] = useState([]);
   const [showOperatingAddressForm, setShowOperatingAddressForm] = useState(false);
@@ -568,12 +569,43 @@ export default function OnboardingDark() {
       } else {
         // Free plan - wait for Clerk session to sync before navigating
         toast.success("Onboarding completed successfully!");
+        setSyncingSession(true);
 
-        // Wait for database transaction to commit and Clerk session to sync
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for Clerk session to sync with companyId (poll until it appears)
+        let attempts = 0;
+        const maxAttempts = 30; // 30 attempts * 1000ms = 30 seconds max
+        let synced = false;
 
-        // Force refresh Clerk session to ensure companyId is updated
-        await getToken();
+        while (attempts < maxAttempts && !synced) {
+          // Wait before checking
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Refresh token and reload user
+          try {
+            await getToken({ skipCache: true });
+            await user.reload();
+
+            // Check if companyId is now present
+            if (user.publicMetadata?.companyId) {
+              console.log('✅ CompanyId synced successfully:', user.publicMetadata.companyId);
+              synced = true;
+              break;
+            }
+          } catch (error) {
+            console.error('Error during sync check:', error);
+          }
+
+          attempts++;
+          console.log(`⏳ Waiting for session sync... (${attempts}/${maxAttempts})`);
+        }
+
+        setSyncingSession(false);
+
+        if (!synced) {
+          toast.error("Setup is taking longer than expected. Redirecting anyway - please refresh if you encounter issues.", {
+            duration: 5000
+          });
+        }
 
         navigate("/client/dashboard");
       }
@@ -1788,14 +1820,16 @@ export default function OnboardingDark() {
               )} */}
               <button
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || syncingSession}
                 className="flex items-center gap-2 px-8 py-3 font-semibold transition-all rounded-[10px] bg-gradient-to-r from-blue-600 via-violet-600 to-purple-600 hover:shadow-lg hover:shadow-purple-500/50 group disabled:opacity-50 disabled:cursor-not-allowed">
-                {isSubmitting
+                {syncingSession
+                  ? "Setting up your dashboard..."
+                  : isSubmitting
                   ? "Saving..."
                   : currentStep === totalSteps
                   ? "Complete Setup"
                   : "Continue"}
-                {!isSubmitting && (
+                {!isSubmitting && !syncingSession && (
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 )}
               </button>
@@ -1830,6 +1864,24 @@ export default function OnboardingDark() {
           isCurrentlyChecked={formData[activePolicyModal]}
           preloadedData={preloadedPolicies[policyConfig[activePolicyModal].type]}
         />
+      )}
+
+      {/* Syncing Session Overlay */}
+      {syncingSession && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="inline-block p-4 mb-4 rounded-full bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20">
+              <div className="w-16 h-16">
+                <svg className="animate-spin text-violet-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            </div>
+            <h3 className="mb-2 text-2xl font-bold text-white">Setting up your dashboard</h3>
+            <p className="text-slate-400">Please wait while we finalize your account...</p>
+          </div>
+        </div>
       )}
     </div>
   );
