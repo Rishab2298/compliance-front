@@ -116,7 +116,7 @@ const BillingSuccess = () => {
             <section className={`rounded-[10px] p-4 border mt-6 ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-gray-50 border-gray-200'}`}>
               <p className={`text-sm text-center ${getThemeClasses.text.secondary(isDarkMode)}`}>
                 Need help? Contact us at{' '}
-                <span className={`font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>support@complyo.io</span>
+                <span className={`font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>support@complyo.co</span>
               </p>
             </section>
           </div>

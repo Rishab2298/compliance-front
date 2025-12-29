@@ -17,6 +17,7 @@ const PolicyModal = ({
   policyType,
   policyLabel,
   isCurrentlyChecked,
+  preloadedData, // New prop for preloaded policy data
 }) => {
   const [policyData, setPolicyData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,12 +27,22 @@ const PolicyModal = ({
   const contentRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
 
-  // Fetch policy content when modal opens
+  // Fetch policy content when modal opens (or use preloaded data)
   useEffect(() => {
     if (isOpen && policyType) {
-      fetchPolicyContent();
+      // If preloaded data exists, use it immediately
+      if (preloadedData) {
+        console.log('✅ Using preloaded policy data for:', policyType);
+        setPolicyData(preloadedData);
+        setIsLoading(false);
+        setError(null);
+      } else {
+        // Otherwise, fetch from API
+        console.log('🔄 Fetching policy data for:', policyType);
+        fetchPolicyContent();
+      }
     }
-  }, [isOpen, policyType]);
+  }, [isOpen, policyType, preloadedData]);
 
   // Check if content is scrollable
   useEffect(() => {

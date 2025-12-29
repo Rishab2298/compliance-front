@@ -601,7 +601,7 @@
     "toasts": {
       "alreadyOnPlan": "Ya está en este plan",
       "contactSales": "Contacte a ventas para precios Enterprise",
-      "contactSalesDesc": "Envíenos un correo a sales@complyo.io",
+      "contactSalesDesc": "Envíenos un correo a sales@complyo.co",
       "downgradeNotAvailable": "Cambio a plan inferior no disponible en UI",
       "downgradeDesc": "Contacte a soporte para cambiar a plan inferior",
       "failedToChangePlan": "Error al cambiar el plan",

@@ -376,8 +376,8 @@ export default function ComplaintRegistration() {
           <div className="mt-8 text-center">
             <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
               Need immediate assistance? Contact us at{' '}
-              <a href="mailto:support@complyo.com" className="text-blue-400 hover:underline">
-                support@complyo.com
+              <a href="mailto:support@complyo.co" className="text-blue-400 hover:underline">
+                support@complyo.co
               </a>
               {' '}or call{' '}
               <a href="tel:+1234567890" className="text-blue-400 hover:underline">

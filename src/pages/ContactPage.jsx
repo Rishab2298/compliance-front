@@ -122,7 +122,7 @@ export default function ContactPage() {
     {
       icon: <Mail className="w-5 h-5" />,
       title: "Email",
-      content: ["sales@complyo.com", "enterprise@complyo.com", "support@complyo.com"],
+      content: ["sales@complyo.co", "enterprise@complyo.co", "support@complyo.co"],
       type: "email"
     },
     {

@@ -254,7 +254,7 @@ const AppLayout = ({ ...props }) => {
 
   return (
     <SidebarProvider>
-      <div className={`flex w-full h-screen overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-white'}`}>
+      <div className={`flex w-full h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-white'}`}>
         <Sidebar
           collapsible="true"
           className={isDarkMode ? 'bg-slate-900 border-r border-slate-800' : 'bg-white border-r border-slate-200'}

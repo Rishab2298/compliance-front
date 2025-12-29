@@ -276,7 +276,7 @@ const InvoiceView = () => {
                 <h3 className="mb-3 text-sm font-semibold tracking-wider text-gray-900 uppercase">Billed From</h3>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-gray-900">Complyo</p>
-                  <p className="text-sm text-gray-600">support@complyo.io</p>
+                  <p className="text-sm text-gray-600">support@complyo.co</p>
                   <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
                 </div>
               </div>
@@ -370,7 +370,7 @@ const InvoiceView = () => {
             <div className="pt-8 mt-8 border-t border-gray-200">
               <p className="text-xs text-center text-gray-500">
                 Thank you for your business with Complyo. If you have any questions about this invoice,
-                please contact us at support@complyo.io or call +1 (555) 123-4567
+                please contact us at support@complyo.co or call +1 (555) 123-4567
               </p>
               <p className="mt-2 text-xs text-center text-gray-400">
                 Complyo - Simplifying Driver Document Management

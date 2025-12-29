@@ -175,8 +175,8 @@ const PolicyViewer = () => {
             <p>© {new Date().getFullYear()} Complyo. All rights reserved.</p>
             <p className="mt-2">
               For questions about this policy, contact{' '}
-              <a href="mailto:support@complyo.io" className="text-violet-400 hover:text-violet-300">
-                support@complyo.io
+              <a href="mailto:support@complyo.co" className="text-violet-400 hover:text-violet-300">
+                support@complyo.co
               </a>
             </p>
           </div>

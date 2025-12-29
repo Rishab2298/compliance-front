@@ -98,7 +98,7 @@ const BillingCancel = () => {
                   </div>
                   <div>
                     <p className={`font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>Questions about pricing?</p>
-                    <p className={getThemeClasses.text.secondary(isDarkMode)}>Contact our support team at <span className={`font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>support@complyo.io</span></p>
+                    <p className={getThemeClasses.text.secondary(isDarkMode)}>Contact our support team at <span className={`font-medium ${getThemeClasses.text.primary(isDarkMode)}`}>support@complyo.co</span></p>
                   </div>
                 </div>
               </div>

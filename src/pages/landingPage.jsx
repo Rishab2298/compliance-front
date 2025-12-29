@@ -34,7 +34,7 @@ export default function LandingPage() {
   const [activeFeature, setActiveFeature] = useState(0);
   const [theme, setTheme] = useState(() => {
     // Load theme from localStorage or default to 'dark'
-    return localStorage.getItem('theme') || 'dark';
+    return localStorage.getItem("theme") || "dark";
   });
   const { isSignedIn } = useAuth();
   const { user, isLoaded } = useUser();
@@ -45,10 +45,10 @@ export default function LandingPage() {
       const role = user?.publicMetadata?.role;
 
       // Redirect SUPER_ADMIN to super admin dashboard
-      if (role === 'SUPER_ADMIN') {
-        navigate('/super-admin/dashboard');
+      if (role === "SUPER_ADMIN") {
+        navigate("/super-admin/dashboard");
       } else {
-        navigate('/onboarding-dark');
+        navigate("/onboarding-dark");
       }
     }
   }, [isSignedIn, isLoaded, user, navigate]);
@@ -68,9 +68,9 @@ export default function LandingPage() {
 
   // Persist theme to localStorage
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
     // Dispatch custom event to notify other components
-    window.dispatchEvent(new CustomEvent('themeChange', { detail: theme }));
+    window.dispatchEvent(new CustomEvent("themeChange", { detail: theme }));
   }, [theme]);
 
   // Listen for theme changes from other components
@@ -79,10 +79,9 @@ export default function LandingPage() {
       setTheme(event.detail);
     };
 
-    window.addEventListener('themeChange', handleThemeChange);
-    return () => window.removeEventListener('themeChange', handleThemeChange);
+    window.addEventListener("themeChange", handleThemeChange);
+    return () => window.removeEventListener("themeChange", handleThemeChange);
   }, []);
-
 
   const features = [
     {
@@ -180,10 +179,10 @@ export default function LandingPage() {
       features: [
         "Up to 5 employees",
         "1 document type per employee",
-        "5 AI credits (one-time)",
-        "Email notifications",
-        "Document reminders",
+        "Email alerts (7-day expiry reminder)",
         "Basic dashboard",
+        "5 AI credits (one-time)",
+        "Self-serve onboarding",
       ],
       cta: "Get Started Free",
     },
@@ -232,11 +231,12 @@ export default function LandingPage() {
   ];
 
   return (
-    <PublicLayout className={`w-screen min-h-screen transition-colors duration-300 ${
-      theme === 'dark'
-        ? 'text-white bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'
-        : 'text-slate-900 bg-gradient-to-br from-slate-50 via-white to-slate-100'
-    }`}>
+    <PublicLayout
+      className={`w-screen min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "text-white bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "text-slate-900 bg-gradient-to-br from-slate-50 via-white to-slate-100"
+      }`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
@@ -367,8 +367,13 @@ export default function LandingPage() {
                 </span>{" "}
                 Effortlessly
               </h1>
-              <p className={`text-xl ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                Track employee documents, get AI-powered data extraction, send automated reminders, and maintain real-time compliance scores - all in one platform.
+              <p
+                className={`text-xl ${
+                  theme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}>
+                Track employee documents, get AI-powered data extraction, send
+                automated reminders, and maintain real-time compliance scores -
+                all in one platform.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <SignInButton>
@@ -378,16 +383,20 @@ export default function LandingPage() {
                   </button>
                 </SignInButton>
                 <SignInButton>
-                  <button className={`px-8 py-4 text-lg font-semibold transition-all border rounded-lg ${
-                    theme === 'dark'
-                      ? 'border-slate-700 hover:bg-slate-800 text-white'
-                      : 'border-slate-300 hover:bg-slate-100 text-slate-900'
-                  }`}>
+                  <button
+                    className={`px-8 py-4 text-lg font-semibold transition-all border rounded-lg ${
+                      theme === "dark"
+                        ? "border-slate-700 hover:bg-slate-800 text-white"
+                        : "border-slate-300 hover:bg-slate-100 text-slate-900"
+                    }`}>
                     Get Started
                   </button>
                 </SignInButton>
               </div>
-              <div className={`flex items-center space-x-8 text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+              <div
+                className={`flex items-center space-x-8 text-sm ${
+                  theme === "dark" ? "text-slate-400" : "text-slate-600"
+                }`}>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-5 h-5 text-green-400" />
                   <span>Free forever plan available</span>
@@ -401,19 +410,20 @@ export default function LandingPage() {
 
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-900/20 via-blue-600/20 to-teal-500/20 blur-3xl"></div>
-              <div className={`relative p-8 border shadow-2xl rounded-2xl ${
-                theme === 'dark'
-                  ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-                  : 'bg-gradient-to-br from-white to-slate-50 border-slate-300'
-              }`}>
+              <div
+                className={`relative p-8 border shadow-2xl rounded-2xl ${
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700"
+                    : "bg-gradient-to-br from-white to-slate-50 border-slate-300"
+                }`}>
                 <div className="space-y-4">
                   {[0, 1, 2].map((i) => (
                     <div
                       key={i}
                       className={`p-4 rounded-lg border transition-all duration-500 ${
-                        theme === 'dark'
-                          ? 'bg-slate-800/50 border-slate-700'
-                          : 'bg-white/50 border-slate-300'
+                        theme === "dark"
+                          ? "bg-slate-800/50 border-slate-700"
+                          : "bg-white/50 border-slate-300"
                       } ${
                         activeFeature === i
                           ? "border-blue-500 shadow-lg shadow-blue-500/20"
@@ -424,7 +434,7 @@ export default function LandingPage() {
                           className={`p-3 rounded-lg ${
                             activeFeature === i
                               ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400"
-                              : theme === 'dark'
+                              : theme === "dark"
                               ? "bg-slate-700 text-slate-400"
                               : "bg-slate-200 text-slate-600"
                           }`}>
@@ -432,7 +442,12 @@ export default function LandingPage() {
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold">{features[i].title}</h4>
-                          <p className={`mt-1 text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                          <p
+                            className={`mt-1 text-sm ${
+                              theme === "dark"
+                                ? "text-slate-400"
+                                : "text-slate-600"
+                            }`}>
                             {features[i].description}
                           </p>
                         </div>
@@ -447,9 +462,10 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Bar */}
-      <section className={`py-12 bg-gradient-to-r from-blue-900/10 via-blue-600/10 to-teal-500/10 border-y ${
-        theme === 'dark' ? 'border-slate-800' : 'border-slate-300'
-      }`}>
+      <section
+        className={`py-12 bg-gradient-to-r from-blue-900/10 via-blue-600/10 to-teal-500/10 border-y ${
+          theme === "dark" ? "border-slate-800" : "border-slate-300"
+        }`}>
         <div className="px-6 mx-auto max-w-7xl">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {benefits.map((benefit, i) => (
@@ -460,7 +476,12 @@ export default function LandingPage() {
                   })}
                 </div>
                 <h4 className="mb-1 text-lg font-bold">{benefit.title}</h4>
-                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{benefit.desc}</p>
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-400" : "text-slate-600"
+                  }`}>
+                  {benefit.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -478,7 +499,10 @@ export default function LandingPage() {
                 Compliance Excellence
               </span>
             </h2>
-            <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+            <p
+              className={`text-xl ${
+                theme === "dark" ? "text-slate-400" : "text-slate-600"
+              }`}>
               Powerful features designed for modern delivery service providers
             </p>
           </div>
@@ -488,9 +512,9 @@ export default function LandingPage() {
               <div
                 key={i}
                 className={`p-8 transition-all border rounded-xl hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 group ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-                    : 'bg-gradient-to-br from-white to-slate-50 border-slate-300'
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700"
+                    : "bg-gradient-to-br from-white to-slate-50 border-slate-300"
                 }`}>
                 <div className="inline-block p-3 mb-4 transition-transform rounded-lg bg-gradient-to-br from-blue-500/20 via-blue-600/20 to-cyan-500/20 group-hover:scale-110">
                   {React.cloneElement(feature.icon, {
@@ -498,7 +522,12 @@ export default function LandingPage() {
                   })}
                 </div>
                 <h3 className="mb-3 text-xl font-bold">{feature.title}</h3>
-                <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>{feature.description}</p>
+                <p
+                  className={
+                    theme === "dark" ? "text-slate-400" : "text-slate-600"
+                  }>
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
@@ -509,7 +538,7 @@ export default function LandingPage() {
       <section
         id="how-it-works"
         className={`px-6 py-20 bg-gradient-to-b from-transparent ${
-          theme === 'dark' ? 'to-slate-900/50' : 'to-slate-100/50'
+          theme === "dark" ? "to-slate-900/50" : "to-slate-100/50"
         }`}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
@@ -520,7 +549,10 @@ export default function LandingPage() {
                 Four Simple Steps
               </span>
             </h2>
-            <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+            <p
+              className={`text-xl ${
+                theme === "dark" ? "text-slate-400" : "text-slate-600"
+              }`}>
               From onboarding to compliance in minutes, not hours
             </p>
           </div>
@@ -531,11 +563,12 @@ export default function LandingPage() {
                 {i < howItWorks.length - 1 && (
                   <div className="hidden md:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-blue-500 to-transparent -translate-x-8"></div>
                 )}
-                <div className={`p-6 transition-all border rounded-xl hover:border-blue-500/50 ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-                    : 'bg-gradient-to-br from-white to-slate-50 border-slate-300'
-                }`}>
+                <div
+                  className={`p-6 transition-all border rounded-xl hover:border-blue-500/50 ${
+                    theme === "dark"
+                      ? "bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700"
+                      : "bg-gradient-to-br from-white to-slate-50 border-slate-300"
+                  }`}>
                   <div className="flex items-center justify-center w-12 h-12 mb-4 text-2xl font-bold text-white rounded-full bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600">
                     {step.step}
                   </div>
@@ -545,7 +578,12 @@ export default function LandingPage() {
                     })}
                   </div>
                   <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
-                  <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>{step.desc}</p>
+                  <p
+                    className={
+                      theme === "dark" ? "text-slate-400" : "text-slate-600"
+                    }>
+                    {step.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -564,8 +602,11 @@ export default function LandingPage() {
                 Perfect Plan
               </span>
             </h2>
-            <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-              Flexible pricing that grows with your fleet
+            <p
+              className={`text-xl ${
+                theme === "dark" ? "text-slate-400" : "text-slate-600"
+              }`}>
+              Flexible pricing that grows with your team
             </p>
           </div>
 
@@ -574,13 +615,13 @@ export default function LandingPage() {
               <div
                 key={i}
                 className={`p-6 rounded-2xl border ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-slate-800 to-slate-900'
-                    : 'bg-gradient-to-br from-white to-slate-50'
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-slate-800 to-slate-900"
+                    : "bg-gradient-to-br from-white to-slate-50"
                 } ${
                   plan.popular
                     ? "border-blue-500 shadow-2xl shadow-blue-500/20"
-                    : theme === 'dark'
+                    : theme === "dark"
                     ? "border-slate-700"
                     : "border-slate-300"
                 } relative`}>
@@ -593,14 +634,24 @@ export default function LandingPage() {
                 <div className="mb-6">
                   <span className="text-5xl font-bold">${plan.price}</span>
                   {plan.price !== "Custom" && (
-                    <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>/month</span>
+                    <span
+                      className={
+                        theme === "dark" ? "text-slate-400" : "text-slate-600"
+                      }>
+                      /month
+                    </span>
                   )}
                 </div>
                 <ul className="mb-8 space-y-4">
                   {plan.features.map((feature, j) => (
                     <li key={j} className="flex items-center space-x-3">
                       <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400" />
-                      <span className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>{feature}</span>
+                      <span
+                        className={
+                          theme === "dark" ? "text-slate-300" : "text-slate-700"
+                        }>
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -608,7 +659,7 @@ export default function LandingPage() {
                   className={`w-full py-3 rounded-lg font-semibold transition-all ${
                     plan.popular
                       ? "bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600 hover:shadow-lg hover:shadow-blue-500/50 text-white"
-                      : theme === 'dark'
+                      : theme === "dark"
                       ? "bg-slate-700 hover:bg-slate-600 text-white"
                       : "bg-slate-200 hover:bg-slate-300 text-slate-900"
                   }`}>
@@ -618,8 +669,12 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <p className={`mt-12 text-center ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-            Start free with 5 employees • Upgrade anytime • Cancel anytime • All paid plans include Stripe billing
+          <p
+            className={`mt-12 text-center ${
+              theme === "dark" ? "text-slate-400" : "text-slate-600"
+            }`}>
+            Start free with 5 employees • Upgrade anytime • Cancel anytime • All
+            paid plans include Stripe billing
           </p>
         </div>
       </section>
@@ -634,11 +689,14 @@ export default function LandingPage() {
                 Ready to Automate Employee Compliance?
               </h2>
               <p className="mb-8 text-xl text-blue-50">
-                Start free with 5 employees. No credit card required. Upgrade anytime.
+                Start free with 5 employees. No credit card required. Upgrade
+                anytime.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <SignInButton>
-                  <button onClick={()=>(navigate("/sign-in"))} className="flex items-center justify-center px-8 py-4 text-lg font-semibold text-blue-700 transition-all bg-white rounded-lg hover:bg-blue-50 group">
+                  <button
+                    onClick={() => navigate("/sign-in")}
+                    className="flex items-center justify-center px-8 py-4 text-lg font-semibold text-blue-700 transition-all bg-white rounded-lg hover:bg-blue-50 group">
                     Start Your Free Trial
                     <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
                   </button>
@@ -655,7 +713,6 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-     
     </PublicLayout>
   );
 }

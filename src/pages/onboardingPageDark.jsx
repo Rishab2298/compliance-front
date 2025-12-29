@@ -21,6 +21,7 @@ import PolicyModal from "@/components/PolicyModal";
 import { bulkImportDrivers } from "@/api/drivers";
 import { upgradePlan } from "@/api/billing";
 import { toast } from "sonner";
+import { getAllLatestPublishedPolicies } from "@/api/policies";
 
 export default function OnboardingDark() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,6 +38,7 @@ export default function OnboardingDark() {
 
   // Policy modal state
   const [activePolicyModal, setActivePolicyModal] = useState(null);
+  const [preloadedPolicies, setPreloadedPolicies] = useState({});
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -149,6 +151,31 @@ export default function OnboardingDark() {
       }
     }
   }, [user, isLoaded, navigate, setValue]);
+
+  // Preload all policies when component mounts
+  useEffect(() => {
+    const preloadPolicies = async () => {
+      try {
+        console.log('🔄 Preloading policies...');
+        const policies = await getAllLatestPublishedPolicies();
+
+        // Convert array to object with type as key for easy lookup
+        const policiesMap = policies.reduce((acc, policy) => {
+          acc[policy.type] = policy;
+          return acc;
+        }, {});
+
+        setPreloadedPolicies(policiesMap);
+        console.log('✅ Policies preloaded successfully:', Object.keys(policiesMap));
+      } catch (error) {
+        console.error('❌ Failed to preload policies:', error);
+        // Don't block onboarding if preloading fails
+        // Policies will be fetched individually when modals open
+      }
+    };
+
+    preloadPolicies();
+  }, []);
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -495,8 +522,15 @@ export default function OnboardingDark() {
           navigate("/client/dashboard");
         }
       } else {
-        // Free plan - go straight to dashboard
+        // Free plan - wait for Clerk session to sync before navigating
         toast.success("Onboarding completed successfully!");
+
+        // Wait for database transaction to commit and Clerk session to sync
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Force refresh Clerk session to ensure companyId is updated
+        await getToken();
+
         navigate("/client/dashboard");
       }
     } catch (error) {
@@ -1597,7 +1631,7 @@ export default function OnboardingDark() {
               <img src="/logo.png" alt="Complyo Logo" className="w-8 h-8" />
             </div>
             <span className="text-xl font-bold font-white">
-              Complyo.io
+              complyo.co
             </span>
           </div>
         </div>
@@ -1721,6 +1755,7 @@ export default function OnboardingDark() {
           policyType={policyConfig[activePolicyModal].type}
           policyLabel={policyConfig[activePolicyModal].label}
           isCurrentlyChecked={formData[activePolicyModal]}
+          preloadedData={preloadedPolicies[policyConfig[activePolicyModal].type]}
         />
       )}
     </div>

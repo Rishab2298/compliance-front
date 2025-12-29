@@ -601,7 +601,7 @@
     "toasts": {
       "alreadyOnPlan": "Vous êtes déjà sur ce plan",
       "contactSales": "Contactez les ventes pour les tarifs Enterprise",
-      "contactSalesDesc": "Envoyez-nous un e-mail à sales@complyo.io",
+      "contactSalesDesc": "Envoyez-nous un e-mail à sales@complyo.co",
       "downgradeNotAvailable": "Rétrogradation non disponible dans l'interface",
       "downgradeDesc": "Contactez le support pour rétrograder",
       "failedToChangePlan": "Échec du changement de plan",
