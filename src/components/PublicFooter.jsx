@@ -25,27 +25,24 @@ const PublicFooter = () => {
       }`}>
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 mb-8 md:grid-cols-4">
-          <div>
-            <div className="flex items-center mb-4 space-x-3">
-              <img
-                src="/logo.png"
-                alt="Complyo Logo"
-                className="object-contain w-10 h-10"
-              />
-              <span
-                className={`text-xl font-bold ${
-                  theme === "dark" ? "text-white" : "text-black"
-                }`}>
-                Complyo
-              </span>
-            </div>
-            <p
-              className={`text-sm ${
+          <div className="flex flex-col items-center">
+            <img
+              src="/logo.png"
+              alt="Complyo Logo"
+              className="object-contain w-30 h-30 mb-2"
+            />
+            <span
+              className={`text-2xl font-bold mb-1 ${
+                theme === "dark" ? "text-white" : "text-black"
+              }`}>
+              Complyo
+            </span>
+            <span
+              className={`text-sm font-medium tracking-wide ${
                 theme === "dark" ? "text-slate-400" : "text-slate-600"
               }`}>
-              Streamline employee documents compliance with AI-powered tracking,
-              automated reminders, and real-time visibility.
-            </p>
+              Automate. Track. Comply
+            </span>
           </div>
 
           <div>
@@ -89,13 +86,13 @@ const PublicFooter = () => {
               </li>
               <li>
                 <a
-                  href="#roadmap"
+                  href="/#faqs"
                   className={
                     theme === "dark"
                       ? "hover:text-blue-400"
                       : "hover:text-blue-600"
                   }>
-                  Roadmap
+                  FAQs
                 </a>
               </li>
             </ul>

@@ -45,11 +45,16 @@ const PublicHeader = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
             <div className="flex items-center justify-center">
-              <img src="/logo.png" alt="Logo" className="object-contain w-14 h-14" />
+              <img src="/logo.png" alt="Logo" className="object-contain w-20 h-20" />
             </div>
-            <span className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-              Complyo
-            </span>
+            <div className="flex flex-col">
+              <span className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                Complyo
+              </span>
+              <span className={`text-xs font-medium tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                Automate. Track. Comply
+              </span>
+            </div>
           </div>
 
           <div className="items-center hidden space-x-8 md:flex">

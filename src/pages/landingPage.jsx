@@ -16,6 +16,7 @@ import {
   X,
   Sun,
   Moon,
+  ChevronDown,
 } from "lucide-react";
 import {
   SignedIn,
@@ -33,6 +34,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
   const [billingPeriod, setBillingPeriod] = useState("monthly"); // 'monthly' or 'annual'
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [theme, setTheme] = useState(() => {
     // Load theme from localStorage or default to 'dark'
     return localStorage.getItem("theme") || "dark";
@@ -83,6 +85,36 @@ export default function LandingPage() {
     window.addEventListener("themeChange", handleThemeChange);
     return () => window.removeEventListener("themeChange", handleThemeChange);
   }, []);
+ const faqs = [
+  {
+    question: "How accurate is the AI document extraction?",
+    answer: "Our AI delivers up to 98% accuracy when extracting expiration dates and critical metadata from documents. All extracted data can be reviewed and manually adjusted before being finalized, so you stay in control."
+  },
+  {
+    question: "What types of documents can I track?",
+    answer: "You can track any document with an expiration or renewal requirement, including licenses, certifications, contracts, compliance documents, background checks, ID proofs, insurance policies, and more. Custom document types can be created to match your organization’s needs."
+  },
+  {
+    question: "Is my data secure and audit-ready?",
+    answer: "Yes. All data is encrypted using 256-bit encryption and securely hosted on AWS infrastructure. Every access and modification is logged, providing a complete audit trail to support internal reviews and regulatory audits."
+  },
+  {
+    question: "How do automated reminders work?",
+    answer: "You can configure multiple reminder intervals for each document type, such as 90, 60, or 30 days before expiration. Notifications are delivered via email, SMS, and in-app alerts to ensure deadlines are never missed."
+  },
+  {
+    question: "Can I manage documents across multiple teams or locations?",
+    answer: "Yes. The platform supports multi-location and multi-team setups, allowing you to manage different compliance requirements while maintaining centralized visibility and control."
+  },
+  {
+    question: "What happens if I exceed my AI usage limits?",
+    answer: "You’ll receive advance notifications as you approach your limit. Additional AI credits can be purchased, or you can upgrade your plan to accommodate higher document volumes."
+  },
+  {
+  question: "Do I own my data, and can I export it anytime?",
+  answer: "Yes. You retain full ownership of your data at all times. You can export your documents and metadata whenever you choose in standard formats, with no lock-in or restrictions."
+}
+];
 
   const features = [
     {
@@ -213,7 +245,13 @@ export default function LandingPage() {
       includesStarter: true,
       annualSavings: "Save 20% on Annual Plans",
       features: [
-      "Up to 100 employees", "Up to 10 document types per employee", "Email + SMS notifications", "Audit-ready exports (PDF/CSV) + audit log", "Roles & permissions (Admin/Manager/Worker)", "Automation: escalations + risk dashboard", "500 AI credits/month"
+        "Up to 100 employees",
+        "Up to 10 document types per employee",
+        "Email + SMS notifications",
+        "Audit-ready exports (PDF/CSV) + audit log",
+        "Roles & permissions (Admin/Manager/Worker)",
+        "Automation: escalations + risk dashboard",
+        "500 AI credits/month",
       ],
       cta: "Get Started for Free",
       popular: true,
@@ -222,7 +260,8 @@ export default function LandingPage() {
       name: "Enterprise",
       price: "Custom",
       annualPrice: "Custom",
-      description: "Tailored pricing based on users, locations, and integrations. For complex operations and larger organizations",
+      description:
+        "Tailored pricing based on users, locations, and integrations. For complex operations and larger organizations",
       features: [
         "Unlimited employees",
         "Unlimited document types",
@@ -248,6 +287,21 @@ export default function LandingPage() {
 
         h1, h2, h3, h4, h5, h6 {
           font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+        }
+
+        .font-plex {
+          font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+        }
+
+        .font-mono-custom {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .text-gradient-blue-cyan {
+          background: linear-gradient(to right, #60a5fa, #3b82f6, #22d3ee);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
         }
       `}</style>
       {/* Navigation */}
@@ -609,18 +663,20 @@ export default function LandingPage() {
                 Perfect Plan
               </span>
             </h2>
-            <p className={`text-xl ${
-              theme === "dark" ? "text-slate-400" : "text-slate-600"
-            }`}>
+            <p
+              className={`text-xl ${
+                theme === "dark" ? "text-slate-400" : "text-slate-600"
+              }`}>
               Flexible pricing that grows with your team
             </p>
 
             {/* Toggle */}
-            <div className={`inline-flex items-center gap-2 p-1.5 mt-8 rounded-xl ${
-              theme === "dark"
-                ? "bg-slate-800 border border-slate-700"
-                : "bg-slate-100 border border-slate-200"
-            }`}>
+            <div
+              className={`inline-flex items-center gap-2 p-1.5 mt-8 rounded-xl ${
+                theme === "dark"
+                  ? "bg-slate-800 border border-slate-700"
+                  : "bg-slate-100 border border-slate-200"
+              }`}>
               <button
                 onClick={() => setBillingPeriod("monthly")}
                 className={`px-6 py-2.5 text-sm font-semibold rounded-lg transition-all ${
@@ -642,7 +698,6 @@ export default function LandingPage() {
                     : "text-slate-600 hover:text-slate-900"
                 }`}>
                 Annual
-               
               </button>
             </div>
           </div>
@@ -650,7 +705,8 @@ export default function LandingPage() {
           {/* Top 3 Pricing Cards */}
           <div className="grid gap-6 mb-6 md:grid-cols-3">
             {pricing.slice(0, 3).map((plan, i) => {
-              const displayPrice = billingPeriod === "annual" ? plan.annualPrice : plan.price;
+              const displayPrice =
+                billingPeriod === "annual" ? plan.annualPrice : plan.price;
               const isPopular = plan.popular;
 
               return (
@@ -679,9 +735,10 @@ export default function LandingPage() {
 
                   {/* Description */}
                   {plan.description && (
-                    <p className={`text-sm mb-6 min-h-[40px] ${
-                      theme === "dark" ? "text-slate-400" : "text-slate-600"
-                    }`}>
+                    <p
+                      className={`text-sm mb-6 min-h-[40px] ${
+                        theme === "dark" ? "text-slate-400" : "text-slate-600"
+                      }`}>
                       {plan.description}
                     </p>
                   )}
@@ -690,23 +747,29 @@ export default function LandingPage() {
                   <div className="mb-6">
                     <span className="text-5xl font-bold">${displayPrice}</span>
                     {displayPrice !== "Custom" && (
-                      <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>
+                      <span
+                        className={
+                          theme === "dark" ? "text-slate-400" : "text-slate-600"
+                        }>
                         /month
                       </span>
                     )}
                   </div>
 
                   {/* Annual Savings */}
-                  {plan.annualSavings && billingPeriod === "annual" && displayPrice !== "Custom" && (
-                    <p className="mb-4 text-sm font-medium text-green-400">
-                      {plan.annualSavings}
-                    </p>
-                  )}
+                  {plan.annualSavings &&
+                    billingPeriod === "annual" &&
+                    displayPrice !== "Custom" && (
+                      <p className="mb-4 text-sm font-medium text-green-400">
+                        {plan.annualSavings}
+                      </p>
+                    )}
 
                   {/* Divider */}
-                  <div className={`h-px mb-6 ${
-                    theme === "dark" ? "bg-slate-700" : "bg-slate-200"
-                  }`}></div>
+                  <div
+                    className={`h-px mb-6 ${
+                      theme === "dark" ? "bg-slate-700" : "bg-slate-200"
+                    }`}></div>
 
                   {/* Includes Starter Text */}
                   {plan.includesStarter && (
@@ -720,9 +783,12 @@ export default function LandingPage() {
                     {plan.features.map((feature, j) => (
                       <li key={j} className="flex items-start gap-3">
                         <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400 mt-0.5" />
-                        <span className={`text-sm ${
-                          theme === "dark" ? "text-slate-300" : "text-slate-700"
-                        }`}>
+                        <span
+                          className={`text-sm ${
+                            theme === "dark"
+                              ? "text-slate-300"
+                              : "text-slate-700"
+                          }`}>
                           {feature}
                         </span>
                       </li>
@@ -748,18 +814,20 @@ export default function LandingPage() {
 
           {/* Enterprise Card - Full Width Bottom */}
           {pricing[3] && (
-            <div className={`p-8 rounded-2xl border-2 ${
-              theme === "dark"
-                ? "bg-slate-800/50 border-slate-700"
-                : "bg-white border-slate-200"
-            }`}>
+            <div
+              className={`p-8 rounded-2xl border-2 ${
+                theme === "dark"
+                  ? "bg-slate-800/50 border-slate-700"
+                  : "bg-white border-slate-200"
+              }`}>
               <div className="grid gap-8 md:grid-cols-2">
                 {/* Left Side - Info */}
                 <div>
                   <h3 className="mb-2 text-2xl font-bold">{pricing[3].name}</h3>
-                  <p className={`text-sm mb-6 ${
-                    theme === "dark" ? "text-slate-400" : "text-slate-600"
-                  }`}>
+                  <p
+                    className={`text-sm mb-6 ${
+                      theme === "dark" ? "text-slate-400" : "text-slate-600"
+                    }`}>
                     {pricing[3].description}
                   </p>
                   <div className="mb-6">
@@ -782,9 +850,12 @@ export default function LandingPage() {
                     {pricing[3].features.map((feature, j) => (
                       <li key={j} className="flex items-start gap-3">
                         <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400 mt-0.5" />
-                        <span className={`text-sm ${
-                          theme === "dark" ? "text-slate-300" : "text-slate-700"
-                        }`}>
+                        <span
+                          className={`text-sm ${
+                            theme === "dark"
+                              ? "text-slate-300"
+                              : "text-slate-700"
+                          }`}>
                           {feature}
                         </span>
                       </li>
@@ -796,15 +867,263 @@ export default function LandingPage() {
           )}
 
           {/* Footer Note */}
-          <p className={`mt-12 text-center text-sm ${
-            theme === "dark" ? "text-slate-400" : "text-slate-600"
-          }`}>
-            Your data stays yours — export anytime<br/>
-            Start free with 5 employees • Upgrade anytime • Cancel anytime • All paid plans include Stripe billing
+          <p
+            className={`mt-12 text-center text-sm ${
+              theme === "dark" ? "text-slate-400" : "text-slate-600"
+            }`}>
+            Your data stays yours — export anytime
+            <br />
+            Start free with 5 employees • Upgrade anytime • Cancel anytime • All
+            paid plans include Stripe billing
           </p>
         </div>
       </section>
+      {/* FAQ Section */}
+      <section
+        id="faqs"
+        className={`px-6 py-24 ${
+          theme === "dark" ? "bg-slate-900/20" : "bg-slate-50/50"
+        }`}>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid gap-12 lg:grid-cols-12">
+            {/* Left: Sticky Header */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="inline-block px-4 py-2 mb-6 text-sm font-medium border rounded-full border-cyan-500/30 bg-cyan-500/5 text-cyan-400">
+                  Common Questions
+                </div>
+                <h2 className="mb-6 text-4xl font-bold md:text-5xl font-plex">
+                  Frequently Asked
+                  <br />
+                  <span className="text-gradient-blue-cyan">Questions</span>
+                </h2>
+                <p
+                  className={`text-lg mb-8 ${
+                    theme === "dark" ? "text-slate-400" : "text-slate-600"
+                  }`}>
+                  Everything you need to know about implementing Complyo in your
+                  school or district
+                </p>
 
+                {/* Quick stats */}
+                <div
+                  className={`p-6 border rounded-2xl ${
+                    theme === "dark"
+                      ? "bg-slate-900/80 border-slate-800"
+                      : "bg-white border-slate-200"
+                  }`}>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-green-500/10">
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                      </div>
+                      <div>
+                        <p
+                          className={`text-sm font-semibold ${
+                            theme === "dark" ? "text-white" : "text-slate-900"
+                          }`}>
+                          Setup in 5 minutes
+                        </p>
+                        <p className="text-xs text-slate-400">No IT required</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-blue-500/10">
+                        <Users className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <p
+                          className={`text-sm font-semibold ${
+                            theme === "dark" ? "text-white" : "text-slate-900"
+                          }`}>
+                          24/7 Support
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Always here to help
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-cyan-500/10">
+                        <Shield className="w-5 h-5 text-cyan-400" />
+                      </div>
+                      <div>
+                        <p
+                          className={`text-sm font-semibold ${
+                            theme === "dark" ? "text-white" : "text-slate-900"
+                          }`}>
+                          State Audit-Ready
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Bank-grade security
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: FAQ List */}
+            <div className="lg:col-span-8">
+              <div className="space-y-3">
+                {faqs.map((faq, i) => (
+                  <div
+                    key={i}
+                    className={`group border rounded-2xl overflow-hidden transition-all duration-300 hover:border-blue-500/50 ${
+                      openFaqIndex === i
+                        ? theme === "dark"
+                          ? "bg-gradient-to-br from-slate-900 to-slate-800 border-blue-500/30 shadow-xl shadow-blue-500/5"
+                          : "bg-gradient-to-br from-white to-blue-50/30 border-blue-500/30 shadow-xl"
+                        : theme === "dark"
+                        ? "bg-slate-900/50 border-slate-800 hover:bg-slate-900/80"
+                        : "bg-white border-slate-200 hover:bg-slate-50"
+                    }`}>
+                    <button
+                      onClick={() =>
+                        setOpenFaqIndex(openFaqIndex === i ? null : i)
+                      }
+                      className="relative flex items-start w-full gap-4 px-8 py-6 text-left transition-all">
+                      {/* Number badge */}
+                      <div
+                        className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg font-mono-custom text-sm font-semibold transition-all ${
+                          openFaqIndex === i
+                            ? "bg-gradient-to-br from-blue-600 to-cyan-600 text-white"
+                            : theme === "dark"
+                            ? "bg-slate-800 text-slate-400 group-hover:bg-blue-500/10 group-hover:text-blue-400"
+                            : "bg-slate-100 text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600"
+                        }`}>
+                        {String(i + 1).padStart(2, "0")}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className={`text-lg font-bold font-plex mb-1 pr-8 transition-colors ${
+                            openFaqIndex === i
+                              ? "text-gradient-blue-cyan"
+                              : theme === "dark"
+                              ? "text-white group-hover:text-blue-300"
+                              : "text-slate-900 group-hover:text-blue-700"
+                          }`}>
+                          {faq.question}
+                        </h3>
+                      </div>
+
+                      {/* Expand icon */}
+                      <div
+                        className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                          openFaqIndex === i
+                            ? "bg-blue-500/20"
+                            : theme === "dark"
+                            ? "bg-slate-800/50 group-hover:bg-blue-500/10"
+                            : "bg-slate-100 group-hover:bg-blue-50"
+                        }`}>
+                        <ChevronDown
+                          className={`w-5 h-5 transition-all duration-300 ${
+                            openFaqIndex === i
+                              ? "rotate-180 text-blue-400"
+                              : "text-slate-400"
+                          }`}
+                        />
+                      </div>
+
+                      {/* Decorative line */}
+                      {openFaqIndex === i && (
+                        <div className="absolute bottom-0 h-px left-8 right-8 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+                      )}
+                    </button>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-500 ${
+                        openFaqIndex === i
+                          ? "max-h-[500px] opacity-100"
+                          : "max-h-0 opacity-0"
+                      }`}>
+                      <div className="px-8 pb-8">
+                        <div className="pl-12">
+                          <p
+                            className={`text-base leading-relaxed ${
+                              theme === "dark"
+                                ? "text-slate-300"
+                                : "text-slate-600"
+                            }`}>
+                            {faq.answer}
+                          </p>
+
+                          {/* Decorative element */}
+                          <div className="flex items-center gap-2 pt-6 mt-6 border-t border-slate-700/30">
+                            <div className="flex items-center gap-2 text-sm text-slate-400">
+                              <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                              <span>Helpful answer?</span>
+                            </div>
+                            <button
+                              onClick={() => navigate("/contact")}
+                              className={`ml-auto text-sm font-medium transition-colors ${
+                                theme === "dark"
+                                  ? "text-blue-400 hover:text-blue-300"
+                                  : "text-blue-600 hover:text-blue-700"
+                              }`}>
+                              Contact us for more details →
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Additional help CTA */}
+              <div
+                className={`mt-8 p-8 border-2 rounded-2xl relative overflow-hidden ${
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-slate-900 to-slate-800 border-blue-500/20"
+                    : "bg-gradient-to-br from-blue-50 to-white border-blue-200"
+                }`}>
+                {/* Decorative background */}
+                <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-blue-500/10 to-transparent blur-3xl"></div>
+
+                <div className="relative flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
+                  <div className="flex-shrink-0 p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+                    <Users className="w-8 h-8 text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3
+                      className={`mb-2 text-2xl font-bold font-plex ${
+                        theme === "dark" ? "text-white" : "text-slate-900"
+                      }`}>
+                      Still have questions?
+                    </h3>
+                    <p
+                      className={`${
+                        theme === "dark" ? "text-slate-400" : "text-slate-600"
+                      }`}>
+                      Our education compliance experts are here to help you get
+                      started
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={() => navigate("/sign-in")}
+                      className="px-8 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:shadow-xl hover:shadow-blue-500/30 whitespace-nowrap">
+                      Get In Touch
+                    </button>
+                    <button
+                      onClick={() => navigate("/contact")}
+                      className={`px-8 py-3 font-semibold rounded-lg border-2 transition-all duration-300 whitespace-nowrap ${
+                        theme === "dark"
+                          ? "border-slate-700 text-white hover:border-blue-500 hover:bg-blue-500/5"
+                          : "border-slate-300 text-slate-900 hover:border-blue-500 hover:bg-blue-50"
+                      }`}>
+                      Book A Demo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* CTA Section */}
       <section className="px-6 py-20">
         <div className="max-w-5xl mx-auto">
