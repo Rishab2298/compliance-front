@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, FileText, Loader2 } from 'lucide-react';
+import { ArrowLeft, FileText, Loader2, Sun, Moon } from 'lucide-react';
 import { getLatestPublishedPolicy } from '@/api/policies';
 import { createSafeMarkup } from '@/lib/sanitize';
 
@@ -14,6 +14,27 @@ const PolicyViewer = () => {
     // Load theme from localStorage or default to 'dark'
     return localStorage.getItem("theme") || "dark";
   });
+
+  // Persist theme to localStorage
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent("themeChange", { detail: theme }));
+  }, [theme]);
+
+  // Listen for theme changes from other components
+  useEffect(() => {
+    const handleThemeChange = (event) => {
+      setTheme(event.detail);
+    };
+
+    window.addEventListener("themeChange", handleThemeChange);
+    return () => window.removeEventListener("themeChange", handleThemeChange);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const handleGoBack = () => {
     // Check if there's a previous page in history
@@ -52,16 +73,6 @@ const PolicyViewer = () => {
   useEffect(() => {
     fetchPolicy();
   }, [type]);
-
-  // Listen for theme changes from other components
-  useEffect(() => {
-    const handleThemeChange = (event) => {
-      setTheme(event.detail);
-    };
-
-    window.addEventListener("themeChange", handleThemeChange);
-    return () => window.removeEventListener("themeChange", handleThemeChange);
-  }, []);
 
   const fetchPolicy = async () => {
     try {
@@ -111,7 +122,7 @@ const PolicyViewer = () => {
             <FileText className="w-12 h-12 text-red-400" />
           </div>
           <h2 className={`mb-2 text-2xl font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>Policy Not Found</h2>
-          <p className={`mb-6 ${theme === "dark" ? "text-slate-400" : "text-slate-600"}`}>{error}</p>
+          <p className={theme === "dark" ? "mb-6 text-slate-400" : "mb-6 text-slate-600"}>{error}</p>
           <button
             onClick={handleGoBack}
             className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors rounded-lg bg-violet-600 hover:bg-violet-700"
@@ -157,7 +168,19 @@ const PolicyViewer = () => {
             >
               Complyo
             </Link>
-            <div className="w-20"></div>
+            <button
+              onClick={toggleTheme}
+              className={`p-2 transition-all rounded-lg ${
+                theme === "dark" ? "hover:bg-slate-800" : "hover:bg-slate-200"
+              }`}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-slate-700" />
+              )}
+            </button>
           </div>
         </div>
       </header>
@@ -194,7 +217,7 @@ const PolicyViewer = () => {
               : "bg-white/50 border-slate-200"
           }`}>
             <div
-              className={`policy-content ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+              className={`policy-document-text ${theme === "dark" ? "text-slate-300" : "text-slate-900"}`}
               dangerouslySetInnerHTML={createSafeMarkup(policy?.content || '')}
             />
           </div>
@@ -205,8 +228,8 @@ const PolicyViewer = () => {
             onClick={handleGoBack}
             className={`inline-flex items-center gap-2 px-6 py-3 transition-colors border rounded-lg ${
               theme === "dark"
-                ? "bg-slate-800 hover:bg-slate-700 border-slate-700 text-white"
-                : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-900"
+                ? "text-white bg-slate-800 hover:bg-slate-700 border-slate-700"
+                : "text-slate-900 bg-slate-100 hover:bg-slate-200 border-slate-300"
             }`}
           >
             <ArrowLeft className="w-4 h-4" />

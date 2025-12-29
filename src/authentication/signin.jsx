@@ -44,16 +44,13 @@ export default function LoginPage() {
             <a href="/policies/terms-of-service" className="transition-colors hover:text-blue-400">
               Terms of Service
             </a>
-            <span>•</span>
-            <a href="/policies/sms-consent" className="transition-colors hover:text-blue-400">
-              SMS Terms
-            </a>
+
             <span>•</span>
             <a href="/" className="transition-colors hover:text-blue-400">
               Back to Home
             </a>
           </div>
-          <p className="text-xs text-center text-slate-500">© 2025 Complyo. All rights reserved.</p>
+          <p className="text-xs text-center text-slate-500">© Kilimanjaro Innovation Labs Inc. | All Rights Reserved </p>
         </div>
       </div>
 
@@ -68,7 +65,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="max-w-lg space-y-6 text-center">
             <div className="inline-block px-4 py-2 mb-4 text-sm text-blue-400 border rounded-full bg-blue-500/10 border-blue-500/20">
-              Trusted by Leading DSPs
+              Automate. Track. Comply.
             </div>
             <h2 className="text-4xl font-bold leading-tight text-white md:text-5xl">
               Automated Compliance,
@@ -77,7 +74,7 @@ export default function LoginPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-300">
-              Keep your entire fleet compliant with intelligent document tracking and automated reminders.
+              Keep your entire team compliant with intelligent document tracking and automated reminders.
             </p>
 
             {/* Stats */}

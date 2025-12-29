@@ -16,7 +16,7 @@ const Footer = () => {
           <p className={`text-sm ${
             isDarkMode ? 'text-slate-400' : 'text-slate-600'
           }`}>
-            © 2025 Complyo. All rights reserved.
+            © Kilimanjaro Innovation Labs Inc. | All Rights Reserved 
           </p>
 
           <button

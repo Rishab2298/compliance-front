@@ -529,7 +529,7 @@ const ShippingManagementPage = () => {
               </div>
 
               {/* Floating mini card */}
-              <div className={`absolute -bottom-6 -left-6 p-4 border rounded-xl backdrop-blur-sm ${
+              <div className={`absolute -bottom-20 left-0 p-4 border rounded-xl backdrop-blur-sm ${
                 theme === 'dark'
                   ? 'bg-slate-900/90 border-slate-800'
                   : 'bg-white/90 border-slate-200'

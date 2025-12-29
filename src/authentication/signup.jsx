@@ -12,7 +12,7 @@ export default function SignUpPage() {
         {/* Logo */}
         <div className="flex justify-center gap-3 md:justify-start">
           <a href="/" className="flex items-center gap-3 group">
-            <img src="/logo.png" alt="Complyo Logo" className="w-12 h-12 object-contain transition-all group-hover:scale-105" />
+            <img src="/logo.png" alt="Complyo Logo" className="object-contain w-12 h-12 transition-all group-hover:scale-105" />
             <span className="text-2xl font-bold text-white">
               Complyo
             </span>
@@ -41,23 +41,20 @@ export default function SignUpPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-500">
-            <a href="/policies/privacy-policy" className="hover:text-blue-400 transition-colors">
+            <a href="/policies/privacy-policy" className="transition-colors hover:text-blue-400">
               Privacy Policy
             </a>
             <span>•</span>
-            <a href="/policies/terms-of-service" className="hover:text-blue-400 transition-colors">
+            <a href="/policies/terms-of-service" className="transition-colors hover:text-blue-400">
               Terms of Service
             </a>
+           
             <span>•</span>
-            <a href="/policies/sms-consent" className="hover:text-blue-400 transition-colors">
-              SMS Terms
-            </a>
-            <span>•</span>
-            <a href="/" className="hover:text-blue-400 transition-colors">
+            <a href="/" className="transition-colors hover:text-blue-400">
               Back to Home
             </a>
           </div>
-          <p className="text-xs text-center text-slate-500">© 2025 Complyo. All rights reserved.</p>
+          <p className="text-xs text-center text-slate-500">© Kilimanjaro Innovation Labs Inc. | All Rights Reserved </p>
         </div>
       </div>
 
@@ -72,7 +69,7 @@ export default function SignUpPage() {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="max-w-lg space-y-6 text-center">
             <div className="inline-block px-4 py-2 mb-4 text-sm text-blue-400 border rounded-full bg-blue-500/10 border-blue-500/20">
-              Trusted by Leading DSPs
+             Automate. Track. Comply.
             </div>
             <h2 className="text-4xl font-bold leading-tight text-white md:text-5xl">
               Automated Compliance,
@@ -81,7 +78,7 @@ export default function SignUpPage() {
               </span>
             </h2>
             <p className="text-xl text-slate-300">
-              Keep your entire fleet compliant with intelligent document tracking and automated reminders.
+              Keep your entire team compliant with intelligent document tracking and automated reminders.
             </p>
 
             {/* Stats */}
