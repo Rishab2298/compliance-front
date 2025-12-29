@@ -32,6 +32,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [billingPeriod, setBillingPeriod] = useState("monthly"); // 'monthly' or 'annual'
   const [theme, setTheme] = useState(() => {
     // Load theme from localStorage or default to 'dark'
     return localStorage.getItem("theme") || "dark";
@@ -176,6 +177,8 @@ export default function LandingPage() {
     {
       name: "Free",
       price: "0",
+      annualPrice: "0",
+      description: "For individuals and very small teams",
       features: [
         "Up to 5 employees",
         "1 document type per employee",
@@ -189,42 +192,45 @@ export default function LandingPage() {
     {
       name: "Starter",
       price: "49",
+      annualPrice: "44",
+      description: "Best for teams starting compliance tracking right",
+      annualSavings: "Save 10% on annual billing",
       features: [
         "Up to 25 employees",
-        "5 document types per employee",
+        "Up to 5 document types per employee",
+        "Configurable email reminders (30/14/7/1 days)",
+        "Basic reporting (CSV export)",
         "100 AI credits/month",
-        "Email notifications",
-        "Document reminders",
-        "Priority support",
+        "Priority email support",
       ],
-      cta: "Start Free Trial",
+      cta: "Get Started for Free",
     },
     {
       name: "Professional",
       price: "149",
+      annualPrice: "119",
+      description: "Best value for growing teams",
+      includesStarter: true,
+      annualSavings: "Save 20% on Annual Plans",
       features: [
-        "Up to 100 employees",
-        "10 document types per employee",
-        "500 AI credits/month",
-        "Email + SMS notifications",
-        "Advanced analytics",
-        "Priority support",
-        "Billing & invoicing",
+      "Up to 100 employees", "Up to 10 document types per employee", "Email + SMS notifications", "Audit-ready exports (PDF/CSV) + audit log", "Roles & permissions (Admin/Manager/Worker)", "Automation: escalations + risk dashboard", "500 AI credits/month"
       ],
-      cta: "Start Free Trial",
+      cta: "Get Started for Free",
       popular: true,
     },
     {
       name: "Enterprise",
       price: "Custom",
+      annualPrice: "Custom",
+      description: "Tailored pricing based on users, locations, and integrations. For complex operations and larger organizations",
       features: [
         "Unlimited employees",
         "Unlimited document types",
         "Unlimited AI credits",
-        "Email + SMS + WhatsApp",
-        "Multi-location support",
-        "Dedicated support",
-        "Custom integrations",
+        "Email + SMS + WhatsApp notifications",
+        "Multi-location + SSO",
+        "Dedicated support + SLA",
+        "Custom integrations + advanced workflows",
       ],
       cta: "Contact Sales",
     },
@@ -593,7 +599,8 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section id="pricing" className="px-6 py-20">
-        <div className="mx-auto max-w-7xl">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-4xl font-bold md:text-5xl">
               Choose Your
@@ -602,79 +609,197 @@ export default function LandingPage() {
                 Perfect Plan
               </span>
             </h2>
-            <p
-              className={`text-xl ${
-                theme === "dark" ? "text-slate-400" : "text-slate-600"
-              }`}>
-              Flexible pricing that grows with your team
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {pricing.map((plan, i) => (
-              <div
-                key={i}
-                className={`p-6 rounded-2xl border ${
-                  theme === "dark"
-                    ? "bg-gradient-to-br from-slate-800 to-slate-900"
-                    : "bg-gradient-to-br from-white to-slate-50"
-                } ${
-                  plan.popular
-                    ? "border-blue-500 shadow-2xl shadow-blue-500/20"
-                    : theme === "dark"
-                    ? "border-slate-700"
-                    : "border-slate-300"
-                } relative`}>
-                {plan.popular && (
-                  <div className="absolute px-4 py-1 text-sm font-semibold text-white -translate-x-1/2 rounded-full -top-4 left-1/2 bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="mb-2 text-2xl font-bold">{plan.name}</h3>
-                <div className="mb-6">
-                  <span className="text-5xl font-bold">${plan.price}</span>
-                  {plan.price !== "Custom" && (
-                    <span
-                      className={
-                        theme === "dark" ? "text-slate-400" : "text-slate-600"
-                      }>
-                      /month
-                    </span>
-                  )}
-                </div>
-                <ul className="mb-8 space-y-4">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-center space-x-3">
-                      <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400" />
-                      <span
-                        className={
-                          theme === "dark" ? "text-slate-300" : "text-slate-700"
-                        }>
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  className={`w-full py-3 rounded-lg font-semibold transition-all ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600 hover:shadow-lg hover:shadow-blue-500/50 text-white"
-                      : theme === "dark"
-                      ? "bg-slate-700 hover:bg-slate-600 text-white"
-                      : "bg-slate-200 hover:bg-slate-300 text-slate-900"
-                  }`}>
-                  {plan.cta}
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <p
-            className={`mt-12 text-center ${
+            <p className={`text-xl ${
               theme === "dark" ? "text-slate-400" : "text-slate-600"
             }`}>
-            Start free with 5 employees • Upgrade anytime • Cancel anytime • All
-            paid plans include Stripe billing
+              Flexible pricing that grows with your team
+            </p>
+
+            {/* Toggle */}
+            <div className={`inline-flex items-center gap-2 p-1.5 mt-8 rounded-xl ${
+              theme === "dark"
+                ? "bg-slate-800 border border-slate-700"
+                : "bg-slate-100 border border-slate-200"
+            }`}>
+              <button
+                onClick={() => setBillingPeriod("monthly")}
+                className={`px-6 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+                  billingPeriod === "monthly"
+                    ? "bg-blue-600 text-white"
+                    : theme === "dark"
+                    ? "text-slate-400 hover:text-white"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}>
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingPeriod("annual")}
+                className={`px-6 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+                  billingPeriod === "annual"
+                    ? "bg-blue-600 text-white"
+                    : theme === "dark"
+                    ? "text-slate-400 hover:text-white"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}>
+                Annual
+               
+              </button>
+            </div>
+          </div>
+
+          {/* Top 3 Pricing Cards */}
+          <div className="grid gap-6 mb-6 md:grid-cols-3">
+            {pricing.slice(0, 3).map((plan, i) => {
+              const displayPrice = billingPeriod === "annual" ? plan.annualPrice : plan.price;
+              const isPopular = plan.popular;
+
+              return (
+                <div
+                  key={i}
+                  className={`relative flex flex-col p-8 rounded-2xl border-2 transition-all ${
+                    isPopular
+                      ? theme === "dark"
+                        ? "bg-slate-800 border-blue-500 shadow-xl shadow-blue-500/10"
+                        : "bg-white border-blue-500 shadow-xl shadow-blue-500/10"
+                      : theme === "dark"
+                      ? "bg-slate-800/50 border-slate-700 hover:border-slate-600"
+                      : "bg-white border-slate-200 hover:border-slate-300"
+                  }`}>
+                  {/* Popular Badge */}
+                  {isPopular && (
+                    <div className="absolute -translate-x-1/2 -top-4 left-1/2">
+                      <div className="px-4 py-1.5 text-xs font-bold text-white uppercase rounded-full bg-blue-600">
+                        Most Popular
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Plan Name */}
+                  <h3 className="mb-2 text-2xl font-bold">{plan.name}</h3>
+
+                  {/* Description */}
+                  {plan.description && (
+                    <p className={`text-sm mb-6 min-h-[40px] ${
+                      theme === "dark" ? "text-slate-400" : "text-slate-600"
+                    }`}>
+                      {plan.description}
+                    </p>
+                  )}
+
+                  {/* Price */}
+                  <div className="mb-6">
+                    <span className="text-5xl font-bold">${displayPrice}</span>
+                    {displayPrice !== "Custom" && (
+                      <span className={theme === "dark" ? "text-slate-400" : "text-slate-600"}>
+                        /month
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Annual Savings */}
+                  {plan.annualSavings && billingPeriod === "annual" && displayPrice !== "Custom" && (
+                    <p className="mb-4 text-sm font-medium text-green-400">
+                      {plan.annualSavings}
+                    </p>
+                  )}
+
+                  {/* Divider */}
+                  <div className={`h-px mb-6 ${
+                    theme === "dark" ? "bg-slate-700" : "bg-slate-200"
+                  }`}></div>
+
+                  {/* Includes Starter Text */}
+                  {plan.includesStarter && (
+                    <p className="mb-4 text-sm font-semibold text-blue-400">
+                      Includes everything in Starter, plus:
+                    </p>
+                  )}
+
+                  {/* Features */}
+                  <ul className="flex-1 mb-8 space-y-3">
+                    {plan.features.map((feature, j) => (
+                      <li key={j} className="flex items-start gap-3">
+                        <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400 mt-0.5" />
+                        <span className={`text-sm ${
+                          theme === "dark" ? "text-slate-300" : "text-slate-700"
+                        }`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <button
+                    onClick={() => navigate("/sign-up")}
+                    className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                      isPopular
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : theme === "dark"
+                        ? "bg-slate-700 hover:bg-slate-600 text-white"
+                        : "bg-slate-900 hover:bg-slate-800 text-white"
+                    }`}>
+                    {plan.cta}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Enterprise Card - Full Width Bottom */}
+          {pricing[3] && (
+            <div className={`p-8 rounded-2xl border-2 ${
+              theme === "dark"
+                ? "bg-slate-800/50 border-slate-700"
+                : "bg-white border-slate-200"
+            }`}>
+              <div className="grid gap-8 md:grid-cols-2">
+                {/* Left Side - Info */}
+                <div>
+                  <h3 className="mb-2 text-2xl font-bold">{pricing[3].name}</h3>
+                  <p className={`text-sm mb-6 ${
+                    theme === "dark" ? "text-slate-400" : "text-slate-600"
+                  }`}>
+                    {pricing[3].description}
+                  </p>
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold">Custom Pricing</span>
+                  </div>
+                  <button
+                    onClick={() => navigate("/contact")}
+                    className={`px-8 py-3 rounded-lg font-semibold transition-all ${
+                      theme === "dark"
+                        ? "bg-slate-700 hover:bg-slate-600 text-white"
+                        : "bg-slate-900 hover:bg-slate-800 text-white"
+                    }`}>
+                    {pricing[3].cta}
+                  </button>
+                </div>
+
+                {/* Right Side - Features */}
+                <div>
+                  <ul className="space-y-3">
+                    {pricing[3].features.map((feature, j) => (
+                      <li key={j} className="flex items-start gap-3">
+                        <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-400 mt-0.5" />
+                        <span className={`text-sm ${
+                          theme === "dark" ? "text-slate-300" : "text-slate-700"
+                        }`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer Note */}
+          <p className={`mt-12 text-center text-sm ${
+            theme === "dark" ? "text-slate-400" : "text-slate-600"
+          }`}>
+            Start free with 5 employees • Upgrade anytime • Cancel anytime • All paid plans include Stripe billing
           </p>
         </div>
       </section>

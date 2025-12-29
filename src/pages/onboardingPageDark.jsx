@@ -39,6 +39,9 @@ export default function OnboardingDark() {
   // Policy modal state
   const [activePolicyModal, setActivePolicyModal] = useState(null);
   const [preloadedPolicies, setPreloadedPolicies] = useState({});
+  const [policiesLoading, setPoliciesLoading] = useState(true);
+  const [policiesLoaded, setPoliciesLoaded] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -154,9 +157,34 @@ export default function OnboardingDark() {
 
   // Preload all policies when component mounts
   useEffect(() => {
+    const CACHE_KEY = 'onboarding_policies_cache';
+    const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
     const preloadPolicies = async () => {
       try {
-        console.log('🔄 Preloading policies...');
+        // Check sessionStorage cache first
+        const cachedData = sessionStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          try {
+            const { policies: cachedPolicies, timestamp } = JSON.parse(cachedData);
+            const isExpired = Date.now() - timestamp > CACHE_DURATION;
+
+            if (!isExpired && cachedPolicies) {
+              console.log('✅ Using cached policies from sessionStorage');
+              setPreloadedPolicies(cachedPolicies);
+              setPoliciesLoaded(true);
+              setPoliciesLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.warn('Failed to parse cached policies, fetching fresh:', e);
+          }
+        }
+
+        console.log('🔄 Preloading policies from server...');
+        setPoliciesLoading(true);
+
+        // Fetch policies
         const policies = await getAllLatestPublishedPolicies();
 
         // Convert array to object with type as key for easy lookup
@@ -165,12 +193,28 @@ export default function OnboardingDark() {
           return acc;
         }, {});
 
+        // Cache in sessionStorage
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+          policies: policiesMap,
+          timestamp: Date.now()
+        }));
+
         setPreloadedPolicies(policiesMap);
-        console.log('✅ Policies preloaded successfully:', Object.keys(policiesMap));
+        setPoliciesLoaded(true);
+        setShowSuccessBanner(true);
+        console.log('✅ Policies preloaded and cached successfully:', Object.keys(policiesMap));
+
+        // Auto-hide success banner after 5 seconds
+        setTimeout(() => {
+          setShowSuccessBanner(false);
+        }, 5000);
       } catch (error) {
         console.error('❌ Failed to preload policies:', error);
         // Don't block onboarding if preloading fails
         // Policies will be fetched individually when modals open
+        setPoliciesLoaded(true); // Mark as "loaded" to hide loading state
+      } finally {
+        setPoliciesLoading(false);
       }
     };
 
@@ -1376,6 +1420,35 @@ export default function OnboardingDark() {
                 Please review and accept our terms and policies
               </p>
             </div>
+
+            {/* Policy Loading Notice */}
+            {policiesLoading && !policiesLoaded && (
+              <div className="p-4 border rounded-[10px] bg-blue-500/10 border-blue-500/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5">
+                    <svg className="animate-spin text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <p className="text-sm text-blue-300">
+                    Loading policy documents... This will only take a moment.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Policy Loaded Success - Auto-hides after 5 seconds */}
+            {showSuccessBanner && !policiesLoading && policiesLoaded && Object.keys(preloadedPolicies).length > 0 && (
+              <div className="p-4 border rounded-[10px] bg-green-500/10 border-green-500/30 transition-opacity duration-500">
+                <div className="flex items-center gap-3">
+                  <Check className="w-5 h-5 text-green-400" />
+                  <p className="text-sm text-green-300">
+                    All policy documents loaded. Click any checkbox below to review.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4">
               {/* Terms of Service (Required) */}
