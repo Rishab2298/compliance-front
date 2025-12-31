@@ -85,36 +85,43 @@ export default function LandingPage() {
     window.addEventListener("themeChange", handleThemeChange);
     return () => window.removeEventListener("themeChange", handleThemeChange);
   }, []);
- const faqs = [
-  {
-    question: "How accurate is the AI document extraction?",
-    answer: "Our AI delivers up to 98% accuracy when extracting expiration dates and critical metadata from documents. All extracted data can be reviewed and manually adjusted before being finalized, so you stay in control."
-  },
-  {
-    question: "What types of documents can I track?",
-    answer: "You can track any document with an expiration or renewal requirement, including licenses, certifications, contracts, compliance documents, background checks, ID proofs, insurance policies, and more. Custom document types can be created to match your organization’s needs."
-  },
-  {
-    question: "Is my data secure and audit-ready?",
-    answer: "Yes. All data is encrypted using 256-bit encryption and securely hosted on AWS infrastructure. Every access and modification is logged, providing a complete audit trail to support internal reviews and regulatory audits."
-  },
-  {
-    question: "How do automated reminders work?",
-    answer: "You can configure multiple reminder intervals for each document type, such as 90, 60, or 30 days before expiration. Notifications are delivered via email, SMS, and in-app alerts to ensure deadlines are never missed."
-  },
-  {
-    question: "Can I manage documents across multiple teams or locations?",
-    answer: "Yes. The platform supports multi-location and multi-team setups, allowing you to manage different compliance requirements while maintaining centralized visibility and control."
-  },
-  {
-    question: "What happens if I exceed my AI usage limits?",
-    answer: "You’ll receive advance notifications as you approach your limit. Additional AI credits can be purchased, or you can upgrade your plan to accommodate higher document volumes."
-  },
-  {
-  question: "Do I own my data, and can I export it anytime?",
-  answer: "Yes. You retain full ownership of your data at all times. You can export your documents and metadata whenever you choose in standard formats, with no lock-in or restrictions."
-}
-];
+  const faqs = [
+    {
+      question: "How accurate is the AI document extraction?",
+      answer:
+        "Our AI delivers up to 98% accuracy when extracting expiration dates and critical metadata from documents. All extracted data can be reviewed and manually adjusted before being finalized, so you stay in control.",
+    },
+    {
+      question: "What types of documents can I track?",
+      answer:
+        "You can track any document with an expiration or renewal requirement, including licenses, certifications, contracts, compliance documents, background checks, ID proofs, insurance policies, and more. Custom document types can be created to match your organization’s needs.",
+    },
+    {
+      question: "Is my data secure and audit-ready?",
+      answer:
+        "Yes. All data is encrypted using 256-bit encryption and securely hosted on AWS infrastructure. Every access and modification is logged, providing a complete audit trail to support internal reviews and regulatory audits.",
+    },
+    {
+      question: "How do automated reminders work?",
+      answer:
+        "You can configure multiple reminder intervals for each document type, such as 90, 60, or 30 days before expiration. Notifications are delivered via email, SMS, and in-app alerts to ensure deadlines are never missed.",
+    },
+    {
+      question: "Can I manage documents across multiple teams or locations?",
+      answer:
+        "Yes. The platform supports multi-location and multi-team setups, allowing you to manage different compliance requirements while maintaining centralized visibility and control.",
+    },
+    {
+      question: "What happens if I exceed my AI usage limits?",
+      answer:
+        "You’ll receive advance notifications as you approach your limit. Additional AI credits can be purchased, or you can upgrade your plan to accommodate higher document volumes.",
+    },
+    {
+      question: "Do I own my data, and can I export it anytime?",
+      answer:
+        "Yes. You retain full ownership of your data at all times. You can export your documents and metadata whenever you choose in standard formats, with no lock-in or restrictions.",
+    },
+  ];
 
   const features = [
     {
