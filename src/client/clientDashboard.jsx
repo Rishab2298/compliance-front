@@ -23,7 +23,7 @@ import {
   Zap,
   Ticket,
 } from 'lucide-react'
-import { useDrivers } from '@/hooks/useDrivers'
+import { useDrivers, useDocumentTypes } from '@/hooks/useDrivers'
 import { useCompany } from '@/hooks/useCompany'
 import { useReminders } from '@/hooks/useReminders'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -46,6 +46,8 @@ const ClientDashboard = () => {
   const { data: driversData, isLoading: driversLoading } = useDrivers(1, 1000) // Fetch all drivers for dashboard
   const { data: company, isLoading: companyLoading } = useCompany(companyId)
   const { data: remindersData, isLoading: remindersLoading } = useReminders()
+  // Fetch active document types (backend already filters for isActive=true)
+  const { data: documentTypeNames = [] } = useDocumentTypes(companyId, false)
 
   const drivers = driversData?.drivers || []
   const reminders = remindersData?.reminders || []
@@ -62,10 +64,11 @@ const ClientDashboard = () => {
 
   // Calculate metrics from real data
   const totalDrivers = drivers.length
-  const documentTypes = company?.documentTypes || []
+  const documentTypes = documentTypeNames || []
 
   // Calculate compliance
   const calculateCompliance = () => {
+    // documentTypes already filtered for active types by backend
     if (drivers.length === 0 || documentTypes.length === 0) return 0
 
     let totalDocs = 0
@@ -146,6 +149,7 @@ const ClientDashboard = () => {
 
   const getDriverCompliance = (driver) => {
     const docs = driver.documents || []
+    // documentTypes already filtered for active types by backend
     if (documentTypes.length === 0) return 0
     const activeDocs = docs.filter(doc => doc.status === 'ACTIVE').length
     return Math.round((activeDocs / documentTypes.length) * 100)
