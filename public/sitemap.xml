@@ -103,17 +103,5 @@
   </url>
 
   <!-- Demo & Onboarding -->
-  <url>
-    <loc>https://complyo.co/dashboard-sample</loc>
-    <lastmod>2026-01-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://complyo.co/onboarding-dark</loc>
-    <lastmod>2026-01-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+  
 </urlset>
