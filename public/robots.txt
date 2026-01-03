@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow private/protected routes
+Disallow: /client/
+Disallow: /super-admin/
+Disallow: /driver/upload/
+
+# Sitemap
+Sitemap: https://complyo.com/sitemap.xml
